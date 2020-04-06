@@ -1,7 +1,7 @@
 {
     "Servers": [
         {
-            "Address": "ws://localhost:29132/mc",
+            "Address": "ws://103.107.189.25:29132/mc",
             "Passwd": "passwd",
             "Tag": "测试服务器1",
             "Triggers": [
@@ -66,7 +66,7 @@
             ]
         }
     ],
-    "CheckConnectionTime": 30,
+    "CheckConnectionTime": 10,
     "Groups": [
         {
             "ID": 386475891,
