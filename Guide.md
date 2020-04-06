@@ -2,9 +2,6 @@
 - 配置文件位置../app/ml.paradis.tool/config.json
 ## 配置文件使用方法
 
-
-
-
 {
     "Servers": [
         {
@@ -12,7 +9,8 @@
             "Token": "76A2173BE6393254E72FFA4D6DF1030A",
             "Tag": "服务器1",
             "Triggers": [
-                 {
+               
+                {
                     "Variants": [
                         //
                         //{
