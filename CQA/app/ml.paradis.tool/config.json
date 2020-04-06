@@ -2,7 +2,7 @@
     "Servers": [
         {
             "Address": "ws://localhost:29132/mc",
-            "Token": "76A2173BE6393254E72FFA4D6DF1030A",
+            "Passwd": "passwd",
             "Tag": "测试服务器1",
             "Triggers": [
                 {
@@ -66,12 +66,11 @@
             ]
         }
     ],
+    "CheckConnectionTime": 30,
     "Groups": [
         {
             "ID": 386475891,
-            "Triggers": [
-                {}
-            ]
+            "SendToServer": true
         }
     ]
 }
