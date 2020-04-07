@@ -196,7 +196,7 @@
               //    "JoinGroupDateTime": "2017-05-13T22:38:10+08:00",
               //    "LastSpeakDateTime": "2020-04-07T14:00:43+08:00",
               //    "Level": "吐槽",
-              //    "MemberType": 3,
+              //    "MemberType": "Creator",
               //    "ExclusiveTitle": "",
               //    "ExclusiveTitleExpirationTime": "1970-01-01T08:00:00+08:00"
               //  },
