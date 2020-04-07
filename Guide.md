@@ -72,7 +72,7 @@
                         //{
                         //    "Type": "Format",                         //操作类型
                         //    "CreateVariant": "ReturnMessage",         //创建的变量，不需要提前在"Variants"定义，自动创建用来储存返回值
-                        //    "Text": "%PlayerName%发送了消息:%Message%" //格式化的字符串
+                        //    "Text": "%PlayerName%发送了消息:%Message%",//格式化的字符串
                         //    "Filter":true                             //筛选是否执行 保持执行请填true
                         //} 
                         //--------------------------------------------------
@@ -80,7 +80,7 @@
                         //{
                         //    "Type": "ToUnicode",                      //操作类型
                         //    "CreateVariant": "ReturnMessage",         //创建的变量，不需要提前在"Variants"定义，自动创建用来储存返回值
-                        //    "Text": "%PlayerName%发送了消息:%Message%" //格式化的字符串
+                        //    "Text": "%PlayerName%发送了消息:%Message%",//格式化的字符串
                         //    "Filter":true                             //筛选是否执行 保持执行请填true
                         //} 
                         //
