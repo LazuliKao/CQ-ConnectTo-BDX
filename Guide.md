@@ -176,6 +176,36 @@
             "ID": 386475891,
             "Triggers": [
                 {}
+                
+                
+                
+                
+              //获取消息目录
+              //{
+              //  "Message": "23333",
+              //  "FromQQ": 441870948,
+              //  "FromQQNick": "g???x???h???",
+              //  "FromGroup": 386475891,
+              //  "IsFromAnonymous": false,
+              //  "Id": 2,
+              //  "MemberInfo": {
+              //    "Card": "gxh2004",
+              //    "Sex": 0,
+              //    "Age": 16,
+              //    "Area": "杭州",
+              //    "JoinGroupDateTime": "2017-05-13T22:38:10+08:00",
+              //    "LastSpeakDateTime": "2020-04-07T14:00:43+08:00",
+              //    "Level": "吐槽",
+              //    "MemberType": 3,
+              //    "ExclusiveTitle": "",
+              //    "ExclusiveTitleExpirationTime": "1970-01-01T08:00:00+08:00"
+              //  },
+              //  "GroupInfo": {
+              //    "Name": "机器人测试",
+              //    "CurrentMemberCount": 7,
+              //    "MaxMemberCount": 200
+              //  }
+              //}
             ]
         }
     ]
