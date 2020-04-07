@@ -1,7 +1,8 @@
 ## 参数
 - 配置文件位置../app/ml.paradis.tool/config.json
 ## 配置文件使用方法
-```
+- 很多内容参考了MCBE行为包的自定义方法，还原度不高但自定义程度很高
+```json
 {
     "Servers": [
         {
@@ -44,7 +45,7 @@
                         //    "TargetVariant": "Message",//操作的变量，需要提前在"Variants"定义
                         //    "Find": "***",              //寻找的字符串
                         //    "Replacement": "???",       //替换掉的字符串
-                        //    "Filter": true              //筛选是否执行
+                        //    "Filter": true              //筛选是否执行 保持执行请填true
                         //}
                         //--------------------------------------------------
                         //正则表达式替换
@@ -52,6 +53,16 @@
                         //    "Type": "RegexReplace",     //类型
                         //    "TargetVariant": "Message",//操作的变量，需要提前在"Variants"定义
                         //    "Pattern": "^!",            //正则表达式匹配
+                        //    "Replacement": "§c",        //替换掉的字符串
+                        //    "Filter":true               //筛选是否执行
+                        //} 
+                        //--------------------------------------------------
+                        //正则表达式筛选
+                        //{
+                        //    "Type": "RegexGet",     //类型
+                        //    "TargetVariant": "Message",//操作的变量，需要提前在"Variants"定义
+                        //    "Pattern": "^!{}",            //正则表达式匹配 基于C#的高端正不懂勿用
+                        //    "GroupName":"",                 
                         //    "Replacement": "§c",        //替换掉的字符串
                         //    "Filter":true               //筛选是否执行
                         //} 
