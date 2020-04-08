@@ -166,7 +166,7 @@ namespace ml.paradis.tool.Code
                     #endregion
 
                 }
-                e.Handler = true;
+             
             }
         }
         private void DoTriggers(JArray triggers, ref JObject receive, JObject group, ref CQGroupMessageEventArgs e)
@@ -208,7 +208,7 @@ namespace ml.paradis.tool.Code
                     #endregion
                 }
                 catch (Exception err)
-                { Operation.AddLog("触发器解析" + err.ToString()); }
+                { Operation.AddLog("触发器解析" + err.ToString()); } 
             }
         }
         private void DoAction(JObject action, ref Dictionary<string, string> Variants, ref JObject receive, ref JObject group, ref CQGroupMessageEventArgs e)
