@@ -236,14 +236,14 @@ namespace ml.paradis.tool.Code
                         {
                             var lambda_receive = receive;
                             var lambda_Variants = Variants;
-                            foreach (var ws in Data.WSClients.Where(l => Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
+                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive&&Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
                             {
                                 ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
                             }
                         }
                         else
                         {
-                            foreach (var ws in Data.WSClients)
+                            foreach (var ws in Data.WSClients.Where(l=>l.Key.IsAlive))
                             {
                                 ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
                             }

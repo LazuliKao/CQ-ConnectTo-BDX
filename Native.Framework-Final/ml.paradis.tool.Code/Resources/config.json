@@ -208,6 +208,11 @@
                                                 "Variant": "feedback",
                                                 "Operator": "!=",
                                                 "Value": "没有与选择器匹配的目标"
+                                            },
+                                            {
+                                                "Variant": "feedback",
+                                                "Operator": "!=",
+                                                "Value": "No targets matched selector"
                                             }
                                         ]
                                     },
@@ -221,14 +226,7 @@
                                             "GroupID": 386475891,
                                             "Message": "%ServerName%>%feedback%"
                                         }
-                                    ],
-                                    "MismatchedActions": [
-                                        {
-                                            "Target": "QQGroup",
-                                            "GroupID": 386475891,
-                                            "Message": "%ServerName%>ERROR"
-                                        }
-                                    ]
+                                    ] 
                                 }
                             ]
                         }
