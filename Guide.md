@@ -1,7 +1,9 @@
 ## 参数
 - 配置文件位置../app/ml.paradis.tool/config.json
 ## 配置文件使用方法
-```
+- 很多内容参考了MCBE行为包的自定义方法，还原度不高但自定义程度很高
+- 如果你懂得如何编写行为包，那么这个自定义配置上手会很容易
+```json
 {
     "Servers": [
         {
@@ -37,24 +39,52 @@
                         //"Operations"操作，
                         //  会在下面的筛选器和Actions被执行前执行
                         //  同样的，每个操作都有一个"Filter"来筛选是否执行，"Filter":true保持执行
+                        //  可选参数"CreateVariant"，即创建变量来储存，否则直接赋值给"TargetVariant"
                         //-------------------------------------------------
                         //普通替换
                         //{
-                        //    "Type": "Replace",          //类型
+                        //    "Type": "Replace",          //操作类型
                         //    "TargetVariant": "Message",//操作的变量，需要提前在"Variants"定义
                         //    "Find": "***",              //寻找的字符串
                         //    "Replacement": "???",       //替换掉的字符串
-                        //    "Filter": true              //筛选是否执行
+                        //    "Filter": true              //筛选是否执行 保持执行请填true
                         //}
                         //--------------------------------------------------
                         //正则表达式替换
                         //{
-                        //    "Type": "RegexReplace",     //类型
+                        //    "Type": "RegexReplace",     //操作类型
                         //    "TargetVariant": "Message",//操作的变量，需要提前在"Variants"定义
                         //    "Pattern": "^!",            //正则表达式匹配
                         //    "Replacement": "§c",        //替换掉的字符串
-                        //    "Filter":true               //筛选是否执行
+                        //    "Filter":true               //筛选是否执行 保持执行请填true
                         //} 
+                        //--------------------------------------------------
+                        //正则表达式子表达式筛选
+                        //{
+                        //    "Type": "RegexGet",     //操作类型
+                        //    "TargetVariant": "Message",//操作的变量，需要提前在"Variants"定义
+                        //    "Pattern": "(?<MyValue>23+)",         //正则表达式匹配 基于C#的高端正不懂勿用
+                        //    "GroupName":"MyValue",            //筛选组名，需要上方 Pattern有定义，否则返回空
+                        //    "Filter":true              //筛选是否执行 保持执行请填true
+                        //} 
+                        //--------------------------------------------------
+                        //字符串格式化(变量替入)
+                        //{
+                        //    "Type": "Format",                         //操作类型
+                        //    "CreateVariant": "ReturnMessage",         //创建的变量，不需要提前在"Variants"定义，自动创建用来储存返回值
+                        //    "Text": "%PlayerName%发送了消息:%Message%",//格式化的字符串
+                        //    "Filter":true                             //筛选是否执行 保持执行请填true
+                        //} 
+                        //--------------------------------------------------
+                        //转Unicode
+                        //{
+                        //    "Type": "ToUnicode",                      //操作类型
+                        //    "CreateVariant": "ReturnMessage",         //创建的变量，不需要提前在"Variants"定义，自动创建用来储存返回值
+                        //    "Text": "%PlayerName%发送了消息:%Message%",//格式化的字符串
+                        //    "Filter":true                             //筛选是否执行 保持执行请填true
+                        //} 
+                        //
+                        
                     ],
                     "Filter": {
                         "all_of": [
@@ -84,7 +114,7 @@
                         //条件比较器
                         //{
                         //  "Path": ["body","properties","MessageType"],
-                        //     //数值源数据包目录，参考https://minecraft-zh.gamepedia.com/%E6%95%99%E7%A8%8B/WebSocket
+                        //     //数值源数据包目录，参考github
                         //  "Operator": "==",
                         //      //比较的操作,可选：
                         //      //"==" "!=" "is" "not" //文字或数值
@@ -146,33 +176,63 @@
             "ID": 386475891,
             "Triggers": [
                 {}
+                
+                
+                
+                
+              //获取消息目录
+              //{
+              //  "Message": "23333",
+              //  "FromQQ": 441870948,
+              //  "FromQQNick": "g???x???h???",
+              //  "FromGroup": 386475891,
+              //  "IsFromAnonymous": false,
+              //  "Id": 2,
+              //  "MemberInfo": {
+              //    "Card": "gxh2004",
+              //    "Sex": 0,
+              //    "Age": 16,
+              //    "Area": "杭州",
+              //    "JoinGroupDateTime": "2017-05-13T22:38:10+08:00",
+              //    "LastSpeakDateTime": "2020-04-07T14:00:43+08:00",
+              //    "Level": "吐槽",
+              //    "MemberType": "Creator",
+              //    "ExclusiveTitle": "",
+              //    "ExclusiveTitleExpirationTime": "1970-01-01T08:00:00+08:00"
+              //  },
+              //  "GroupInfo": {
+              //    "Name": "机器人测试",
+              //    "CurrentMemberCount": 7,
+              //    "MaxMemberCount": 200
+              //  }
+              //}
             ]
         }
     ]
 }
 ```
-#WebSocketAPI
-##玩家消息(服务端发出
+# WebSocketAPI
+## 玩家消息(服务端发出
 ```json
 {"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
 //操作标识——————————目标——————————————————返回信息（玩家聊天内容）
 ```
-##玩家加入(服务端发出
+## 玩家加入(服务端发出
 ```json
 {"operate":"onjoin","target":"WangYneos","text":"Joined server"}
 //操作标识——————————---目标——————————————————返回信息（加入了服务器）
 ```
-##玩家退出(服务端发出
+## 玩家退出(服务端发出
 ```json
 {"operate":"onleft","target":"WangYneos","text":"Lefted server"}
 //与上面类似
 ```
-##玩家使用命令(服务端发出
+## 玩家使用命令(服务端发出
 ```json
 {"operate":"onCMD","target":"WangYneos","CMD":"/list"}
 //操作标识-----------目标玩家--------------执行的命令
 ```
-##WS客户端使用命令
+## WS客户端使用命令
 >发送
 ```json
 {"op":"runcmd","passwd":"CD92DDCEBFB8D3FB1913073783FAC0A1","cmd":"kick WangYneos"}
@@ -184,8 +244,9 @@
 //操作标识---操作类型--密码验证--成功---------返回内容----------------------------
 {"operate":"runcmd","onError":"Auth","text":"Password Not Match"}
 //操作标识---操作类型--出错-------验证---------返回内容--------------
+{"operate":"onCMD","target":"gxh2004","CMD":"/kick gxh2004"}
 ```
-##密码获得规则
+## 密码获得规则
 服务端获取密码
 +当前 年月日时分
 （无分号，空格
