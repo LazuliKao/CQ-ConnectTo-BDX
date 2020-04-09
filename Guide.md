@@ -1,5 +1,10 @@
 ## 参数
 - 配置文件位置../app/ml.paradis.tool/config.json
+## 入门(坟)
+- 插件载入酷Q，运行，然后打开自动释放于../app/ml.paradis.tool/config.json的默认配置文件（建议使用Visual Studio Code编辑，语言选择JSON with Comments）
+- 1.Ctrl+H打开替换工具，把所有默认的测试群号替换成你的群号
+- 2.编辑服务器配置Servers下的数组，将Address与BDX-Websocket端对应
+- 3.
 ## 配置文件使用方法
 - 很多内容参考了MCBE行为包的自定义方法，还原度不高但自定义程度很高
 - 如果你懂得如何编写行为包，那么这个自定义配置上手会很容易
