@@ -59,6 +59,12 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="MaterialDesignColors, Version=1.2.3.1244, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.1.2.3\lib\net45\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=3.1.0.1244, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.3.1.0\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -131,6 +137,10 @@
       <Project>{76613A39-4E7A-4B2F-8E19-B9A6FF6B9716}</Project>
       <Name>ml.paradis.tool.Code</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ml.paradis.tool.UI\ml.paradis.tool.UI.csproj">
+      <Project>{2007843b-ebc2-4fa0-ad29-7ed62cc7fac4}</Project>
+      <Name>ml.paradis.tool.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Native.Sdk\Native.Sdk.csproj">
       <Project>{d7a958b3-79d9-49f8-8bb4-9619bab6ecba}</Project>
       <Name>Native.Sdk</Name>
@@ -141,6 +151,7 @@
     <Import Project="$(SolutionDir)packages\DllExport.1.6.1\tools\net.r_eg.DllExport.targets" Condition="Exists('$(SolutionDir)packages\DllExport.1.6.1\tools\net.r_eg.DllExport.targets')" Label="8337224c9ad9e356" />
     <Import Project="..\packages\Fody.2.2.1.0\build\portable-net+sl+win+wpa+wp\Fody.targets" Condition="Exists('..\packages\Fody.2.2.1.0\build\portable-net+sl+win+wpa+wp\Fody.targets')" />
     <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
+    <Import Project="..\packages\MaterialDesignThemes.3.1.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.1.0\build\MaterialDesignThemes.targets')" />
   </ImportGroup>
   <Target Name="DllExportRestorePkg" BeforeTargets="PrepareForBuild">
     <Warning Condition="!Exists('$(SolutionDir)DllExport.bat')" Text="We can't find 'DllExport.bat' in '$(SolutionDir)' - https://github.com/3F/DllExport" />
@@ -155,6 +166,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.2.2.1.0\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.2.1.0\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
     <Error Condition="!Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\MaterialDesignThemes.3.1.0\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MaterialDesignThemes.3.1.0\build\MaterialDesignThemes.targets'))" />
   </Target>
   <PropertyGroup>
     <PreBuildEvent>if exist "$(TargetDir)$(TargetName)" (echo 文件夹已存在) else (md "$(TargetDir)$(TargetName)") 

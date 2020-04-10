@@ -36,14 +36,14 @@ namespace ml.paradis.tool.Code
                         {
                             try
                             {
-                                File.Copy(ConfigPath, Path.GetDirectoryName(ConfigPath) + "config_old.json");
+                                File.Copy(ConfigPath, Path.GetDirectoryName(ConfigPath) + "\\config_old.json");
                             }
                             catch (Exception)
                             {
                                 for (int i = 1; i < 200; i++)
                                 {
                                     try
-                                    { File.Copy(ConfigPath, Path.GetDirectoryName(ConfigPath) + "config_old (" + i + ").json"); break; }
+                                    { File.Copy(ConfigPath, Path.GetDirectoryName(ConfigPath) + "\\config_old (" + i + ").json"); break; }
                                     catch (Exception)
                                     { continue; }
                                 }
@@ -51,7 +51,7 @@ namespace ml.paradis.tool.Code
                             File.WriteAllBytes(ConfigPath, Code.Config.config);
                         } 
                     }
-                    catch (Exception) { }
+                    catch (Exception err) { Operation.AddLog(err.ToString()); }
                 }
                 return configData;
             }

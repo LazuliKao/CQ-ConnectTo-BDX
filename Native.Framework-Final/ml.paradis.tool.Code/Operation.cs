@@ -373,6 +373,8 @@ namespace ml.paradis.tool.Code
                         try { get = GetSubItem(Source, ((JObject)Filters)["Path"].ToList().ConvertAll(l => l.ToString())); }
                         catch (Exception) { }
                         string value = Format(((JObject)Filters)["Value"].ToString(), Variants);
+                        //AddLog(get.ToString());
+                        //AddLog(value.ToString());
                         switch (((JObject)Filters)["Operator"].ToString())
                         {
                             case "==": case "is": return get == value;
@@ -416,7 +418,7 @@ namespace ml.paradis.tool.Code
                     }
                 }
             }
-            throw new Exception("格式不规范，未能计算Filters的返回值");
+            throw new Exception("格式不规范，未能计算Filters的返回值\n"+Filters.ToString());
         }
         private static string GetSubItem(JToken souData, List<string> pathList)
         {

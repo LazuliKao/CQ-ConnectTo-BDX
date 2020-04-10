@@ -1,4 +1,5 @@
 ﻿using ml.paradis.tool.Code;
+using ml.paradis.tool.UI;
 using Native.Sdk.Cqp.Interface;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,9 @@ namespace Native.Core
         {
             unityContainer.RegisterType<IGroupMessage, Event_GroupMessage>("群消息处理");
             unityContainer.RegisterType<IAppEnable, Event_AppEnable>("应用已被启用");
-            unityContainer.RegisterType<IAppDisable, Event_AppDisable>("应用将被停用");
+            unityContainer.RegisterType<IAppDisable, Event_AppDisable>("应用将被停用");   
+          
+            unityContainer.RegisterType<IMenuCall, Menu_OpenWindow>("配置/帮助/关于");
         }
     }
 }
