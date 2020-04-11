@@ -402,7 +402,7 @@ namespace ml.paradis.tool.Code
                     }
                 }
                 else if (((JObject)Filters).ContainsKey("ServerConfig") && ((JObject)Filters).ContainsKey("Operator") && ((JObject)Filters).ContainsKey("Value"))
-                { 
+                {
                     string get = null;
                     try
                     { get = GetSubItem(server, ((JObject)Filters)["ServerConfig"].ToList().ConvertAll(l => l.ToString())); }
@@ -418,7 +418,7 @@ namespace ml.paradis.tool.Code
                     }
                 }
             }
-            throw new Exception("格式不规范，未能计算Filters的返回值\n"+Filters.ToString());
+            throw new Exception("格式不规范，未能计算Filters的返回值\n" + Filters.ToString());
         }
         private static string GetSubItem(JToken souData, List<string> pathList)
         {
@@ -461,17 +461,15 @@ namespace ml.paradis.tool.Code
         }
         public static string StringToUnicode(string s)//字符串转UNICODE代码
         {
-
             char[] charbuffers = s.ToCharArray();
             byte[] buffer;
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < charbuffers.Length; i++)
             {
-                buffer = System.Text.Encoding.Unicode.GetBytes(charbuffers[i].ToString());
+                buffer = Encoding.Unicode.GetBytes(charbuffers[i].ToString());
                 sb.Append(String.Format("\\u{0:X2}{1:X2}", buffer[1], buffer[0]));
             }
             return sb.ToString();
         }
-
     }
 }

@@ -58,7 +58,7 @@ namespace ml.paradis.tool.Code
             set { configData = value; }
         }
         public static Dictionary<WebSocket, JObject> WSClients = new Dictionary<WebSocket, JObject>();
-        private readonly static JObject cmdModel = JObject.Parse("{\"op\":\"runcmd\",\"passwd\":\"token\",\"cmd\":\"say null\"}");
+        private readonly static JObject cmdModel = JObject.Parse("{\"operate\":\"runcmd\",\"passwd\":\"token\",\"cmd\":\"say null\"}");
         public static string GetCmdReq(string token, string cmd)
         {
             string GetMD5(string sDataIn)

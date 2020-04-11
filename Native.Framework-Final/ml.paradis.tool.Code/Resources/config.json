@@ -266,7 +266,7 @@
                                         {
                                             "Name": "CMD",
                                             "Path": [
-                                                "CMD"
+                                                "text"
                                             ]
                                         },
                                         {

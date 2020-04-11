@@ -138,7 +138,7 @@
       <Name>ml.paradis.tool.Code</Name>
     </ProjectReference>
     <ProjectReference Include="..\ml.paradis.tool.UI\ml.paradis.tool.UI.csproj">
-      <Project>{2007843b-ebc2-4fa0-ad29-7ed62cc7fac4}</Project>
+      <Project>{adc0362c-608b-43ff-bdbe-79b784b05fe4}</Project>
       <Name>ml.paradis.tool.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Native.Sdk\Native.Sdk.csproj">

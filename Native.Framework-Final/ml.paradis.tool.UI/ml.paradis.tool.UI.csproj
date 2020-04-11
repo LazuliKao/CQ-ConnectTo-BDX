@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2007843B-EBC2-4FA0-AD29-7ED62CC7FAC4}</ProjectGuid>
+    <ProjectGuid>{ADC0362C-608B-43FF-BDBE-79B784B05FE4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ml.paradis.tool.UI</RootNamespace>
     <AssemblyName>ml.paradis.tool.UI</AssemblyName>
@@ -90,9 +90,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="tesws.xaml.cs">
-      <DependentUpon>tesws.xaml</DependentUpon>
+    <Compile Include="config.xaml.cs">
+      <DependentUpon>config.xaml</DependentUpon>
     </Compile>
+    <Compile Include="update.xaml.cs">
+      <DependentUpon>update.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="welcome.xaml.cs">
+      <DependentUpon>welcome.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="wsc.xaml.cs">
+      <DependentUpon>wsc.xaml</DependentUpon>
+    </Compile>
+    <Page Include="config.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -105,7 +118,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="tesws.xaml">
+    <Page Include="update.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="welcome.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="wsc.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -139,6 +160,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ml.paradis.tool.Code\ml.paradis.tool.Code.csproj">
+      <Project>{76613a39-4e7a-4b2f-8e19-b9a6ff6b9716}</Project>
+      <Name>ml.paradis.tool.Code</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Native.Sdk\Native.Sdk.csproj">
       <Project>{d7a958b3-79d9-49f8-8bb4-9619bab6ecba}</Project>
       <Name>Native.Sdk</Name>

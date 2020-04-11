@@ -22,7 +22,7 @@ namespace ml.paradis.tool.Code {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Config {
+    public class Config {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -59,11 +59,11 @@ namespace ml.paradis.tool.Code {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
-        internal static byte[] config {
+        public static byte[] config {
             get {
                 object obj = ResourceManager.GetObject("config", resourceCulture);
                 return ((byte[])(obj));
