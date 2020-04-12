@@ -1,11 +1,13 @@
 ## 参数
 - 配置文件位置../app/ml.paradis.tool/config.json
 ## 入门(坟)
-- 1.插件载入酷Q，运行，然后打开自动释放于../app/ml.paradis.tool/config.json的默认配置文件（建议使用Visual Studio Code编辑，语言选择JSON with Comments）
-- 2.Ctrl+H打开替换工具，把所有默认的测试群号替换成你的群号
-- 3.编辑服务器配置Servers下的JSON数组，将Address与BDX-Websocket端对应
-- 4.再次Ctrl+H把所有"测试服务器1"替换成你想修改的名称
-- 5.投入使用(体验bug)
+- ~~1.插件载入酷Q，运行，然后打开自动释放于../app/ml.paradis.tool/config.json的默认配置文件（建议使用Visual Studio Code编辑，语言选择JSON with Comments）~~
+- ~~2.Ctrl+H打开替换工具，把所有默认的测试群号替换成你的群号~~
+- ~~3.编辑服务器配置Servers下的JSON数组，将Address与BDX-Websocket端对应~~
+- ~~4.再次Ctrl+H把所有"测试服务器1"替换成你想修改的名称~~
+- ~~5.投入使用(体验bug)~~
+### 首次使用直接打开酷Q插件菜单设置就行了
+- 更多高级内容还是要参考下面的文档！！！
 ## 配置文件使用方法
 - 很多内容参考了MCBE行为包的自定义方法，还原度不高但自定义程度很高
 - 如果你懂得如何编写行为包，那么这个自定义配置上手会很容易
