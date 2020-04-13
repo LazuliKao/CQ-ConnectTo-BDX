@@ -5,8 +5,10 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ml.paradis.tool.UI"
      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+       xmlns:mde="clr-namespace:MaterialDesignExtensions.Controls;assembly=MaterialDesignExtensions"
       mc:Ignorable="d" 
       d:DesignHeight="520" d:DesignWidth="700"    >
+
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,6 +16,9 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <!--MDE-->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignLightTheme.xaml" />
                 <!-- primary colors -->
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
@@ -35,7 +40,6 @@
                     <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{StaticResource Accent400Foreground}" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-
             <Style TargetType="CheckBox" x:Key="SelectCheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -152,12 +156,13 @@
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="1.WebSocket服务器地址" Margin="0,0,10,0"/>
-                                    <TextBox   materialDesign:HintAssist.Hint="ws://127.0.0.1:19132/mc"/>
+                                    <TextBox Name="Address_1" materialDesign:HintAssist.Hint="ws://127.0.0.1:19132/mc"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="   WebSocket服务器密码" Margin="0,0,10,0"/>
-                                    <TextBox   materialDesign:HintAssist.Hint="passwd"/>
+                                    <TextBox  Name="Password_1" materialDesign:HintAssist.Hint="passwd"/>
                                 </StackPanel>
+                                <TextBlock Visibility="Collapsed" Foreground="Red" Name="ErrLabel_1"/>
                             </StackPanel>
                         </Expander.Header>
                         <Grid HorizontalAlignment="Left" TextBlock.Foreground="{DynamicResource MaterialDesignBody}"    Margin="-18,0"         Width="{Binding ActualWidth,ElementName=root}"   >
@@ -173,8 +178,7 @@
     "wsport" : 29132,
     "endpoint" : "^/mc/?$"
 }
-那么在这里就要填"ws://你的服务器IP:29132/mc"，如果机器人和BDX位于同一服务器，IP用localhost替代即可。
-否则填写公网IP，并且需要对该端口放通HTTP协议(一般情况只要不是80端口都可以通过"端口转发"或者"安全组"之类的操作放通的)</TextBlock>
+那么在这里就要填"ws://你的服务器IP:29132/mc"，如果机器人和BDX位于同一服务器，IP用localhost替代即可，否则填写公网IP，并且需要对该端口放通HTTP协议(一般情况只要不是80端口都可以通过"端口转发"或者"安全组"之类的操作放通的)</TextBlock>
                                     <Separator/>
                                 </StackPanel>
                             </Grid>
@@ -182,9 +186,12 @@
                     </Expander>
                     <Expander   HorizontalAlignment="Stretch" >
                         <Expander.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="2.消息联动的群号" Margin="0,0,10,0"/>
-                                <TextBox  materialDesign:HintAssist.Hint="2333333333"/>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="2.消息联动的群号" Margin="0,0,10,0"/>
+                                    <TextBox Name="GroupID_2" materialDesign:HintAssist.Hint="2333333333"/>
+                                </StackPanel>
+                                <TextBlock Visibility="Collapsed" Foreground="Red" Name="ErrLabel_2"/>
                             </StackPanel>
                         </Expander.Header>
                         <Grid HorizontalAlignment="Left"  TextBlock.Foreground="{DynamicResource MaterialDesignBody}"    Margin="-18,0"         Width="{Binding ActualWidth,ElementName=root}"   >
@@ -201,30 +208,94 @@
                     </Expander>
                     <Expander   HorizontalAlignment="Stretch" >
                         <Expander.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="3.快捷指令" Margin="0,0,10,0"/>
-                                <CheckBox x:Name="AdminModeCheckBox" Style="{StaticResource SelectCheckBox}" Checked="ToggleButton_Checked" VerticalContentAlignment="Center">
-                                    <TextBlock Text="所有群管理员可执行" FontSize="16"/>
-                                </CheckBox> 
-                                <TextBlock Text="指定管理员QQ " Visibility="{Binding IsChecked,ElementName=AdminModeCheckBox,Converter={StaticResource InverseBoolToVisConverter}}"/>
-                                <TextBox materialDesign:HintAssist.Hint="" Text="输入QQ号，多个用&quot;|&quot;隔开"  Visibility="{Binding IsChecked,ElementName=AdminModeCheckBox,Converter={StaticResource InverseBoolToVisConverter}}"/>
-
-                                <!--materialDesign:HintAssist.Hint="2333333333"-->
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="3.快捷指令" Margin="0,0,10,0"/>
+                                    <CheckBox x:Name="AdminMode_3" Style="{StaticResource SelectCheckBox}"   VerticalContentAlignment="Center">
+                                        <TextBlock Text="所有群管理员可执行" FontSize="16"/>
+                                    </CheckBox>
+                                    <TextBlock Text="指定管理员QQ " Visibility="{Binding IsChecked,ElementName=AdminMode_3,Converter={StaticResource InverseBoolToVisConverter}}"/>
+                                    <TextBox Name="AdminQQ_3" materialDesign:HintAssist.Hint="输入QQ号，多个用&quot;|&quot;隔开"  Visibility="{Binding IsChecked,ElementName=AdminMode_3,Converter={StaticResource InverseBoolToVisConverter}}"/>
+                                    <!--materialDesign:HintAssist.Hint="2333333333"-->
+                                </StackPanel>
+                                <TextBlock Visibility="Collapsed" Foreground="Red" Name="ErrLabel_3"/>
                             </StackPanel>
                         </Expander.Header>
                         <Grid HorizontalAlignment="Left"  TextBlock.Foreground="{DynamicResource MaterialDesignBody}"    Margin="-18,0"         Width="{Binding ActualWidth,ElementName=root}"   >
                             <Grid Margin="40,0">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="提示:" Foreground="Blue"/>
-                                    <TextBlock Opacity=".68"   TextWrapping="Wrap" xml:space="preserve">这里填写你的服务器群号就行了
-简易配置自动生成的配置文件会支持该群号的消息转发到服务器，同时把服务器的玩家消息实时转发到群聊，消息格式请自行在生成的配置文件相应内容中修改
-注意：请务必让机器人的QQ号提前加进这个群，不然消息没发成功时由于酷Q机制还不会报错</TextBlock>
+                                    <TextBlock Text="填写提示:" Foreground="Blue"/>
+                                    <TextBlock Opacity=".68"   TextWrapping="Wrap" xml:space="preserve">所有管理员均可执行则发送者qq权限是管理员或群主即可
+默认输入群里发送/cmd 指令内容即可执行指令，指令执行结果会自动反馈到群里
+注意：所有消息格式、匹配方式、权限判断、提示内容均可在配置文件中自定义，这里只是为了方便首次使用</TextBlock>
                                     <Separator/>
                                 </StackPanel>
                             </Grid>
                         </Grid>
                     </Expander>
-                    <TextBlock Text="还没写完呢~~~"/>
+                    <Expander   HorizontalAlignment="Stretch" >
+                        <Expander.Header>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="4.服务器命名" Margin="0,0,10,0"/>
+                                    <TextBox Name="ServerTag_4" materialDesign:HintAssist.Hint="例如：XXX生存服"/>
+                                </StackPanel>
+                                <TextBlock Visibility="Collapsed" Foreground="Red" Name="ErrLabel_4"/>
+                            </StackPanel>
+                        </Expander.Header>
+                        <Grid HorizontalAlignment="Left"  TextBlock.Foreground="{DynamicResource MaterialDesignBody}"    Margin="-18,0"         Width="{Binding ActualWidth,ElementName=root}"   >
+                            <Grid Margin="40,0">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="填写提示:" Foreground="Blue"/>
+                                    <TextBlock Opacity=".68"   TextWrapping="Wrap" xml:space="preserve">用来标记服务器名称的，以便作为自定义变量引用，在默认配置会将此作为服务器消息转发到群聊时显示的名称
+注意：默认消息格式可以自行在配置文件中修改</TextBlock>
+                                    <Separator/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Expander>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Click="SaveFileButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ContentSave" Width="25" Height="25"/>
+                                <TextBlock Text="保存到配置文件"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Name="OpenConfigFilePathButton" Grid.Column="2" Click="OpenConfigFilePathButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="OpenInNew" Width="25" Height="25"/>
+                                <TextBlock Text="打开配置文件目录"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <Expander   HorizontalAlignment="Stretch" >
+                        <Expander.Header>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text=" 更多帮助" Margin="0,0,10,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander.Header>
+                        <Grid HorizontalAlignment="Left"  TextBlock.Foreground="{DynamicResource MaterialDesignBody}"    Margin="-18,0"         Width="{Binding ActualWidth,ElementName=root}"   >
+                            <Grid Margin="40,0">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Tip:" Foreground="Blue"/>
+                                    <TextBlock Opacity=".68"   TextWrapping="Wrap" xml:space="preserve">这个简易的设置界面仅仅是整个插件的冰山一角，而且是为了方便首次使用者和那些懒得看文档却又想要实现一些基础功能的小白设计的。
+本插件支持实现多个群聊、多个服务器集控，亦可实现多个服务器之间以酷q插件为媒介的消息联动，还可以做到服务器发送指定的前缀消息或斜杠指令时执行一系列Actions，具体请参考github的Guide.md文档自行发挥！</TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="配置文档地址:" Foreground="Blue"/>
+                                        <TextBox IsReadOnly="True"  Text="https://github.com/littlegao233/CQ-ConnectTo-BDX/blob/master/Guide.md" GotFocus="GuideTextBox_GotFocus"/>
+                                    </StackPanel>
+                                    <Separator/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Expander>
                 </StackPanel>
             </ScrollViewer.Content>
         </ScrollViewer>

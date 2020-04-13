@@ -1,19 +1,17 @@
-﻿<Window x:Class="ml.paradis.tool.UI.MainWindow"
+﻿<mde:MaterialWindow x:Class="ml.paradis.tool.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ml.paradis.tool.UI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        mc:Ignorable="d" FontFamily="Microsoft YaHei"
+      xmlns:mde="clr-namespace:MaterialDesignExtensions.Controls;assembly=MaterialDesignExtensions"
+                    mc:Ignorable="d" FontFamily="Microsoft YaHei"
         Title="CQ-ConnectTo-BDX : CQPlugin By gxh" Height="450" Width="700" 
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="CanResizeWithGrip" WindowStyle="ToolWindow"
         >        <!--TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType" TextOptions.TextHintingMode="Fixed" UseLayoutRounding="True"-->
-
-    <Window.Resources>
-        <ResourceDictionary>
-
-
+     <Window.Resources>
+        <ResourceDictionary> 
             <ResourceDictionary.MergedDictionaries>
                 <!-- material design styles -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
@@ -135,4 +133,4 @@
             </Grid>
         </GroupBox>
     </Grid>
-</Window>
+</mde:MaterialWindow>

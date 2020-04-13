@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ml.paradis.tool.UI"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+       xmlns:mde="clr-namespace:MaterialDesignExtensions.Controls;assembly=MaterialDesignExtensions"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="500"
       Title="update">
@@ -15,6 +16,9 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <!--MDE-->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignLightTheme.xaml" />
                 <!-- primary colors -->
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
@@ -36,85 +40,15 @@
                     <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{StaticResource Accent400Foreground}" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="ToggleButton" x:Key="stlToggleButton">
-                <Setter Property="Foreground" Value="White"></Setter>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Border x:Name="Back" Background="#F7FDF7" BorderThickness="1" BorderBrush="Transparent">
-                                <Path Name="PathFill" Fill="#59CA4F" Width="8" Height="6" StrokeThickness="0" Data="M5,0 L10,10 L0,10 z" RenderTransformOrigin="0.5,0.5" Stretch="Fill">
-                                    <Path.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="180"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </Path.RenderTransform>
-                                </Path>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="PathFill" Property="Fill" Value="White"></Setter>
-                                    <Setter TargetName="Back" Property="Background" Value="#59CA4F"></Setter>
-                                    <Setter TargetName="Back" Property="BorderBrush" Value="#59CA4F"></Setter>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="ComboBoxItem" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}"/>
+             <Style TargetType="ComboBoxItem" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}"/>
             <Style x:Key="EchoTextbox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignComboBoxEditableTextBox}"/>
-            <Style TargetType="ComboBox"   >
-                <Setter Property="SnapsToDevicePixels" Value="True"/>
-                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-                <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-                <Setter Property="HorizontalAlignment" Value="Left"></Setter>
-                <Setter Property="Foreground" Value="Black"></Setter>
-                <Setter Property="Height" Value="30"></Setter>
-                <Setter Property="Margin" Value="0,0,0,0"></Setter>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ComboBox">
-                            <Grid Background="#F7FDF7">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.7*"/>
-                                    <ColumnDefinition Width="0.3*" MaxWidth="30"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox  Grid.Column="0" IsReadOnly="True" TextAlignment="Center" VerticalContentAlignment="Center" Text="{TemplateBinding Text}"></TextBox>
-                                <Border  Grid.Column="0" BorderThickness="1,1,0,1" BorderBrush="#81D779" CornerRadius="1,0,0,1">
-                                </Border>
-                                <Border Grid.Column="1" BorderThickness="0,1,1,1" BorderBrush="#81D779" CornerRadius="0,1,1,0">
-                                    <ToggleButton Style="{StaticResource stlToggleButton}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"></ToggleButton>
-                                </Border>
-                                <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide">
-                                    <Border CornerRadius="1" MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True">
-                                        <Border.Effect>
-                                            <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="0" Opacity="0.5"/>
-                                        </Border.Effect>
-                                        <ScrollViewer Margin="4,6,4,6"  MaxHeight="{TemplateBinding MaxDropDownHeight}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-                                            <!-- StackPanel 用于显示子级，方法是将 IsItemsHost 设置为 True -->
-                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" Background="White"/>
-                                        </ScrollViewer>
-                                    </Border>
-                                </Popup>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <local:SelectedToBool x:Key="SelectedToBool" />
+             <local:SelectedToBool x:Key="SelectedToBool" />
         </ResourceDictionary>
     </Page.Resources>
 
     <Grid>
-        <TabControl BorderBrush="{x:Null}">
-            <TabItem>
-                <TabItem.Header>
-                    <RadioButton Padding="0" Margin="-5,-3,-5,-3" IsChecked="{Binding Parent.IsSelected, RelativeSource={RelativeSource Self}}" Content="INFO" Style="{StaticResource MaterialDesignTabRadioButton}"/>
-                </TabItem.Header>
+        <TabControl BorderBrush="{x:Null}" Style="{StaticResource MaterialDesignTabControl}">
+            <TabItem Header="INFO">
                 <materialDesign:Card   Padding="10">
                     <Grid>
                         <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
@@ -134,10 +68,7 @@
                     </Grid>
                 </materialDesign:Card>
             </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <RadioButton Padding="0" Margin="-5,-3,-5,-3" IsChecked="{Binding Parent.IsSelected, RelativeSource={RelativeSource Self}}" Content="Update" Style="{StaticResource MaterialDesignTabRadioButton}"/>
-                </TabItem.Header>
+            <TabItem Header="Update">
                 <materialDesign:Card  Padding="10">
                     <Grid>
                         <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
@@ -145,6 +76,7 @@
                                 <Grid>
                                     <StackPanel >
                                         <TextBlock Text="施工中..." HorizontalAlignment="Center" FontSize="40"/>
+                                        <WebBrowser Source="https://github.com/littlegao233/CQ-ConnectTo-BDX/releases" Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
                                     </StackPanel>
                                 </Grid>
                             </ScrollViewer.Content>
@@ -152,10 +84,7 @@
                     </Grid>
                 </materialDesign:Card>
             </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <RadioButton Padding="0" Margin="-5,-3,-5,-3" IsChecked="{Binding Parent.IsSelected, RelativeSource={RelativeSource Self}}" Content="External Link" Style="{StaticResource MaterialDesignTabRadioButton}"/>
-                </TabItem.Header>
+            <TabItem Header="External Link">
                 <materialDesign:Card   Padding="10">
                     <Grid>
                         <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >

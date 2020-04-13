@@ -10,11 +10,19 @@ using WebSocketSharp;
 
 namespace ml.paradis.tool.Code
 {
-    class Data
+    public class Data
     {
         public static Timer KeepAliveTimer = new Timer() { AutoReset = true };
         public static CQAppEnableEventArgs E = null;
-        private static string ConfigPath = null;//数据文件储存路径
+        private static string ConfigPathData = null;//数据文件储存路径
+        public static string ConfigPath
+        {
+            get
+            {
+                if (ConfigPathData == null) { ConfigPathData = E.CQApi.AppDirectory.Replace("\\data\\app\\", "\\app\\") + "config.json"; }
+                return ConfigPathData;
+            }
+        }
         private static JObject configData = null;
         public static JObject Config
         {
@@ -22,7 +30,6 @@ namespace ml.paradis.tool.Code
             {
                 if (configData == null)
                 {
-                    if (ConfigPath == null) { ConfigPath = E.CQApi.AppDirectory.Replace("\\data\\app\\", "\\app\\") + "config.json"; }
                     if (!Directory.Exists(Path.GetDirectoryName(ConfigPath)))//检测文件目录是否存在
                     { Directory.CreateDirectory(Path.GetDirectoryName(ConfigPath)); }
                     if (!File.Exists(ConfigPath))
@@ -40,7 +47,7 @@ namespace ml.paradis.tool.Code
                             }
                             catch (Exception)
                             {
-                                for (int i = 1; i < 200; i++)
+                                for (int i = 1; i < 500; i++)
                                 {
                                     try
                                     { File.Copy(ConfigPath, Path.GetDirectoryName(ConfigPath) + "\\config_old (" + i + ").json"); break; }
@@ -49,7 +56,7 @@ namespace ml.paradis.tool.Code
                                 }
                             }
                             File.WriteAllBytes(ConfigPath, Code.Config.config);
-                        } 
+                        }
                     }
                     catch (Exception err) { Operation.AddLog(err.ToString()); }
                 }

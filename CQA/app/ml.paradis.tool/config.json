@@ -127,7 +127,7 @@
                     "Actions": [ //满足上面的筛选器后执行行为
                         {
                             "Target": "doTriggers", //嵌套一层触发器
-                            "Triggers": [ //更上面一样格式的触发器
+                            "Triggers": [ //上面一样格式的触发器
                                 {
                                     "Variants": [ //自定义变量，以便在后面用%xxx%调用
                                         {
@@ -373,7 +373,7 @@
                                             "Path": [
                                                 "Message"
                                             ]
-                                        },
+                                        }, 
                                         {
                                             "Name": "MemberType",
                                             "Path": [
@@ -444,7 +444,7 @@
                                             {
                                                 "Variant": "MemberType",
                                                 "Operator": "==",
-                                                "Value": "Manage" //判断是群主
+                                                "Value": "Manage" //判断是管理员
                                             } /*,
                                             {
                                                 "Path": [
