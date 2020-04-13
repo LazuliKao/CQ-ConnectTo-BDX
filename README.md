@@ -7,4 +7,4 @@ with BDX plugin and this CQ plugin,you could simply operate between QQ group and
 ![GLIV76.png](https://s1.ax1x.com/2020/04/12/GLIV76.png)
 - <a href="https://www.mcbbs.net/thread-1011364-1-1.html">MCBBS</a><br/>
 - <a href="https://www.minebbs.com/resources/1023/">MineBBS</a><br/>
-- <a href="https://cqp.cc/t/49037">酷Q论坛</a><br/>
+- <a href="https://cqp.cc/t/49225">酷Q论坛</a><br/>
