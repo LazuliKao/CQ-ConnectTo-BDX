@@ -107,7 +107,8 @@
             <local:SelectedToBool x:Key="SelectedToBool" />
         </ResourceDictionary>
     </Page.Resources>
-    <Grid>
+    <materialDesign:TransitioningContent x:Name="TransitioningContentMenu" OpeningEffect="{materialDesign:TransitionEffect SlideInFromBottom, Duration=0:0:0.3}"  >
+        <Grid>
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -158,5 +159,7 @@
                 </Button>
             </Grid>
         </Grid>
-    </Grid>
+        </Grid>
+    </materialDesign:TransitioningContent>
+
 </Page>

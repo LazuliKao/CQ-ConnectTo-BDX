@@ -45,8 +45,8 @@
              <local:SelectedToBool x:Key="SelectedToBool" />
         </ResourceDictionary>
     </Page.Resources>
-
-    <Grid>
+    <materialDesign:TransitioningContent x:Name="TransitioningContentMenu" OpeningEffect="{materialDesign:TransitionEffect SlideInFromBottom, Duration=0:0:0.3}"  >
+         <Grid>
         <TabControl BorderBrush="{x:Null}" Style="{StaticResource MaterialDesignTabControl}">
             <TabItem Header="INFO">
                 <materialDesign:Card   Padding="10">
@@ -75,9 +75,10 @@
                             <ScrollViewer.Content>
                                 <Grid>
                                     <StackPanel >
-                                        <TextBlock Text="施工中..." HorizontalAlignment="Center" FontSize="40"/>
-                                        <WebBrowser Source="https://github.com/littlegao233/CQ-ConnectTo-BDX/releases" Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                                    </StackPanel>
+                                        <TextBlock Text="正在获取最新版本中......" HorizontalAlignment="Center" FontSize="30" Name="UpdateTitle" Loaded="UpdateTitle_Loaded"/>
+                                            <WebBrowser  Source="https://github.com/littlegao233/CQ-ConnectTo-BDX/releases" Height="200" Name="UpdateWB" LoadCompleted="UpdateWB_LoadCompleted" Unloaded="UpdateWB_Unloaded" />
+                                            <TextBox x:Name="UpdateOut"/>
+                                        </StackPanel>
                                 </Grid>
                             </ScrollViewer.Content>
                         </ScrollViewer>
@@ -92,17 +93,17 @@
                                 <Grid>
                                     <StackPanel >
                                         <TextBlock Text="..." HorizontalAlignment="Center" FontSize="40"/>
-                                        <Button Content="GitHub" MaxWidth="200" Click="HitHubButton_Click"/>
+                                        <Button Content="GitHub" MaxWidth="200" Click="GitHubButton_Click"/>
                                         <Separator MaxWidth="200"/>
-                                        <Button Content="McBBS" MaxWidth="200"/>
+                                        <Button Content="McBBS" MaxWidth="200" Click="McBBSButton_Click"/>
                                         <Separator MaxWidth="200"/>
-                                        <Button Content="MineBBS" MaxWidth="200"/>
+                                        <Button Content="MineBBS" MaxWidth="200" Click="MinebbsButton_Click"/>
                                         <Separator MaxWidth="200"/>
-                                        <Button Content="BiliBili" MaxWidth="200"/>
-                                        <Separator MaxWidth="200"/>
+                                            <Button Content="cqp.cc" MaxWidth="200" Click="CQPButton_Click"/>
+                                        <!--<Separator MaxWidth="200"/>
                                         <Button Content="YouTube" MaxWidth="200"/>
                                         <Separator MaxWidth="200"/>
-                                        <Button Content="Youku" MaxWidth="200"/>
+                                        <Button Content="Youku" MaxWidth="200"/>-->
                                     </StackPanel>
                                 </Grid>
                             </ScrollViewer.Content>
@@ -112,4 +113,6 @@
             </TabItem>
         </TabControl>
     </Grid>
+    </materialDesign:TransitioningContent>
+
 </Page>

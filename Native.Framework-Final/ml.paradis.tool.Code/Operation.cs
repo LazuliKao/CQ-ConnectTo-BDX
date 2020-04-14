@@ -233,8 +233,8 @@ namespace ml.paradis.tool.Code
                                             }
                                         }
                                     }
-                                    catch (Exception)
-                                    { AddLog("参数缺失或变量不存在"); }
+                                    catch (Exception err)
+                                    { AddLog($"参数缺失或变量不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "RegexReplace":
                                     try
@@ -247,13 +247,13 @@ namespace ml.paradis.tool.Code
                                             }
                                             else
                                             {
-                                                string TargetVariant = operation["TargetVariant"].ToString();
+                                                string TargetVariant = operation["TargetVariant"].ToString(); 
                                                 Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], operation["Pattern"].ToString(), operation["Replacement"].ToString());
                                             }
                                         }
                                     }
-                                    catch (Exception)
-                                    { AddLog("参数缺失或变量或正则表达式有误不存在"); }
+                                    catch (Exception err)
+                                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t", Variants)}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "RegexGet":
                                     try
@@ -271,8 +271,8 @@ namespace ml.paradis.tool.Code
                                             }
                                         }
                                     }
-                                    catch (Exception)
-                                    { AddLog("参数缺失或变量或正则表达式有误不存在"); }
+                                    catch (Exception err)
+                                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t",Variants)}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "Format":
                                     try
@@ -290,8 +290,8 @@ namespace ml.paradis.tool.Code
                                             }
                                         }
                                     }
-                                    catch (Exception)
-                                    { AddLog("参数缺失或变量或格式有误不存在"); }
+                                    catch (Exception err)
+                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "ToUnicode":
                                     try
@@ -312,8 +312,8 @@ namespace ml.paradis.tool.Code
                                             }
                                         }
                                     }
-                                    catch (Exception)
-                                    { AddLog("参数缺失或变量或格式有误不存在"); }
+                                    catch (Exception err)
+                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 default:
                                     break;
@@ -332,6 +332,7 @@ namespace ml.paradis.tool.Code
         #region format
         public static string Format(string input, Dictionary<string, string> vars)
         {
+            if (string.IsNullOrEmpty(input)) { return ""; }
             string processText = input;
             while (true)
             {

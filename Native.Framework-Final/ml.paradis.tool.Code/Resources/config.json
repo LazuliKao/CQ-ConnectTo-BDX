@@ -172,7 +172,7 @@
                     "Filter": {
                         "Path": [
                             "operate"
-                        ], //收到的json逐层目录取自{"operate":"runcmd","Auth":"PasswdMatch","feedback":"commands.kick.success"}
+                        ], //收到的json逐层目录取自{"operate":"runcmd","Auth":"Success","text":"commands.kick.success"}
                         "Operator": "==", //比较符github有详讲
                         "Value": "runcmd" //值
                     },
@@ -185,9 +185,9 @@
                                         {
                                             "Name": "feedback", //%PlayerName%
                                             "Path": [
-                                                "feedback" //层级目录，取自{"operate":"runcmd","Auth":"PasswdMatch","feedback":"commands.kick.success"}
+                                                "text" //层级目录，取自{"operate":"runcmd","Auth":"Success","text":"commands.kick.success"}
                                             ]
-                                        },
+                                        },  
                                         {
                                             "Name": "ServerName",
                                             "ServerConfig": [
@@ -199,7 +199,7 @@
                                         {
                                             "Type": "RegexReplace", //操作类型
                                             "TargetVariant": "feedback", //操作的变量，需要提前在"Variants"定义
-                                            "Pattern": "\n*$", //正则表达式匹配
+                                            "Pattern": "\\n*$", //正则表达式匹配
                                             "Replacement": "", //替换掉的字符串
                                             "Filter": true //筛选是否执行 保持执行请填true
                                         } //上面这个是把返回信息的文末换行符去掉的意思
@@ -209,20 +209,20 @@
                                             {
                                                 "Path": [
                                                     "Auth"
-                                                ], //收到的json逐层目录取自 {"operate":"runcmd","Auth":"PasswdMatch","feedback":"commands.kick.success"}
+                                                ], //收到的json逐层目录取自 {"operate":"runcmd","Auth":"Success","text":"commands.kick.success"}
                                                 "Operator": "==", //比较符github有详讲
-                                                "Value": "PasswdMatch" //值
+                                                "Value": "Success" //值
                                             },
-                                            {
-                                                "Variant": "feedback",
-                                                "Operator": "!=",
-                                                "Value": "没有与选择器匹配的目标"
-                                            },
-                                            {
-                                                "Variant": "feedback",
-                                                "Operator": "!=",
-                                                "Value": "No targets matched selector"
-                                            },
+                                            //{
+                                            //    "Variant": "feedback",
+                                            //    "Operator": "!=",
+                                            //    "Value": "没有与选择器匹配的目标"
+                                            //},
+                                            //{
+                                            //    "Variant": "feedback",
+                                            //    "Operator": "!=",
+                                            //    "Value": "No targets matched selector"
+                                            //},
                                             {
                                                 "Variant": "feedback",
                                                 "Operator": "!=",
@@ -252,10 +252,10 @@
                             "operate"
                         ],
                         //收到的json逐层目录取自
-                        //{"operate":"onCMD","target":"gxh2004","CMD":"/x test"}
-                        //{"operate":"onCMD","target":"gxh2004","CMD":"/kick gxh2004"}
+                        //{"operate":"onCMD","target":"gxh2004","text":"/x test"}
+                        //{"operate":"onCMD","target":"gxh2004","text":"/kick gxh2004"}
                         "Operator": "==",
-                        "Value": "onCMD"
+                        "Value": "oncmd"
                     },
                     "Actions": [
                         {
@@ -326,6 +326,10 @@
     "Groups": [
         {
             "ID": 386475891,
+            //START--------------
+            //快捷转发消息发送到服务器
+            //为方便使用没有太多设置(也许自定义格式已经很多了)
+            //如果感觉快捷转发方式不满意也可以"SendToServer": false后在下面的下面用触发器自定义转发(相对麻烦,but自定义程度98%)
             "SendToServer": true,
             "SendToServerFormat": {
                 //[CQ:xx]自定义转换格式,注意:{n}是参数变量，不是每个都有的
@@ -337,6 +341,7 @@
                 //消息格式
                 "Main": "§b【群聊消息】§e<{0}>§a{1}"
             },
+            //END--------------
             "Triggers": [
                 {
                     "Variants": [ //自定义变量，以便在后面用%xxx%调用
@@ -373,7 +378,7 @@
                                             "Path": [
                                                 "Message"
                                             ]
-                                        }, 
+                                        },
                                         {
                                             "Name": "MemberType",
                                             "Path": [

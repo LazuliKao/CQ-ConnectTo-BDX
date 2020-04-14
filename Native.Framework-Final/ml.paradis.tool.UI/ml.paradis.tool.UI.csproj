@@ -101,6 +101,7 @@
     <Compile Include="Dialog.xaml.cs">
       <DependentUpon>Dialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HttpStringGet.cs" />
     <Compile Include="update.xaml.cs">
       <DependentUpon>update.xaml</DependentUpon>
     </Compile>
@@ -179,6 +180,10 @@
     <ProjectReference Include="..\Native.Sdk\Native.Sdk.csproj">
       <Project>{d7a958b3-79d9-49f8-8bb4-9619bab6ecba}</Project>
       <Name>Native.Sdk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Native.Tool\Native.Tool.csproj">
+      <Project>{0ca93eb9-4e25-46c6-94d2-0f97137a1606}</Project>
+      <Name>Native.Tool</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
