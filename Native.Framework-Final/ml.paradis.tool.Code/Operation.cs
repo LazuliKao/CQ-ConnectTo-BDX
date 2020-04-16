@@ -18,99 +18,100 @@ namespace ml.paradis.tool.Code
             try
             {
                 JObject receive = JObject.Parse(receiveData);
-                foreach (JObject server in Data.Config["Servers"])
+                //foreach (JObject server in Data.Config["Servers"])
+                //{
+                JObject server = Data.WSClients[wsc];
+                void DoTriggers(JArray triggers)
                 {
-                    void DoTriggers(JArray triggers)
+                    foreach (JObject trigger in triggers)
                     {
-                        foreach (JObject trigger in triggers)
+                        VariantCreate(trigger, receive, out Dictionary<string, string> Variants, server);
+                        VariantOperation(trigger, receive, ref Variants);
+                        #region 过滤条件计算
+                        if (trigger.ContainsKey("Filter"))
                         {
-                            VariantCreate(trigger, receive, out Dictionary<string, string> Variants, server);
-                            VariantOperation(trigger, receive, ref Variants);
-                            #region 过滤条件计算
-                            if (trigger.ContainsKey("Filter"))
+                            void DoActions(JObject action)
                             {
-                                void DoActions(JObject action)
+                                switch (action["Target"].ToString())
                                 {
-                                    switch (action["Target"].ToString())
-                                    {
-                                        case "log":
-                                            try
-                                            {
-                                                if (action.ContainsKey("Info"))
-                                                    _ = Data.E.CQLog.Info("CQToBDX-Log", Format(action["Info"].ToString(), Variants));
-                                                if (action.ContainsKey("Debug"))
-                                                    _ = Data.E.CQLog.Debug("CQToBDX-Log", Format(action["Debug"].ToString(), Variants));
-                                                if (action.ContainsKey("Warning"))
-                                                    _ = Data.E.CQLog.Warning("CQToBDX-Log", Format(action["Warning"].ToString(), Variants));
-                                                if (action.ContainsKey("Fatal"))
-                                                    _ = Data.E.CQLog.Fatal("CQToBDX-Log", Format(action["Fatal"].ToString(), Variants));
-                                            }
-                                            catch (Exception) { }
-                                            break;
-                                        case "sender":
+                                    case "log":
+                                        try
+                                        {
+                                            if (action.ContainsKey("Info"))
+                                                _ = Data.E.CQLog.Info("CQToBDX-Log", Format(action["Info"].ToString(), Variants));
+                                            if (action.ContainsKey("Debug"))
+                                                _ = Data.E.CQLog.Debug("CQToBDX-Log", Format(action["Debug"].ToString(), Variants));
+                                            if (action.ContainsKey("Warning"))
+                                                _ = Data.E.CQLog.Warning("CQToBDX-Log", Format(action["Warning"].ToString(), Variants));
+                                            if (action.ContainsKey("Fatal"))
+                                                _ = Data.E.CQLog.Fatal("CQToBDX-Log", Format(action["Fatal"].ToString(), Variants));
+                                        }
+                                        catch (Exception) { }
+                                        break;
+                                    case "sender":
+                                        if (action.ContainsKey("cmd"))
+                                        {
+                                            wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants)));
+                                        }
+                                        break;
+                                    case "other":
+                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
+                                        {
                                             if (action.ContainsKey("cmd"))
-                                            {
-                                                wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants)));
-                                            }
-                                            break;
-                                        case "other":
-                                            foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
-                                            {
-                                                if (action.ContainsKey("cmd"))
-                                                { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants))); }
-                                            }
-                                            break;
-                                        case "all":
-                                            foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
-                                            {
-                                                if (action.ContainsKey("cmd"))
-                                                { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants))); }
-                                            }
-                                            break;
-                                        case "QQGroup":
-                                            if (action.ContainsKey("GroupID"))
-                                            {
-                                                Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Format(action["Message"].ToString(), Variants));
-                                            }
-                                            break;
-                                        case "doTriggers":
-                                            DoTriggers((JArray)action["Triggers"]);
-                                            break;
-                                        default:
-                                            break;
-                                    }
+                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants))); }
+                                        }
+                                        break;
+                                    case "all":
+                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
+                                        {
+                                            if (action.ContainsKey("cmd"))
+                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants))); }
+                                        }
+                                        break;
+                                    case "QQGroup":
+                                        if (action.ContainsKey("GroupID"))
+                                        {
+                                            Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Format(action["Message"].ToString(), Variants));
+                                        }
+                                        break;
+                                    case "doTriggers":
+                                        DoTriggers((JArray)action["Triggers"]);
+                                        break;
+                                    default:
+                                        break;
+                                }
 
-                                }
-                                if (CalculateExpressions(trigger["Filter"], receive, Variants))
-                                {
-                                    #region 满足条件Actions 
-                                    if (trigger.ContainsKey("Actions"))
-                                    {
-                                        foreach (JObject action in trigger["Actions"])
-                                        {
-                                            DoActions(action);
-                                        }
-                                    }
-                                    #endregion
-                                }
-                                else
-                                {
-                                    #region 不满足条件Actions 
-                                    if (trigger.ContainsKey("MismatchedActions"))
-                                    {
-                                        foreach (JObject action in trigger["MismatchedActions"])
-                                        {
-                                            DoActions(action);
-                                        }
-                                    }
-                                    #endregion
-                                }
                             }
-                            #endregion
+                            if (CalculateExpressions(trigger["Filter"], receive, Variants))
+                            {
+                                #region 满足条件Actions 
+                                if (trigger.ContainsKey("Actions"))
+                                {
+                                    foreach (JObject action in trigger["Actions"])
+                                    {
+                                        DoActions(action);
+                                    }
+                                }
+                                #endregion
+                            }
+                            else
+                            {
+                                #region 不满足条件Actions 
+                                if (trigger.ContainsKey("MismatchedActions"))
+                                {
+                                    foreach (JObject action in trigger["MismatchedActions"])
+                                    {
+                                        DoActions(action);
+                                    }
+                                }
+                                #endregion
+                            }
                         }
+                        #endregion
                     }
-                    DoTriggers((JArray)server["Triggers"]);
                 }
+                DoTriggers((JArray)server["Triggers"]);
+                //}
             }
             catch (Exception err)
             { AddLog(err.ToString()); }
@@ -247,7 +248,7 @@ namespace ml.paradis.tool.Code
                                             }
                                             else
                                             {
-                                                string TargetVariant = operation["TargetVariant"].ToString(); 
+                                                string TargetVariant = operation["TargetVariant"].ToString();
                                                 Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], operation["Pattern"].ToString(), operation["Replacement"].ToString());
                                             }
                                         }
@@ -272,7 +273,7 @@ namespace ml.paradis.tool.Code
                                         }
                                     }
                                     catch (Exception err)
-                                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t",Variants)}\n位于{operation}\n错误内容{err.Message}"); }
+                                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t", Variants)}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "Format":
                                     try
