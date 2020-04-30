@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -27,10 +26,6 @@ namespace ml.paradis.tool.UI
         public update()
         {
             InitializeComponent();
-            //web.Source =new Uri( "https://github.com/littlegao233/MinecraftToolKit");
-            // HttpHelper.GetHtmlStr("https://github.com/littlegao233/MinecraftToolKit");
-
-            // web.Source = new Uri("https://baidu.com");
         }
 
         private void GitHubButton_Click(object sender, RoutedEventArgs e) => Process.Start("https://github.com/littlegao233/CQ-ConnectTo-BDX/");
@@ -40,29 +35,107 @@ namespace ml.paradis.tool.UI
 
         private void UpdateTitle_Loaded(object sender, RoutedEventArgs e)
         {
-            string versonN = "v0.1.2";
-            Task.Run(() =>
-            {
-                HttpWebClient webClient = new HttpWebClient();
-                string download = webClient.DownloadString("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/latest");
-                var relase_link = Regex.Match(download, "<body>You are being <a href=\"https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/tag/(?<version>.*?)\">redirected</a>.");
-                Dispatcher.Invoke(() => UpdateOut.Clear());
-                Dispatcher.Invoke(() => UpdateTitle.Text = $"最新版本:{relase_link.Groups["version"].Value}\n当前版本:{versonN}");
-                download = webClient.DownloadString("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/tag/" + relase_link.Groups["version"].Value);
-
-                Dispatcher.Invoke(() => UpdateOut.Text += download);
-
-            });
-            //webClient.downloadf
-            //Task.Run(() =>
-            //{
-            //    string get = HttpStringGet.GetHtmlStr("https://cqp.cc/t/49225"
-            //        , Encoding.UTF8  );
-            //    Dispatcher.Invoke(() => UpdateOut.Text += get);
-            //});
-
+            UpdateRefresh();
         }
-
-
+        private System.Timers.Timer Refreshing = new System.Timers.Timer(10000) { AutoReset = false, Enabled = false };
+        private bool? RefreshingBusy = null;
+        private void UpdateRefresh()
+        {
+            if (RefreshingBusy != true)
+            {
+                string versonN = "v0.1.3";
+                if (RefreshingBusy == null)
+                {
+                    Refreshing.Elapsed += (sender, e) =>
+                    {
+                        RefreshingBusy = false; CheckRefreshBusy();
+                    };
+                }
+                RefreshingBusy = true; CheckRefreshBusy();
+                Refreshing.Stop();
+                Refreshing.Start();
+                UpdateLog.Children.Clear();
+                UpdateLog.Children.Add(new TextBlock() { FontSize = 20, Text = $"当前版本:{versonN}" });
+                UpdateLog.Children.Add(new TextBlock() { FontSize = 20, Foreground = Brushes.Red, Text = $"正在获取最新版本..." });
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        HttpWebClient webClient = new HttpWebClient();
+                        webClient.Encoding = Encoding.UTF8;
+                        var download = webClient.DownloadData("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/latest");
+                        var relase_link = Regex.Match(Encoding.UTF8.GetString(download), "<body>You are being <a href=\"https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/tag/(?<version>.*?)\">redirected</a>.");
+                        Dispatcher.Invoke(() => UpdateLog.Children.Clear());
+                        Dispatcher.Invoke(() => UpdateLog.Children.Add(new TextBlock() { FontSize = 20, Text = $"最新版本:{relase_link.Groups["version"].Value}\n当前版本:{versonN}{(relase_link.Groups["version"].Value == versonN?"":"\n请及时更新体验最新bug")}" }));
+                        download = webClient.DownloadData("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/tag/" + relase_link.Groups["version"].Value);
+                        //download = webClient.DownloadData("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/");
+                        string MDcontent = Regex.Match(Encoding.UTF8.GetString(download), "<div class=\"markdown-body\">(?<content>(.*|\\s*)*?)</div>").Groups["content"].Value;
+                        UIElement GetHtml(string html)
+                        {
+                            StackPanel stackPanel = new StackPanel();
+                            var match = Regex.Match(html, @"<(?<type>..)>(?<content>(.|\s)*?)</\k<type>>");
+                            while (match.Success)
+                            {
+                                switch (match.Groups["type"].Value)
+                                {
+                                    case "h1":
+                                    case "h2":
+                                    case "h3":
+                                    case "h4":
+                                    case "h5":
+                                    case "h6":
+                                    case "h7":
+                                        stackPanel.Children.Add(new TextBlock() { Foreground = Brushes.DarkBlue, Text = match.Groups["content"].Value, FontSize = 24 - 2 * int.Parse(Regex.Replace(match.Groups["type"].Value, "^h", "")) });
+                                        break;
+                                    case "li":
+                                        Match getLink = Regex.Match(match.Groups["content"].Value, "<a.*?alt=\"(?<content>.*?)\".*?</a>");
+                                        stackPanel.Children.Add(new TextBlock() { Text = getLink.Success ? match.Groups["content"].Value.Replace(getLink.Value, getLink.Groups["content"].Value) : match.Groups["content"].Value, FontSize = 13 });
+                                        break;
+                                    case "ul":
+                                        stackPanel.Children.Add(GetHtml(match.Groups["content"].Value));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                html = html.Replace(match.Value, "");
+                                match = Regex.Match(html, @"<(?<type>..)>(?<content>(.|\s)*?)</\k<type>>");
+                            }
+                            return stackPanel;
+                        }
+                        Dispatcher.Invoke(() => UpdateLog.Children.Add(new GroupBox() { Header = new TextBlock() { FontSize = 20, Text = $"{relase_link.Groups["version"].Value}更新日志", Foreground = Brushes.White }, Content = GetHtml(MDcontent), Margin = new Thickness(10) }));
+                        RefreshingBusy = false; CheckRefreshBusy();
+                    }
+                    catch (Exception err)
+                    {
+                        Dispatcher.Invoke(() => UpdateLog.Children.Add(new TextBlock() { FontSize = 20, Text = $"更新获取失败!!!\n请重试...\n{err.Message}" }));
+                        //Dispatcher.Invoke(() => UpdateLog.Children.Add(new Button() { FontSize = 20, Text = "更新获取失败!!!\n请重试..." }));
+                    }
+                }
+                );
+            }
+        }
+        private void CheckRefreshBusy()
+        {
+            if (RefreshingBusy == true)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CheckUpdateButton.IsEnabled = false;
+                    CheckUpdateButton.Content = "获取中   请稍候...";
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CheckUpdateButton.IsEnabled = true;
+                    CheckUpdateButton.Content = "点击检查更新";
+                });
+            }
+        }
+        private void CheckUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateRefresh();
+        }
     }
 }
