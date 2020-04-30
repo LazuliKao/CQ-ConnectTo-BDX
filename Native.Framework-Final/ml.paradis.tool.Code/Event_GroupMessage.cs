@@ -68,7 +68,6 @@ namespace ml.paradis.tool.Code
                 {
 
                     #region 消息转发
-
                     if ((bool)group["SendToServer"])
                     {
                         try
@@ -108,7 +107,7 @@ namespace ml.paradis.tool.Code
                                 }
                                 catch (Exception) { continue; }
                             }
-                            output_text = output_text.Replace("\r", "");
+                            output_text = output_text.Replace("\r", "").Replace("&#91;", "[").Replace("&#93;", "]");
                             output_text = string.Format(Format["Main"].ToString(), GetMemberNick(ref e), output_text);   // $"§b【群聊消息】§e<{GetMemberNick(ref e)}>§a{output_text}";
                             e.CQLog.Info("转发消息到服务器", output_text);
                             foreach (var server in Data.WSClients.Where(l => l.Key.IsAlive))
@@ -130,7 +129,7 @@ namespace ml.paradis.tool.Code
                         var MemberInfo = e.FromQQ.GetGroupMemberInfo(e.FromGroup);
                         var GroupInfo = e.FromGroup.GetGroupInfo();
                         JObject receive = new JObject() {
-                            new JProperty("Message", e.Message.Text),
+                            new JProperty("Message", e.Message.Text.Replace("&#91;", "[").Replace("&#93;", "]")),
                             new JProperty("FromQQ", e.FromQQ.Id),
                             new JProperty("FromQQNick",MemberInfo.Nick),
                             new JProperty("FromGroup", e.FromGroup.Id),

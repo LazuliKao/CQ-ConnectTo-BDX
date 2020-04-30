@@ -19,10 +19,20 @@ namespace ml.paradis.tool.UI
         /// <summary>  
         /// 获取网页的HTML
         /// </summary>  
+        /// <param name="url">链接地址:string</param>
+        /// <param name="encoding">编码类型:Encoding</param>
+        /// <returns></returns>  
+        public static string GetHtmlStr(string url, Encoding encoding) => GetHtmlStr(url, encoding, Reqheaders: null);
+
+        /// <summary>  
+        /// 获取网页的HTML
+        /// </summary>  
         /// <param name="url">链接地址:string</param>  
         /// <param name="encoding">编码类型:Encoding</param>  
+        /// <param name="Reqheaders">请求头:Dictionary<HttpRequestHeader, string></param>  
+        ///// <param name="Resheaders">响应头:Dictionary<HttpRequestHeader, string></param>  
         /// <returns></returns>  
-        public static string GetHtmlStr(string url, Encoding encoding)
+        public static string GetHtmlStr(string url, Encoding encoding, string Reqheaders)
         {
             try
             {
@@ -32,7 +42,18 @@ namespace ml.paradis.tool.UI
                     {
                         try
                         {
-                            WebRequest request = WebRequest.Create(url);            //实例化WebRequest对象  
+                            WebRequest request = WebRequest.Create(url);            //实例化WebRequest对象
+                            //foreach (var hd in Reqheaders)
+                            //{
+                            if (!string.IsNullOrEmpty(Reqheaders))
+                            {
+                                request.Headers.Add(Reqheaders);
+                            }
+                            //}
+                            //foreach (var hd in Resheaders)
+                            //{
+                            //    request.Headers.Add(hd.Key, hd.Value);
+                            //}
                             request.Timeout = 10000;
                             WebResponse response = request.GetResponse();           //创建WebResponse对象  
                             Stream datastream = response.GetResponseStream();   //创建流对象  
@@ -48,13 +69,29 @@ namespace ml.paradis.tool.UI
                                 response.Close();
                             }
                         }
-                        catch (Exception) { continue; }
+                        catch (Exception err)
+                        {
+                            if (i == 5)
+                            { return "Error{" + err.Message + "}"; }
+                            continue;
+                        }
                     }
                 }
             }
             catch { }
             return "Error!";
         }
+        ///// <summary>  
+        ///// 获取网页的HTML
+        ///// </summary>  
+        ///// <param name="url">链接地址:string</param>  
+        ///// <param name="encoding">编码类型:Encoding</param>  
+        ///// <param name="headers">请求头:Dictionary<HttpRequestHeader, string></param>  
+        ///// <returns></returns>  
+        //public static string GetHtmlStr(string url, Encoding encoding, string headers)
+        //{
+        //    return;
+        //}
 
 
         public static bool HttpFileExist(string fileUrl)

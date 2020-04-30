@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Native.Sdk.Cqp;
 using Native.Tool.Http;
 namespace ml.paradis.tool.UI
 {
@@ -38,31 +40,29 @@ namespace ml.paradis.tool.UI
 
         private void UpdateTitle_Loaded(object sender, RoutedEventArgs e)
         {
-            //Native.Tool.Http.HttpWebClient webClient = new HttpWebClient();
+            string versonN = "v0.1.2";
+            Task.Run(() =>
+            {
+                HttpWebClient webClient = new HttpWebClient();
+                string download = webClient.DownloadString("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/latest");
+                var relase_link = Regex.Match(download, "<body>You are being <a href=\"https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/tag/(?<version>.*?)\">redirected</a>.");
+                Dispatcher.Invoke(() => UpdateOut.Clear());
+                Dispatcher.Invoke(() => UpdateTitle.Text = $"最新版本:{relase_link.Groups["version"].Value}\n当前版本:{versonN}");
+                download = webClient.DownloadString("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/tag/" + relase_link.Groups["version"].Value);
+
+                Dispatcher.Invoke(() => UpdateOut.Text += download);
+
+            });
             //webClient.downloadf
             //Task.Run(() =>
             //{
-            //    string get = HttpStringGet.GetHtmlStr("https://github.com/littlegao233/CQ-ConnectTo-BDX/releases");
+            //    string get = HttpStringGet.GetHtmlStr("https://cqp.cc/t/49225"
+            //        , Encoding.UTF8  );
             //    Dispatcher.Invoke(() => UpdateOut.Text += get);
             //});
 
         }
 
-        private void UpdateWB_LoadCompleted(object sender, NavigationEventArgs e)
-        {
-            var html = UpdateWB.Document as HtmlDocument;
 
-            UpdateOut.Text += html.GetElementById("tag-select-menu-5e27c41e-7d3d-11ea-8ca6-9e2d60861627").Parent.InnerText;
-            UpdateWB.Visibility = Visibility.Collapsed;
-
-        }
-
-        private void UpdateWB_Unloaded(object sender, RoutedEventArgs e)
-        {
-            var html = UpdateWB.Document as HtmlDocument;
-
-            UpdateOut.Text += html.GetElementById("tag-select-menu-5e27c41e-7d3d-11ea-8ca6-9e2d60861627").Parent.InnerText;
-            UpdateWB.Visibility = Visibility.Collapsed;
-        }
     }
 }

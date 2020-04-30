@@ -330,7 +330,7 @@
             ]
         }
     ],
-    "CheckConnectionTime": 30, //检查连接时长，单位:秒
+    "CheckConnectionTime": 30, //检查连接时长，如果服务器掉线了会在检查后自动重连，单位:秒
     "Groups": [
         {
             "ID": 386475891,

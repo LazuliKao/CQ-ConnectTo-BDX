@@ -40,79 +40,79 @@
                     <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{StaticResource Accent400Foreground}" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-             <Style TargetType="ComboBoxItem" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}"/>
+            <Style TargetType="ComboBoxItem" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}"/>
             <Style x:Key="EchoTextbox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignComboBoxEditableTextBox}"/>
-             <local:SelectedToBool x:Key="SelectedToBool" />
+            <local:SelectedToBool x:Key="SelectedToBool" />
         </ResourceDictionary>
     </Page.Resources>
     <materialDesign:TransitioningContent x:Name="TransitioningContentMenu" OpeningEffect="{materialDesign:TransitionEffect SlideInFromBottom, Duration=0:0:0.3}"  >
-         <Grid>
-        <TabControl BorderBrush="{x:Null}" Style="{StaticResource MaterialDesignTabControl}">
-            <TabItem Header="INFO">
-                <materialDesign:Card   Padding="10">
-                    <Grid>
-                        <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
-                            <ScrollViewer.Content>
-                                <Grid>
-                                    <StackPanel >
-                                        <TextBlock Text="About" HorizontalAlignment="Center" FontSize="40"/>
-                                        <TextBlock Text="作者 gxh" FontSize="20"/>
-                                        <TextBlock Text="版本:0.1.0beta.1" FontSize="20" />
-                                        <TextBlock Text="转载请标明出处" Foreground="Red" FontSize="20"/>
-                                        <TextBox Text="https://www.mcbbs.net/thread-1011364-1-1.html" IsReadOnly="True" Style="{StaticResource EchoTextbox}"/>
-                                        <TextBlock Text="严禁将源码用于商业行为" Foreground="Red" FontSize="20"/>
-                                    </StackPanel>
-                                </Grid>
-                            </ScrollViewer.Content>
-                        </ScrollViewer>
-                    </Grid>
-                </materialDesign:Card>
-            </TabItem>
-            <TabItem Header="Update">
-                <materialDesign:Card  Padding="10">
-                    <Grid>
-                        <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
-                            <ScrollViewer.Content>
-                                <Grid>
-                                    <StackPanel >
-                                        <TextBlock Text="正在获取最新版本中......" HorizontalAlignment="Center" FontSize="30" Name="UpdateTitle" Loaded="UpdateTitle_Loaded"/>
-                                            <WebBrowser  Source="https://github.com/littlegao233/CQ-ConnectTo-BDX/releases" Height="200" Name="UpdateWB" LoadCompleted="UpdateWB_LoadCompleted" Unloaded="UpdateWB_Unloaded" />
-                                            <TextBox x:Name="UpdateOut"/>
+        <Grid>
+            <TabControl BorderBrush="{x:Null}" Style="{StaticResource MaterialDesignTabControl}">
+                <TabItem Header="INFO">
+                    <materialDesign:Card   Padding="10">
+                        <Grid>
+                            <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+                                <ScrollViewer.Content>
+                                    <Grid>
+                                        <StackPanel >
+                                            <TextBlock Text="About" HorizontalAlignment="Center" FontSize="40"/>
+                                            <TextBlock Text="作者 gxh" FontSize="20"/>
+                                            <TextBlock Text="版本:0.1.0beta.1" FontSize="20" />
+                                            <TextBlock Text="转载请标明出处" Foreground="Red" FontSize="20"/>
+                                            <TextBox Text="https://www.mcbbs.net/thread-1011364-1-1.html" IsReadOnly="True" Style="{StaticResource EchoTextbox}"/>
+                                            <TextBlock Text="严禁将源码用于商业行为" Foreground="Red" FontSize="20"/>
                                         </StackPanel>
-                                </Grid>
-                            </ScrollViewer.Content>
-                        </ScrollViewer>
-                    </Grid>
-                </materialDesign:Card>
-            </TabItem>
-            <TabItem Header="External Link">
-                <materialDesign:Card   Padding="10">
-                    <Grid>
-                        <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
-                            <ScrollViewer.Content>
-                                <Grid>
-                                    <StackPanel >
-                                        <TextBlock Text="..." HorizontalAlignment="Center" FontSize="40"/>
-                                        <Button Content="GitHub" MaxWidth="200" Click="GitHubButton_Click"/>
-                                        <Separator MaxWidth="200"/>
-                                        <Button Content="McBBS" MaxWidth="200" Click="McBBSButton_Click"/>
-                                        <Separator MaxWidth="200"/>
-                                        <Button Content="MineBBS" MaxWidth="200" Click="MinebbsButton_Click"/>
-                                        <Separator MaxWidth="200"/>
+                                    </Grid>
+                                </ScrollViewer.Content>
+                            </ScrollViewer>
+                        </Grid>
+                    </materialDesign:Card>
+                </TabItem>
+                <TabItem Header="Update">
+                    <materialDesign:Card  Padding="10">
+                        <Grid>
+                            <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+                                <ScrollViewer.Content>
+                                    <Grid>
+                                        <StackPanel >
+                                            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="检查"/>
+                                            <TextBlock Text="正在获取最新版本中......" HorizontalAlignment="Center" FontSize="30" Name="UpdateTitle" Loaded="UpdateTitle_Loaded"/>
+                                            <TextBox x:Name="UpdateOut" Style="{StaticResource EchoTextbox}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </ScrollViewer.Content>
+                            </ScrollViewer>
+                        </Grid>
+                    </materialDesign:Card>
+                </TabItem>
+                <TabItem Header="External Link">
+                    <materialDesign:Card   Padding="10">
+                        <Grid>
+                            <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+                                <ScrollViewer.Content>
+                                    <Grid>
+                                        <StackPanel >
+                                            <TextBlock Text="..." HorizontalAlignment="Center" FontSize="40"/>
+                                            <Button Content="GitHub" MaxWidth="200" Click="GitHubButton_Click"/>
+                                            <Separator MaxWidth="200"/>
+                                            <Button Content="McBBS" MaxWidth="200" Click="McBBSButton_Click"/>
+                                            <Separator MaxWidth="200"/>
+                                            <Button Content="MineBBS" MaxWidth="200" Click="MinebbsButton_Click"/>
+                                            <Separator MaxWidth="200"/>
                                             <Button Content="cqp.cc" MaxWidth="200" Click="CQPButton_Click"/>
-                                        <!--<Separator MaxWidth="200"/>
+                                            <!--<Separator MaxWidth="200"/>
                                         <Button Content="YouTube" MaxWidth="200"/>
                                         <Separator MaxWidth="200"/>
                                         <Button Content="Youku" MaxWidth="200"/>-->
-                                    </StackPanel>
-                                </Grid>
-                            </ScrollViewer.Content>
-                        </ScrollViewer>
-                    </Grid>
-                </materialDesign:Card>
-            </TabItem>
-        </TabControl>
-    </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </ScrollViewer.Content>
+                            </ScrollViewer>
+                        </Grid>
+                    </materialDesign:Card>
+                </TabItem>
+            </TabControl>
+        </Grid>
     </materialDesign:TransitioningContent>
 
 </Page>
