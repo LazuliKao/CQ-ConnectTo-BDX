@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Native.Sdk.Cqp;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +81,6 @@ namespace ml.paradis.tool.Code
                                     default:
                                         break;
                                 }
-
                             }
                             if (CalculateExpressions(trigger["Filter"], receive, Variants))
                             {
@@ -153,7 +153,7 @@ namespace ml.paradis.tool.Code
                 catch (Exception err) { AddLog($"{server["Tag"]}{Data.WSClients.Last().Key.Url}连接失败！\n{err}"); }
             }
             Data.KeepAliveTimer.Interval = double.Parse(Data.Config["CheckConnectionTime"].ToString()) * 1000;
-            Data.KeepAliveTimer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) =>
+            Data.KeepAliveTimer.Elapsed += (sender, e) =>
             {
                 foreach (WebSocket ws in Data.WSClients.Keys.Where(l => !l.IsAlive))
                 {
@@ -169,6 +169,74 @@ namespace ml.paradis.tool.Code
                 }
             };
             Data.KeepAliveTimer.Start();
+            foreach (JObject Atimer in Data.Config["Timers"])
+            {
+                System.Timers.Timer timer = new System.Timers.Timer(double.Parse(Atimer["Interval"].ToString()) * 1000);
+                timer.Elapsed += (sender, e) =>
+                {
+                    try
+                    {
+                        foreach (JObject action in Data.Timers[sender as System.Timers.Timer]["Actions"])
+                        {
+                            #region 执行Actions
+                            Dictionary<string, string> Variants = new Dictionary<string, string>();
+                            switch (action["Target"].ToString())
+                            {
+                                case "log":
+                                    try
+                                    {
+                                        if (action.ContainsKey("Info"))
+                                            _ = Data.E.CQLog.Info("CQToBDX-Log", Format(action["Info"].ToString(), Variants));
+                                        if (action.ContainsKey("Debug"))
+                                            _ = Data.E.CQLog.Debug("CQToBDX-Log", Format(action["Debug"].ToString(), Variants));
+                                        if (action.ContainsKey("Warning"))
+                                            _ = Data.E.CQLog.Warning("CQToBDX-Log", Format(action["Warning"].ToString(), Variants));
+                                        if (action.ContainsKey("Fatal"))
+                                            _ = Data.E.CQLog.Fatal("CQToBDX-Log", Format(action["Fatal"].ToString(), Variants));
+                                    }
+                                    catch (Exception) { }
+                                    break;
+                                case "servers":
+                                    if (action.ContainsKey("cmd"))
+                                    {
+                                        if (action.ContainsKey("Filter"))
+                                        {
+                                            var lambda_receive = new JObject();
+                                            var lambda_Variants = Variants;
+                                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive && Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
+                                            {
+                                                ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive))
+                                            {
+                                                ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case "QQGroup":
+                                    if (action.ContainsKey("GroupID"))
+                                    {
+                                        Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            #endregion
+                        }
+                        Data.E.CQLog.Debug("计时器触发", "#" + (Data.Timers.Keys.ToList().IndexOf(sender as System.Timers.Timer) + 1));
+                    }
+                    catch (Exception err) { Data.E.CQLog.Warning("计时器触发出错", err.Message + "\n" + Data.Timers[sender as System.Timers.Timer]); }
+                };
+                Data.Timers.Add(timer, Atimer);
+                Data.Timers.Keys.Last().Start();
+            }
+            int i = 0;
+            AddLog($"成功创建个{Data.Timers.Count()}计时器(Timers)\n[#" + string.Join("秒|#", Data.Timers.Values.ToList().ConvertAll(l => ++i + ">" + l["Interval"].ToString())) + "秒]");
         }
         public static void Quit()
         {

@@ -1,5 +1,5 @@
 {
-    "configVersion": 0.2,
+    "configVersion": 0.3,
     "Servers": [
         {
             "Address": "ws://localhost:29132/mc",
@@ -330,14 +330,14 @@
             ]
         }
     ],
-    "CheckConnectionTime": 30, //检查连接时长，如果服务器掉线了会在检查后自动重连，单位:秒
+    "CheckConnectionTime": 60, //检查连接时长，如果服务器掉线了会在检查后自动重连，单位:秒
     "Groups": [
         {
             "ID": 386475891,
             //START--------------
             //快捷转发消息发送到服务器
-            //为方便使用没有太多设置(也许自定义格式已经很多了)
-            //如果感觉快捷转发方式不满意也可以"SendToServer": false后在下面的下面用触发器自定义转发(相对麻烦,but自定义程度98%)
+            //为方便使用没有太多设置(虽然自定义格式已经很多了)
+            //如果感觉快捷转发方式不满意也可以"SendToServer": false后在下面的下面用触发器自定义转发(相对麻烦,但是可以实现更多自定义)
             "SendToServer": true,
             "SendToServerFormat": {
                 //[CQ:xx]自定义转换格式,注意:{n}是参数变量，不是每个都有的
@@ -569,6 +569,37 @@
                     ]
                 }
             ]
+        }
+    ],
+    "Timers": [
+        {
+            "Interval": 3600, //计时间隔，单位(秒)
+            //3600秒即1小时
+            "Actions": [
+                {
+                    "Target": "log",
+                    "Info": "计时器：定时在线查询"
+                },
+                {
+                    "Target": "servers",
+                    "cmd": "list",
+                    "Filter": true
+                }
+            ]
+        },
+        {
+            "Interval": 60, //计时间隔，单位(秒)
+            "Actions": []
+        }
+    ],
+    "Tasks": [
+        {
+            "Mode": 0
+            //触发模式
+            //允许的值0-1
+            //0：完整日期模式，到达这个日期则自动触发
+            //1: 每日整点模式
+            
         }
     ]
 }

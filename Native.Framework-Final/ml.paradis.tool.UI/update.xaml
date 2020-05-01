@@ -56,8 +56,8 @@
                         <Grid>
                             <ScrollViewer   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
                                 <ScrollViewer.Content>
-                                    <Grid>
-                                        <StackPanel >
+                                    <Grid Margin="10">
+                                        <StackPanel > 
                                             <TextBlock Text="About" HorizontalAlignment="Center" FontSize="40"/>
                                             <TextBlock Text="作者 gxh" FontSize="20"/>
                                             <TextBlock Text="版本:0.1.0beta.1" FontSize="20" />
@@ -76,9 +76,9 @@
                         <Grid>
                             <ScrollViewer   VerticalScrollBarVisibility="Auto" >
                                 <ScrollViewer.Content>
-                                    <Grid>
+                                    <Grid Margin="7"> 
                                         <StackPanel ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                            <Button Style="{StaticResource MaterialDesignFlatLightBgButton}" Content="检查更新" FontSize="25" Click="CheckUpdateButton_Click" Name="CheckUpdateButton" Height="50"/>
+                                            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="检查更新" FontSize="25" Click="CheckUpdateButton_Click" Name="CheckUpdateButton" Height="50"/>
                                             <!--<TextBox x:Name="UpdateOut"   />-->
                                             <StackPanel   Name="UpdateLog" Loaded="UpdateTitle_Loaded"     >
                                                 <TextBlock Text="正在获取最新版本中......" HorizontalAlignment="Center" FontSize="30"   />

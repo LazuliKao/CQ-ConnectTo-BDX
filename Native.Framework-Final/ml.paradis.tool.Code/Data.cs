@@ -12,6 +12,7 @@ namespace ml.paradis.tool.Code
 {
     public class Data
     {
+        public static Dictionary<Timer, JObject> Timers = new Dictionary<Timer, JObject>();
         public static Timer KeepAliveTimer = new Timer() { AutoReset = true };
         public static CQAppEnableEventArgs E = null;
         private static string ConfigPathData = null;//数据文件储存路径
