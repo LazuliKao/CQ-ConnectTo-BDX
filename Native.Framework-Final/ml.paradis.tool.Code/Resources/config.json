@@ -571,6 +571,7 @@
             ]
         }
     ],
+    //计时器
     "Timers": [
         {
             "Interval": 3600, //计时间隔，单位(秒)
@@ -586,20 +587,47 @@
                     "Filter": true
                 }
             ]
-        },
-        {
-            "Interval": 60, //计时间隔，单位(秒)
-            "Actions": []
         }
     ],
+    //定时任务
     "Tasks": [
         {
-            "Mode": 0
-            //触发模式
-            //允许的值0-1
-            //0：完整日期模式，到达这个日期则自动触发
-            //1: 每日整点模式
-            
+            "Mode": "EachHour",
+            //"Mode":触发模式
+            //EachDay：每日对应时刻触发,即下方的Time可填范围{x∈R|0.0≤x≤24.0},单位(h)
+            //EachHour: 每时对应分钟触发,即下方的Time可填范围{x∈R|0.0≤x≤60.0},单位(min)
+            "Time": 0,
+            "Actions": [
+                {
+                    "Target": "log",
+                    "Info": "现在是整点！"
+                }
+            ]
+        },{
+            "Mode": "EachHour",
+            //"Mode":触发模式
+            //EachDay：每日对应时刻触发,即下方的Time可填范围{x∈R|0.0≤x≤24.0},单位(h)
+            //EachHour: 每时对应分钟触发,即下方的Time可填范围{x∈R|0.0≤x≤60.0},单位(min)
+            "Time": 30,
+            "Actions": [
+                {
+                    "Target": "log",
+                    "Info": "现在是半点！"
+                }
+            ]
+        },
+        {
+            "Mode": "EachDay",
+            //"Mode":触发模式
+            //EachDay：每日对应时刻触发,即下方的Time可填范围{x∈R|0.0≤x≤24.0},单位(h)
+            //EachHour: 每时对应分钟触发,即下方的Time可填范围{x∈R|0.0≤x≤60.0},单位(min)
+            "Time": 0,
+            "Actions": [
+                {
+                    "Target": "log",
+                    "Info": "美好的一天过去了......"
+                }
+            ]
         }
     ]
 }

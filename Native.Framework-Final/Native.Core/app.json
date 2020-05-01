@@ -6,8 +6,8 @@
 	"ret": 1,
 	"apiver": 9,
 	"name": "酷Q与BDX联动",
-	"version": "0.1.3",
-	"version_id": 1,
+	"version": "0.1.4",
+	"version_id": 5,
 	"author": "gxh2004",
 	"description": "实现酷Q与BDX服务器端联动,高自定义程度，所有内容、操作、触发器均由config.json定义,注意:必须配合BDX服务端的MCWS插件才能使用",//\t\tby gxh\t
 	"event": [
