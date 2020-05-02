@@ -80,7 +80,7 @@ namespace ml.paradis.tool.UI
             ErrLabel_3.Visibility = Visibility.Collapsed;
             if (AdminMode_3.IsChecked == false)
             {
-                if (!Regex.IsMatch(AdminQQ_3.Text, "^(\\d|\\|){4,13}$"))
+                if (!Regex.IsMatch(AdminQQ_3.Text, "^(\\d|\\|){4,13}"))
                 {
                     ShowErrFTB(ErrLabel_3, AdminQQ_3, "请正确填写QQ号!!!(多个管理QQ请用\"|\"分隔)"); return;
                 }
