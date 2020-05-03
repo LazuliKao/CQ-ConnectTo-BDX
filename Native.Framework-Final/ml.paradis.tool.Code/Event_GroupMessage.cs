@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Native.Sdk.Cqp;
 using Native.Sdk.Cqp.Enum;
 using Native.Sdk.Cqp.EventArgs;
 using Native.Sdk.Cqp.Interface;
@@ -66,60 +67,62 @@ namespace ml.paradis.tool.Code
             {
                 foreach (JObject group in ((JArray)Data.Config["Groups"]).Where(l => long.Parse(l["ID"].ToString()) == e.FromGroup.Id))
                 {
-
                     #region 消息转发
-                    if ((bool)group["SendToServer"])
+                    try
                     {
-                        try
+                        if (!(bool)group["SendToServer"]) { continue; }
+                        string output_text = CQApi.CQDeCode(e.Message.Text);
+                        if (group.ContainsKey("SendToServerRegex"))
                         {
-                            string output_text = e.Message.Text;
-                            JObject Format = group["SendToServerFormat"] as JObject;
-                            foreach (var item in e.Message.CQCodes)
+                            Match MSGCheck = Regex.Match(output_text, group["SendToServerRegex"].ToString());
+                            if (MSGCheck.Success) { output_text = MSGCheck.Value; }
+                            else { e.CQLog.Debug("群聊=>服务器", "消息不符合正则表达式,未转发"); continue; }
+                        }
+                        JObject Format = group["SendToServerFormat"] as JObject;
+                        foreach (var item in e.Message.CQCodes)
+                        {
+                            try
                             {
-                                try
+                                switch (item.Function)
                                 {
-                                    switch (item.Function)
-                                    {
-                                        case CQFunction.At://[CQ:at,qq=441870948]
-                                            output_text = output_text.Replace(item.ToString() + " ", string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
-                                            output_text = output_text.Replace(item.ToString(), string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
-                                            break;
-                                        case CQFunction.Image://[CQ: image, file=2031F3F5C7B5CEB95725CB27B76BC1AD.jpg]
-                                            output_text = output_text.Replace(item.ToString(), Format["CQImage"].ToString());
-                                            break;
-                                        case CQFunction.Emoji://[CQ: emoji, id=128560]
-                                            output_text = output_text.Replace(item.ToString(), Format["CQEmoji"].ToString());
-                                            break;
-                                        case CQFunction.Face://[CQ:face,id=14]
-                                            output_text = output_text.Replace(item.ToString(), Format["CQFace"].ToString());
-                                            break;
-                                        case CQFunction.Bface:
-                                            //[CQ:bface,p=10616,id=F4A89A4173A48888751D27679FFEEB60]&#91;财源广进&#93;
-                                            Match m = Regex.Match(output_text, "&#91;(.*?)&#93;");
-                                            output_text = output_text.Replace(item.ToString(), string.Format(Format["CQBface"].ToString(), m.Groups[1]).Replace(m.Value, null));
-                                            break;
-                                        //case CQFunction.Sign:
-                                        //    output_text = output_text.Replace(item.ToString(), "§l§7[签到]§r§a");
-                                        //    break;
-                                        default:
-                                            break;
-                                    }
+                                    case CQFunction.At://[CQ:at,qq=441870948]
+                                        output_text = output_text.Replace(item.ToString() + " ", string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
+                                        output_text = output_text.Replace(item.ToString(), string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
+                                        break;
+                                    case CQFunction.Image://[CQ: image, file=2031F3F5C7B5CEB95725CB27B76BC1AD.jpg]
+                                        output_text = output_text.Replace(item.ToString(), Format["CQImage"].ToString());
+                                        break;
+                                    case CQFunction.Emoji://[CQ: emoji, id=128560]
+                                        output_text = output_text.Replace(item.ToString(), Format["CQEmoji"].ToString());
+                                        break;
+                                    case CQFunction.Face://[CQ:face,id=14]
+                                        output_text = output_text.Replace(item.ToString(), Format["CQFace"].ToString());
+                                        break;
+                                    case CQFunction.Bface:
+                                        //[CQ:bface,p=10616,id=F4A89A4173A48888751D27679FFEEB60]&#91;财源广进&#93;
+                                        Match m = Regex.Match(output_text, "\\[(.*?)\\]");
+                                        output_text = output_text.Replace(item.ToString(), string.Format(Format["CQBface"].ToString(), m.Groups[1]).Replace(m.Value, null));
+                                        break;
+                                    //case CQFunction.Sign:
+                                    //    output_text = output_text.Replace(item.ToString(), "§l§7[签到]§r§a");
+                                    //    break;
+                                    default:
+                                        break;
                                 }
-                                catch (Exception) { continue; }
                             }
-                            output_text = output_text.Replace("\r", "").Replace("&#91;", "[").Replace("&#93;", "]");
-                            output_text = string.Format(Format["Main"].ToString(), GetMemberNick(ref e), output_text);   // $"§b【群聊消息】§e<{GetMemberNick(ref e)}>§a{output_text}";
-                            e.CQLog.Info("转发消息到服务器", output_text);
-                            foreach (var server in Data.WSClients.Where(l => l.Key.IsAlive))
-                            {
-                                server.Key.Send(Data.GetCmdReq(server.Value["Passwd"].ToString(), $"tellraw @a {{\"rawtext\":[{{\"text\":\"{Operation.StringToUnicode(output_text)}\"}}]}}"));
-                            }
+                            catch (Exception) { continue; }
                         }
-                        catch (Exception err)
+                        output_text = output_text.Replace("\r", "")/*.Replace("&#91;", "[").Replace("&#93;", "]")*/;
+                        output_text = string.Format(Format["Main"].ToString(), GetMemberNick(ref e), output_text);   // $"§b【群聊消息】§e<{GetMemberNick(ref e)}>§a{output_text}";
+                        e.CQLog.Info("转发消息到服务器", output_text);
+                        foreach (var server in Data.WSClients.Where(l => l.Key.IsAlive))
                         {
-                            Operation.AddLog("群聊消息转发" + err.ToString());
+                            server.Key.Send(Data.GetCmdReq(server.Value["Passwd"].ToString(), $"tellraw @a {{\"rawtext\":[{{\"text\":\"{Operation.StringToUnicode(output_text)}\"}}]}}"));
                         }
-
+                    }
+                    catch (Exception err)
+                    {
+                        Operation.AddLog("群聊消息转发" + err.ToString());
                     }
                     #endregion
 
@@ -129,7 +132,7 @@ namespace ml.paradis.tool.Code
                         var MemberInfo = e.FromQQ.GetGroupMemberInfo(e.FromGroup);
                         var GroupInfo = e.FromGroup.GetGroupInfo();
                         JObject receive = new JObject() {
-                            new JProperty("Message", e.Message.Text.Replace("&#91;", "[").Replace("&#93;", "]")),
+                            new JProperty("Message", CQApi.CQDeCode(e.Message.Text)/*.Replace("&#91;", "[").Replace("&#93;", "]")*/),
                             new JProperty("FromQQ", e.FromQQ.Id),
                             new JProperty("FromQQNick",MemberInfo.Nick),
                             new JProperty("FromGroup", e.FromGroup.Id),
@@ -165,7 +168,7 @@ namespace ml.paradis.tool.Code
                     #endregion
 
                 }
-             
+
             }
         }
         private void DoTriggers(JArray triggers, ref JObject receive, JObject group, ref CQGroupMessageEventArgs e)
@@ -207,7 +210,7 @@ namespace ml.paradis.tool.Code
                     #endregion
                 }
                 catch (Exception err)
-                { Operation.AddLog("触发器解析" + err.ToString()); } 
+                { Operation.AddLog("触发器解析" + err.ToString()); }
             }
         }
         private void DoAction(JObject action, ref Dictionary<string, string> Variants, ref JObject receive, ref JObject group, ref CQGroupMessageEventArgs e)
@@ -235,14 +238,14 @@ namespace ml.paradis.tool.Code
                         {
                             var lambda_receive = receive;
                             var lambda_Variants = Variants;
-                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive&&Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
+                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive && Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
                             {
                                 ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
                             }
                         }
                         else
                         {
-                            foreach (var ws in Data.WSClients.Where(l=>l.Key.IsAlive))
+                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive))
                             {
                                 ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
                             }

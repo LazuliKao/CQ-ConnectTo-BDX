@@ -503,6 +503,28 @@ namespace ml.paradis.tool.Code
                                     catch (Exception err)
                                     { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
+                                //case "ToUnicode":
+                                //    try
+                                //    {
+                                //        if (CalculateExpressions(operation["Filter"], receive, Variants))
+                                //        {
+                                //            if (operation.ContainsKey("CreateVariant"))
+                                //            {
+                                //                Variants.Add(operation["CreateVariant"].ToString(), Operation.StringToUnicode(Format(operation["Text"].ToString(), Variants)));
+                                //            }
+                                //            else
+                                //            {
+                                //                if (operation.ContainsKey("TargetVariant"))
+                                //                {
+                                //                    string TargetVariant = operation["TargetVariant"].ToString();
+                                //                    Variants[TargetVariant] = Operation.StringToUnicode(Variants[TargetVariant]);
+                                //                }
+                                //            }
+                                //        }
+                                //    }
+                                //    catch (Exception err)
+                                //    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                //    break;
                                 default:
                                     break;
                             }

@@ -60,7 +60,8 @@
                                         <StackPanel > 
                                             <TextBlock Text="About" HorizontalAlignment="Center" FontSize="40"/>
                                             <TextBlock Text="作者 gxh" FontSize="20"/>
-                                            <TextBlock Text="版本:0.1.0beta.1" FontSize="20" />
+                                            <TextBlock Text="版本:0.1.0beta.1" FontSize="20" Name="VersionText"/>
+                                            <TextBlock Text="[点击上方Update栏目检查更新]" FontSize="15"  /> 
                                             <TextBlock Text="转载请标明出处" Foreground="Red" FontSize="20"/>
                                             <TextBox Text="https://www.mcbbs.net/thread-1011364-1-1.html" IsReadOnly="True" Style="{StaticResource EchoTextbox}"/>
                                             <TextBlock Text="严禁将源码用于商业行为" Foreground="Red" FontSize="20"/>

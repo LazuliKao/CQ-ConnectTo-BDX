@@ -25,7 +25,12 @@ namespace ml.paradis.tool.UI
     /// </summary>
     public partial class update : Page
     {
-        public update() => InitializeComponent();
+        public update()
+        {
+            InitializeComponent();
+            VersionText.Text = "当前版本:v" + Data.E.CQApi.AppInfo.Version;
+        }
+
         private void GitHubButton_Click(object sender, RoutedEventArgs e) => Process.Start("https://github.com/littlegao233/CQ-ConnectTo-BDX/");
         private void McBBSButton_Click(object sender, RoutedEventArgs e) => Process.Start("https://www.mcbbs.net/thread-1011364-1-1.html");
         private void MinebbsButton_Click(object sender, RoutedEventArgs e) => Process.Start("https://www.minebbs.com/resources/1023/");
@@ -143,8 +148,8 @@ namespace ml.paradis.tool.UI
                     catch (Exception err)
                     {
                         Dispatcher.Invoke(() => UpdateLog.Children.Add(new TextBlock() { FontSize = 20, Text = $"更新获取失败!!!\n请重试...\n{err.Message}" }));
-        //Dispatcher.Invoke(() => UpdateLog.Children.Add(new Button() { FontSize = 20, Text = "更新获取失败!!!\n请重试..." }));
-    }
+                        //Dispatcher.Invoke(() => UpdateLog.Children.Add(new Button() { FontSize = 20, Text = "更新获取失败!!!\n请重试..." }));
+                    }
                 }
                 );
                 taskID = UpdateQueryTask.Id;
