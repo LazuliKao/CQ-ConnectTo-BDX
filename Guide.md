@@ -18,22 +18,22 @@
 | JSON内容 |注释| 快捷目录 |
 |----|----|----|
 |`{`|||
-|`"configVersion": 0.3,`|`//配置文件版本标记，请不要随意改动`| |
-|`"Servers": [{...},{...}],`|`//[{服务器1},{服务器2},······]无上限`|[WS服务器配置](#WS服务器配置)|
-|`"CheckConnectionTime": 60,`|`检查连接时长，如果服务器掉线了会在检查后自动重连，单位:秒`||
-|`"Groups": [{...},{...}],`|`[{群聊1},{群聊2},······]无上限(每个群聊单独配置)`||[群聊配置](#群聊配置)|
-|`"Timers": [{...},{...}],`||[计时器](#计时器)|
-|`"Tasks": [{...},{...}]`||[定时任务](#定时任务)|
+|&#8195;`"configVersion": 0.3,`|`//配置文件版本标记，请不要随意改动`| |
+|&#8195;`"Servers": [{...},{...},...],`|`//[{服务器1},{服务器2},······]无上限`|[WS服务器配置模板](#WS服务器配置)|
+|&#8195;`"CheckConnectionTime": 60,`|`检查连接时长，如果服务器掉线了会在检查后自动重连，单位:秒`||
+|&#8195;`"Groups": [{...},{...},...],`|`[{群聊1},{群聊2},······]无上限(每个群聊单独配置)`|[群聊配置模板](#群聊配置)|
+|&#8195;`"Timers": [{...},{...},...],`||[计时器](#计时器)|
+|&#8195;`"Tasks": [{...},{...},...]`||[定时任务](#定时任务)|
 |`}`||
 ---
 - ## WS服务器配置
 | JSON文本 | 备注 |
 |----|----|
 |`{`||
-|`"Address": "ws://localhost:29132/mc",`||
-|`"Token": "76A2173BE6393254E72FFA4D6DF1030A",`||
-|`"Tag": "服务器1",`||
-|`"Triggers": [{...},{...}]`|[通用触发器](#通用触发器)|
+|&#8195;`"Address": "ws://localhost:29132/mc",`||
+|&#8195;`"Token": "76A2173BE6393254E72FFA4D6DF1030A",`||
+|&#8195;`"Tag": "服务器1",`||
+|&#8195;`"Triggers": [{...},{...},...]`|[通用触发器](#通用触发器)|
 |`}`||
 
 ----
@@ -41,19 +41,44 @@
 | JSON文本 | 备注 |
 |----|----|
 |`{`||
-|`"ID": 386475891,`|群号码|
-|`"SendToServer": true,`|是否转发到服务器|
-|`"SendToServerRegex": "^(?!/)(.+|\\s+)+",`||
-|`"Triggers": [{...},{...}]`|[通用触发器](#通用触发器)|
+|&#8195;`"ID": 386475891,`|群号码|
+|&#8195;`"SendToServer": true,`|是否转发到服务器|
+|&#8195;`"SendToServerRegex": "^(?!/)(.+|\\s+)+",`|正则筛选，符合条件会转发匹配到的内容<br>---------Examples---------<br>群聊消息>无条件转发，可以这么填（或者把这行删了）<br>`"SendToServerRegex": "(.*|\\s*)*",`<br>群聊消息>不转发以"/"开头的消息，可以这么填(使用了"零宽度负预测先行断言(?!exp)")<br>`"SendToServerRegex": "^(?!/)(.+|\\s+)+",`<br>群聊消息>指定以"+"开头的消息，并转发+后面的内容，可以这么填(使用了"零宽度正回顾后发断言(?<=exp)")<br>`"SendToServerRegex": "(?<=^\+)(.+|\\s+)+",`<br>推荐正则教程(如果你不会改):https://deerchao.cn/tutorials/regex/regex.htm
+|&#8195;`"SendToServerFormat": {`<br>&#8195;&#8195;`"CQAt": "§r§l§6@§r§6{0}§a",`<br>&#8195;&#8195;`"CQImage": "§r§l§d[图骗]§r§a",`<br>&#8195;&#8195;`"CQEmoji": "§r§l§d[emoji]§r§a",`<br>&#8195;&#8195;`"CQFace": "§r§l§c[表情]§r§a",`<br>&#8195;&#8195;`"CQBface": "§r§l§d[大表情:§r§o§7{0}§r§l§d]§r§a",`<br>&#8195;&#8195;`"Main": "§b【群聊消息】§e<{0}>§a{1}"},`|[CQ:xx]自定义转换格式,注意:{n}是参数变量，不是每个都有的|
+|&#8195;`"Triggers": [{...},{...},...]`|[通用触发器](#通用触发器)|
 |`}`||
 ----
 - ## 通用触发器
-```jsonc
-{
+| JSON文本 | 备注 |
+|----|----|
+|`{`||
+|&#8195;`"Variants": [{...},{...},...],`|[自定义变量](#触发器=>自定义变量)，以便在后面用%xxx%调用|
+|&#8195;`"Operations": [{...},{...},...],`|[自定义操作](#触发器=>自定义操作)，|
+|&#8195;`"Filter": [{...},{...},...],`|[自定义条件筛选器](#触发器=>自定义条件筛选器)，|
+|&#8195;`"Actions": [{...},{...},...]`|[自定义动作](#触发器=>自定义动作)，|
+|`}`||
 
-}
-```
-- ## 详细参数
+- - ### 触发器=>自定义变量
+> #### 初始变量创建方式:
+>``` jsonc
+>{
+>    "Name": "Message",//自定义名称,以便在后面Operations操作或者用%xxx%调用
+>    "Path": ["MemberInfo","MemberType"]
+>     //数值源数据包目录，参考数据包示例
+>}
+>```
+>[数据包示例](#数据包示例)
+
+
+- - ### 触发器=>自定义操作
+
+- - ### 触发器=>自定义条件筛选器
+
+- - ### 触发器=>自定义动作
+
+
+----
+- ## 详细示例
 ```jsonc
 {
     "Servers": [
@@ -62,7 +87,6 @@
             "Token": "76A2173BE6393254E72FFA4D6DF1030A",
             "Tag": "服务器1",
             "Triggers": [
-               
                 {
                     "Variants": [
                         //
@@ -263,67 +287,68 @@
 }
 ```
 
+----
+- ## 数据包示例
+  ## WebSocketAPI
 
-# WebSocketAPI
+  ### 玩家消息(服务端发出
+  ### player send a message
+  ```json
+  {"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
+  //操作标识——————————目标——————————————————返回信息（玩家聊天内容）
+  ```
 
-## 玩家消息(服务端发出
-## player send a message
-```json
-{"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
-//操作标识——————————目标——————————————————返回信息（玩家聊天内容）
-```
+  ### 玩家加入(服务端发出
+  ### when a playe join the server
+  ```json
+  {"operate":"onjoin","target":"WangYneos","text":"target's ip address"}
+  //操作标识——————————---目标——————————————————返回信息（玩家ip）
+  ```
 
-## 玩家加入(服务端发出
-## when a playe join the server
-```json
-{"operate":"onjoin","target":"WangYneos","text":"target's ip address"}
-//操作标识——————————---目标——————————————————返回信息（玩家ip）
-```
+  ### 玩家退出(服务端发出
+    ### when the player left the server
+    ```json
+    {"operate":"onleft","target":"WangYneos","text":"Lefted server"}
+    //与上面类似
+    ```
 
-## 玩家退出(服务端发出
-## when the player left the server
-```json
-{"operate":"onleft","target":"WangYneos","text":"Lefted server"}
-//与上面类似
-```
+    ### 玩家使用命令(服务端发出
+    ### when the player use a command
+    ```json
+    {"operate":"onCMD","target":"WangYneos","text":"/list"}
+    //操作标识-----------目标玩家--------------执行的命令
+    ```
 
-## 玩家使用命令(服务端发出
-## when the player use a command
-```json
-{"operate":"onCMD","target":"WangYneos","text":"/list"}
-//操作标识-----------目标玩家--------------执行的命令
-```
+    ### WS客户端使用命令
+    ### WebSocket Client execute a command
+    >发送
+    >send
+    ```json
+    {"operate":"runcmd","passwd":"CD92DDCEBFB8D3FB1913073783FAC0A1","cmd":"in_game command here"}
+    //标识--操作类型--密码---------------------------------------执行内容----------------
+    ```
+    >服务端返回
+    >feedback by server
+    ```json
+    {"operate":"runcmd","Auth":"PasswdMatch","text":"Command Feedback"}
+    //操作标识---操作类型--密码验证--成功---------返回内容----------------------------
+    {"operate":"runcmd","Auth":"Failed”,"text":"Password Not Match" }
+    //操作标识---操作类型--出错-------验证---------返回内容--------------
+    ```
 
-## WS客户端使用命令
-## WebSocket Client execute a command
->发送
->send
-```json
-{"operate":"runcmd","passwd":"CD92DDCEBFB8D3FB1913073783FAC0A1","cmd":"in_game command here"}
-//标识--操作类型--密码---------------------------------------执行内容----------------
-```
->服务端返回
->feedback by server
-```json
-{"operate":"runcmd","Auth":"PasswdMatch","text":"Command Feedback"}
-//操作标识---操作类型--密码验证--成功---------返回内容----------------------------
-{"operate":"runcmd","Auth":"Failed”,"text":"Password Not Match" }
-//操作标识---操作类型--出错-------验证---------返回内容--------------
-```
+    ### 密码获得规则
+    服务端获取密码
+    +当前 年月日时分
+    （无分号，空格
+    例如密码是passwd
+    则验证密码passwd202004062016
+    （2020年4月6日8点16
+    取MD5（大写
+    得到CD92DDCEBFB8D3FB1913073783FAC0A1
+    客户端与服务端一致则验证成功
 
-## 密码获得规则
-服务端获取密码
-+当前 年月日时分
-（无分号，空格
-例如密码是passwd
-则验证密码passwd202004062016
-（2020年4月6日8点16
-取MD5（大写
-得到CD92DDCEBFB8D3FB1913073783FAC0A1
-客户端与服务端一致则验证成功
-
-## Way to get the passwd
-1,get the base password(for example:passwd)
-2,add (int)year month day hour minute(e.g :passwd2020040110)
-3,get the MD5 vaule and it's the passwd
-(one passwd can use in 2 min
+    ### Way to get the passwd
+    1,get the base password(for example:passwd)
+    2,add (int)year month day hour minute(e.g :passwd2020040110)
+    3,get the MD5 vaule and it's the passwd
+    (one passwd can use in 2 min)
