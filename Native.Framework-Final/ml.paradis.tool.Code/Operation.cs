@@ -3,7 +3,8 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -250,7 +251,7 @@ namespace ml.paradis.tool.Code
             if (Data.Config.ContainsKey("Tasks"))
             {
                 int i = 0;
-                AddLog($"--------初始化--------\n读取到 {Data.Config["Tasks"].Count()} 个定时任务(Tasks)\n#" + string.Join("\n#", Data.Config["Tasks"].ToList().ConvertAll(l => ++i + ">" + l["Mode"].ToString()+":" + l["Time"].ToString())) + "\n----------------------");
+                AddLog($"--------初始化--------\n读取到 {Data.Config["Tasks"].Count()} 个定时任务(Tasks)\n#" + string.Join("\n#", Data.Config["Tasks"].ToList().ConvertAll(l => ++i + ">" + l["Mode"].ToString() + ":" + l["Time"].ToString())) + "\n----------------------");
                 SetNextTask();
             }
             #endregion
@@ -403,22 +404,21 @@ namespace ml.paradis.tool.Code
                     {
                         if (operation.ContainsKey("Type"))
                         {
+                            if (operation.ContainsKey("Filter"))
+                            { if (!CalculateExpressions(operation["Filter"], receive, Variants)) { continue; } }
                             switch (operation["Type"].ToString())
                             {
                                 case "Replace":
                                     try
                                     {
-                                        if (Operation.CalculateExpressions(operation["Filter"], receive, Variants))
+                                        if (operation.ContainsKey("CreateVariant"))
                                         {
-                                            if (operation.ContainsKey("CreateVariant"))
-                                            {
-                                                Variants.Add(operation["CreateVariant"].ToString(), Variants[operation["TargetVariant"].ToString()].Replace(operation["Find"].ToString(), operation["Replacement"].ToString()));
-                                            }
-                                            else
-                                            {
-                                                string TargetVariant = operation["TargetVariant"].ToString();
-                                                Variants[TargetVariant] = Variants[TargetVariant].Replace(operation["Find"].ToString(), operation["Replacement"].ToString());
-                                            }
+                                            Variants.Add(operation["CreateVariant"].ToString(), Variants[operation["TargetVariant"].ToString()].Replace(operation["Find"].ToString(), operation["Replacement"].ToString()));
+                                        }
+                                        else
+                                        {
+                                            string TargetVariant = operation["TargetVariant"].ToString();
+                                            Variants[TargetVariant] = Variants[TargetVariant].Replace(operation["Find"].ToString(), operation["Replacement"].ToString());
                                         }
                                     }
                                     catch (Exception err)
@@ -427,17 +427,14 @@ namespace ml.paradis.tool.Code
                                 case "RegexReplace":
                                     try
                                     {
-                                        if (CalculateExpressions(operation["Filter"], receive, Variants))
+                                        if (operation.ContainsKey("CreateVariant"))
                                         {
-                                            if (operation.ContainsKey("CreateVariant"))
-                                            {
-                                                Variants.Add(operation["CreateVariant"].ToString(), Regex.Replace(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString(), operation["Replacement"].ToString()));
-                                            }
-                                            else
-                                            {
-                                                string TargetVariant = operation["TargetVariant"].ToString();
-                                                Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], operation["Pattern"].ToString(), operation["Replacement"].ToString());
-                                            }
+                                            Variants.Add(operation["CreateVariant"].ToString(), Regex.Replace(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString(), operation["Replacement"].ToString()));
+                                        }
+                                        else
+                                        {
+                                            string TargetVariant = operation["TargetVariant"].ToString();
+                                            Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], operation["Pattern"].ToString(), operation["Replacement"].ToString());
                                         }
                                     }
                                     catch (Exception err)
@@ -446,17 +443,14 @@ namespace ml.paradis.tool.Code
                                 case "RegexGet":
                                     try
                                     {
-                                        if (CalculateExpressions(operation["Filter"], receive, Variants))
+                                        if (operation.ContainsKey("CreateVariant"))
                                         {
-                                            if (operation.ContainsKey("CreateVariant"))
-                                            {
-                                                Variants.Add(operation["CreateVariant"].ToString(), Regex.Match(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value);
-                                            }
-                                            else
-                                            {
-                                                string TargetVariant = operation["TargetVariant"].ToString();
-                                                Variants[TargetVariant] = Regex.Match(Variants[TargetVariant], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value;
-                                            }
+                                            Variants.Add(operation["CreateVariant"].ToString(), Regex.Match(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value);
+                                        }
+                                        else
+                                        {
+                                            string TargetVariant = operation["TargetVariant"].ToString();
+                                            Variants[TargetVariant] = Regex.Match(Variants[TargetVariant], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value;
                                         }
                                     }
                                     catch (Exception err)
@@ -465,17 +459,14 @@ namespace ml.paradis.tool.Code
                                 case "Format":
                                     try
                                     {
-                                        if (CalculateExpressions(operation["Filter"], receive, Variants))
+                                        if (operation.ContainsKey("CreateVariant"))
                                         {
-                                            if (operation.ContainsKey("CreateVariant"))
-                                            {
-                                                Variants.Add(operation["CreateVariant"].ToString(), Format(operation["Text"].ToString(), Variants));
-                                            }
-                                            else
-                                            {
-                                                string TargetVariant = operation["TargetVariant"].ToString();
-                                                Variants[TargetVariant] = Format(operation["Text"].ToString(), Variants);
-                                            }
+                                            Variants.Add(operation["CreateVariant"].ToString(), Format(operation["Text"].ToString(), Variants));
+                                        }
+                                        else
+                                        {
+                                            string TargetVariant = operation["TargetVariant"].ToString();
+                                            Variants[TargetVariant] = Format(operation["Text"].ToString(), Variants);
                                         }
                                     }
                                     catch (Exception err)
@@ -484,47 +475,66 @@ namespace ml.paradis.tool.Code
                                 case "ToUnicode":
                                     try
                                     {
-                                        if (CalculateExpressions(operation["Filter"], receive, Variants))
+                                        if (operation.ContainsKey("CreateVariant"))
                                         {
-                                            if (operation.ContainsKey("CreateVariant"))
+                                            Variants.Add(operation["CreateVariant"].ToString(), Operation.StringToUnicode(Format(operation["Text"].ToString(), Variants)));
+                                        }
+                                        else
+                                        {
+                                            if (operation.ContainsKey("TargetVariant"))
                                             {
-                                                Variants.Add(operation["CreateVariant"].ToString(), Operation.StringToUnicode(Format(operation["Text"].ToString(), Variants)));
-                                            }
-                                            else
-                                            {
-                                                if (operation.ContainsKey("TargetVariant"))
-                                                {
-                                                    string TargetVariant = operation["TargetVariant"].ToString();
-                                                    Variants[TargetVariant] = Operation.StringToUnicode(Variants[TargetVariant]);
-                                                }
+                                                string TargetVariant = operation["TargetVariant"].ToString();
+                                                Variants[TargetVariant] = Operation.StringToUnicode(Variants[TargetVariant]);
                                             }
                                         }
                                     }
                                     catch (Exception err)
                                     { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
-                                //case "ToUnicode":
-                                //    try
-                                //    {
-                                //        if (CalculateExpressions(operation["Filter"], receive, Variants))
-                                //        {
-                                //            if (operation.ContainsKey("CreateVariant"))
-                                //            {
-                                //                Variants.Add(operation["CreateVariant"].ToString(), Operation.StringToUnicode(Format(operation["Text"].ToString(), Variants)));
-                                //            }
-                                //            else
-                                //            {
-                                //                if (operation.ContainsKey("TargetVariant"))
-                                //                {
-                                //                    string TargetVariant = operation["TargetVariant"].ToString();
-                                //                    Variants[TargetVariant] = Operation.StringToUnicode(Variants[TargetVariant]);
-                                //                }
-                                //            }
-                                //        }
-                                //    }
-                                //    catch (Exception err)
-                                //    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
-                                //    break;
+                                case "MotdBE":
+                                    try
+                                    {
+                                        if (operation.ContainsKey("CreateVariant"))
+                                        {
+                                            try
+                                            {
+                                                Variants.Add(operation["CreateVariant"].ToString(),
+                                                    Format(Format(operation["Text"].ToString(), GetServerInfoD(
+                                                      Format(operation["IP"].ToString(), Variants),
+                                                      Format(operation["PORT"].ToString(), Variants)),
+                                                        "$"), Variants)
+                                                    );
+                                            }
+                                            catch (Exception err)
+                                            {
+                                                Variants.Add(operation["CreateVariant"].ToString(), Format(string.Format(operation["FailedText"].ToString(), err.Message), Variants));
+                                            }
+                                        }
+                                    }
+                                    catch (Exception err)
+                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                    break;
+                                case "GetHTML":
+                                    try
+                                    {
+                                        if (operation.ContainsKey("CreateVariant"))
+                                        {
+                                            try
+                                            {
+                                                Native.Tool.Http.HttpWebClient webClient = new Native.Tool.Http.HttpWebClient();
+                                                Variants.Add(operation["CreateVariant"].ToString(),
+                                                    Encoding.UTF8.GetString(webClient.DownloadData(Format(operation["URI"].ToString(), Variants)))
+                                                    );
+                                            }
+                                            catch (Exception err)
+                                            {
+                                                Variants.Add(operation["CreateVariant"].ToString(), "获取失败"+ err.Message);
+                                            }
+                                        }
+                                    }
+                                    catch (Exception err)
+                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                    break;
                                 default:
                                     break;
                             }
@@ -558,13 +568,80 @@ namespace ml.paradis.tool.Code
             }
             return processText;
         }
+        public static string Format(string input, Dictionary<string, string> vars, string tag)
+        {
+            if (string.IsNullOrEmpty(input)) { return ""; }
+            string processText = input;
+            while (true)
+            {
+                Match match = Regex.Match(processText, $@"{tag}(\w+?){tag}");
+                if (match.Success)
+                {
+                    string searched = "null";
+                    try { searched = vars[match.Groups[1].Value]; }
+                    catch (Exception) { }
+                    processText = processText.Replace(match.Value, searched);
+                }
+                else { break; }
+            }
+            return processText;
+        }
         #endregion
 
+        #endregion
+        #region 服务器Motd
+        private enum InfoList
+        {
+            type, description, connectionVer, gameVer, onlineplayers, maxPlayers,
+            serverUID, mapName, defaultMode, isBDS, port, portv6
+            //,
+            //类别 = 0, 简介, 协议版本, 游戏版本, 在线人数, 在线在线人数,
+            //客户端标识, 存档名称, 默认模式, _未知2, 端口, ipv6端口
+        }
+        private static Dictionary<InfoList, string> GetServerInfo(string address, int port)
+        {
+            byte[] sendData = Convert.FromBase64String("AQAAAAAAA2oHAP//AP7+/v79/f39EjRWeJx0FrwC/0lw");
+            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            byte[] receiveData = new byte[256];
+            Task queryTask = Task.Run(() =>
+            {
+                try
+                {
+                    client.SendTo(sendData, new IPEndPoint(IPAddress.TryParse(address, out IPAddress ipAddress) ? ipAddress : Dns.GetHostAddresses(address).First(), port));
+                    client.Receive(receiveData, receiveData.Length, SocketFlags.None);
+                }
+                catch (Exception) { }
+            }
+            );
+            queryTask.Wait(TimeSpan.FromSeconds(10));
+            if (!queryTask.IsCompleted || queryTask.IsFaulted) { throw new ArgumentNullException("Query Failed", "Unable to connect to the server!"); }
+            queryTask.Dispose();
+            int i = 0;
+            return Encoding.UTF8.GetString(receiveData).Substring(31).Split(';').ToDictionary(x => (InfoList)i++, l => /*i == 2 ? System.Text.RegularExpressions.Regex.Replace(l, @"§[A-Za-z\d]", "") :*/ l);
+        }
+        public static Dictionary<string, string> GetServerInfoD(string address, string port)
+        {
+            var get = GetServerInfo(address, int.Parse(port));
+            return new Dictionary<string, string>() {
+                { "type" ,  get[InfoList.type] },
+                { "description" ,  get[InfoList.description] },
+                { "connectionVer" ,  get[InfoList.connectionVer] },
+                { "gameVer" ,  get[InfoList.gameVer] },
+                { "onlineplayers" ,  get[InfoList.onlineplayers] },
+                { "maxPlayers" ,  get[InfoList.maxPlayers] },
+                { "serverUID" ,  get[InfoList.serverUID] },
+                { "mapName" ,  get[InfoList.mapName] },
+                { "defaultMode" ,  get[InfoList.defaultMode] },
+                { "isBDS" ,  get[InfoList.isBDS] },
+                { "port" ,  get[InfoList.port] },
+                { "portv6" ,  get[InfoList.portv6] },
+            };
+        }
         #endregion
         //----------------
 
         public static bool CalculateExpressions(JToken Filters, JToken Source, Dictionary<string, string> Variants) =>
-          CalculateExpressions(Filters, Source, Variants, new JObject());
+  CalculateExpressions(Filters, Source, Variants, new JObject());
         public static bool CalculateExpressions(JToken Filters, JToken Source, Dictionary<string, string> Variants, JObject server)
         {
             if (Filters.Type == JTokenType.Boolean) { return (bool)Filters; }

@@ -11,7 +11,7 @@
 - ~~5.投入使用(体验bug)~~
 ----
 # 配置文件使用方法
-- 很多内容参考了MCBE行为包的自定义方法，还原度不高但自定义程度很高
+- 很多内容低仿了MCBE行为包的自定义方法，还原度不高但自定义程度很高
 - 如果你懂得如何编写行为包，那么这个自定义配置上手会很容易
 - ## 配置文件基本框架
 ---
@@ -128,8 +128,39 @@
 >} 
 >```
 >----
-> - <h3>自定义操作:... </h3>
+> - <h3>自定义操作:MotdBE查服(通过地址和端口)</h3>
 >``` jsonc
+>{
+>    "Type": "MotdBE",                //操作类型
+>    "CreateVariant": "MotdResult",   //创建的变量，不需要提前在"Variants"定义，自动创建用来储存返回值
+>    "IP": "1.2.3.4",                 //查询的服务器地址（可以引用变量，比如%ip%）
+>    "PORT": "19132",                 //查询的服务器端口（可以引用变量，比如%ip%）
+>    "Text":"查询成功:\n名称$$",
+>    //返回变量列表(使用"$名称$"引用，而不是%)
+>    //  { "type" ,  get[InfoList.type] },
+>    //{ "description" ,  get[InfoList.description] },
+>    //{ "connectionVer" ,  get[InfoList.connectionVer] },
+>    //{ "gameVer" ,  get[InfoList.gameVer] },
+>    //{ "onlineplayers" ,  get[InfoList.onlineplayers] },
+>    //{ "maxPlayers" ,  get[InfoList.maxPlayers] },
+>    //{ "serverUID" ,  get[InfoList.serverUID] },
+>    //{ "defaultMode" ,  get[InfoList.defaultMode] },
+>    //{ "isBDS" ,  get[InfoList.isBDS] },
+>    //{ "port" ,  get[InfoList.port] },
+>    //{ "portv6" ,  get[InfoList.portv6] }, 
+>    "FailedText":"查询失败:{0}",       //无法连接至世界！
+>    "Filter":true                    //筛选是否执行 保持执行请填true
+>} 
+>```
+>----
+> - <h3>自定义操作:获取网页HTML</h3>
+>``` jsonc
+>{
+>    "Type": "GetHTML",              //操作类型
+>    "CreateVariant": "HTMLstr",     //创建的变量，不需要提前在"Variants"定义，自动创建用来储存返回值
+>    "URI": "https://www.baidu.com/",//网址(Api地址)
+>    "Filter":true                   //筛选是否执行 保持执行请填true
+>} 
 >```
 >----
 
