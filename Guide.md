@@ -229,7 +229,8 @@
 //Target可用参数:
 //
 //"log"=>酷Q软件添加日志,
-//---配套参数>"info":"输出日志"
+//---配套参数>"Info":"输出日志"
+           //"Debug":"输出日志"
 //
 //"sender"=>向这条消息触发的发送者(服务器)发送消息(命令)
 //"other"=>向这条消息触发的发送者以外的连接的(服务器)发送消息(命令)
@@ -245,6 +246,24 @@
 //
 //%变量名%可以引用变量，注意：需要提前在上边的"Variants"标签下面定义，否则返回null
 
+
+
+
+```
+
+
+```jsonc
+//来自QQ群时
+未写完，记得催我
+log
+servers
+QQGroup
+ReturnGroupMessageAtFrom
+
+ReturnPrivateMessage
+--- "QQ":xxx
+
+doTriggers
 ```
 
 ----
