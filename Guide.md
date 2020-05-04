@@ -439,10 +439,7 @@ doTriggers
         {
             "ID": 386475891,
             "Triggers": [
-                {}
-                
-                
-                
+                。。。
                 
               //获取消息目录
               //{
@@ -569,6 +566,16 @@ doTriggers
                                             "Path": [
                                                 "Message"
                                             ]
+                                        }, {
+                                            "Name": "Nick",
+                                            "Path": [
+                                                "FromQQNick"
+                                            ]
+                                        }, {
+                                            "Name": "QQ",
+                                            "Path": [
+                                                "FromQQ"
+                                            ]
                                         }
                                     ],
                                     "Operations": [
@@ -607,7 +614,11 @@ doTriggers
                                         {
                                             "Target": "ReturnGroupMessageAtFrom",
                                             "Message": "自助添加失败!!!\nXboxID:\"%XBOXID%\"已经在云黑系统中!!!"
-                                        }
+                                        }//,//向管理QQ通知用的，注释删掉即可
+                                        //{
+                                        //    "Target": "ReturnPrivateMessage",
+                                        //    "Message": "来自%Nick%:%QQ%\n自助添加白名单失败！\nXboxID:\"%XBOXID%\"已经在云黑系统中!!!"
+                                        //}
                                     ]
                                 }
                             ]
