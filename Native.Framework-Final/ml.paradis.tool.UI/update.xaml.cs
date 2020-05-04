@@ -78,7 +78,15 @@ namespace ml.paradis.tool.UI
                             StackPanel stackPanel = new StackPanel();
                             var match = Regex.Match(html, @"<(?<type>..)>(?<content>(.|\s)*?)</\k<type>>");
                             while (match.Success)
-                            {
+                            { //{
+                                string ParseMarkDown(string input, string regex)
+                                {
+                                    Match getLink = Regex.Match(input, regex);
+                                    return getLink.Success ? ParseMarkDown(input.Replace(getLink.Value, getLink.Groups["content"].Value), regex) : input;
+                                }
+                                string getText = ParseMarkDown(match.Groups["content"].Value, "<a\\shref=\".*?\">(?<content>.*?)</a>");
+                                getText= ParseMarkDown(getText, "<a.*?alt=\"(?<content>.*?)\".*?</a>");
+                                getText= ParseMarkDown(getText, "<a.*?rel=\"nofollow\">(?<content>.*?)</a>");
                                 switch (match.Groups["type"].Value)
                                 {
                                     case "h1":
@@ -89,13 +97,9 @@ namespace ml.paradis.tool.UI
                                     case "h6":
                                     case "h7":
                                         int TextType = int.Parse(Regex.Replace(match.Groups["type"].Value, "^h", ""));
-                                        stackPanel.Children.Add(new TextBlock() { Margin = new Thickness(TextType * 5, 0, 0, 0), Foreground = new SolidColorBrush(Color.FromRgb(0, (byte)Math.Min(255, 30 * TextType), (byte)Math.Max(10, 255 - 30 * TextType))), Text = match.Groups["content"].Value, FontSize = 24 - 2 * TextType });
+                                        stackPanel.Children.Add(new TextBlock() { Margin = new Thickness(TextType * 5, 0, 0, 0), Foreground = new SolidColorBrush(Color.FromRgb(0, (byte)Math.Min(255, 30 * TextType), (byte)Math.Max(10, 255 - 30 * TextType))), Text = getText, FontSize = 24 - 2 * TextType });
                                         break;
                                     case "li":
-                                        Match getLink = Regex.Match(match.Groups["content"].Value, "<a.*?alt=\"(?<content>.*?)\".*?</a>");
-                                        string getText = getLink.Success ? match.Groups["content"].Value.Replace(getLink.Value, getLink.Groups["content"].Value) : match.Groups["content"].Value;
-                                        getLink = Regex.Match(match.Groups["content"].Value, "<a.*?rel=\"nofollow\">(?<content>.*?)</a>");
-                                        getText = getLink.Success ? getText.Replace(getLink.Value, getLink.Groups["content"].Value) : getText;
                                         Match Cont = Regex.Match(getText, @"<(?<type>..)>(?<content>(.|\s)*?)</\k<type>>");
                                         if (Cont.Success)
                                         {

@@ -70,54 +70,63 @@ namespace ml.paradis.tool.Code
                     #region 消息转发
                     try
                     {
-                        if (!(bool)group["SendToServer"]) { continue; }
                         string output_text = CQApi.CQDeCode(e.Message.Text);
-                        if (group.ContainsKey("SendToServerRegex"))
+                        #region 转发条件检查
+                        bool CheckCondition()
                         {
-                            Match MSGCheck = Regex.Match(output_text, group["SendToServerRegex"].ToString());
-                            if (MSGCheck.Success) { output_text = MSGCheck.Value; }
-                            else { e.CQLog.Debug("群聊=>服务器", "消息不符合正则表达式,未转发"); continue; }
-                        }
-                        JObject Format = group["SendToServerFormat"] as JObject;
-                        foreach (var item in e.Message.CQCodes)
-                        {
-                            try
+                            if (!(bool)group["SendToServer"]) { return false; }
+                            if (group.ContainsKey("SendToServerRegex"))
                             {
-                                switch (item.Function)
-                                {
-                                    case CQFunction.At://[CQ:at,qq=441870948]
-                                        output_text = output_text.Replace(item.ToString() + " ", string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
-                                        output_text = output_text.Replace(item.ToString(), string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
-                                        break;
-                                    case CQFunction.Image://[CQ: image, file=2031F3F5C7B5CEB95725CB27B76BC1AD.jpg]
-                                        output_text = output_text.Replace(item.ToString(), Format["CQImage"].ToString());
-                                        break;
-                                    case CQFunction.Emoji://[CQ: emoji, id=128560]
-                                        output_text = output_text.Replace(item.ToString(), Format["CQEmoji"].ToString());
-                                        break;
-                                    case CQFunction.Face://[CQ:face,id=14]
-                                        output_text = output_text.Replace(item.ToString(), Format["CQFace"].ToString());
-                                        break;
-                                    case CQFunction.Bface:
-                                        //[CQ:bface,p=10616,id=F4A89A4173A48888751D27679FFEEB60]&#91;财源广进&#93;
-                                        Match m = Regex.Match(output_text, "\\[(.*?)\\]");
-                                        output_text = output_text.Replace(item.ToString(), string.Format(Format["CQBface"].ToString(), m.Groups[1]).Replace(m.Value, null));
-                                        break;
-                                    //case CQFunction.Sign:
-                                    //    output_text = output_text.Replace(item.ToString(), "§l§7[签到]§r§a");
-                                    //    break;
-                                    default:
-                                        break;
-                                }
+                                Match MSGCheck = Regex.Match(output_text, group["SendToServerRegex"].ToString());
+                                if (MSGCheck.Success) { output_text = MSGCheck.Value; }
+                                else { e.CQLog.Debug("群聊=>服务器", "消息不符合正则表达式,未转发"); return false; }
                             }
-                            catch (Exception) { continue; }
+                            return true;
                         }
-                        output_text = output_text.Replace("\r", "")/*.Replace("&#91;", "[").Replace("&#93;", "]")*/;
-                        output_text = string.Format(Format["Main"].ToString(), GetMemberNick(ref e), output_text);   // $"§b【群聊消息】§e<{GetMemberNick(ref e)}>§a{output_text}";
-                        e.CQLog.Info("转发消息到服务器", output_text);
-                        foreach (var server in Data.WSClients.Where(l => l.Key.IsAlive))
+                        #endregion
+                        if (CheckCondition())
                         {
-                            server.Key.Send(Data.GetCmdReq(server.Value["Passwd"].ToString(), $"tellraw @a {{\"rawtext\":[{{\"text\":\"{Operation.StringToUnicode(output_text)}\"}}]}}"));
+                            JObject Format = group["SendToServerFormat"] as JObject;
+                            foreach (var item in e.Message.CQCodes)
+                            {
+                                try
+                                {
+                                    switch (item.Function)
+                                    {
+                                        case CQFunction.At://[CQ:at,qq=441870948]
+                                            output_text = output_text.Replace(item.ToString() + " ", string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
+                                            output_text = output_text.Replace(item.ToString(), string.Format(Format["CQAt"].ToString(), GetMemberNick(ref e, Convert.ToInt64(item.Items["qq"]))));
+                                            break;
+                                        case CQFunction.Image://[CQ: image, file=2031F3F5C7B5CEB95725CB27B76BC1AD.jpg]
+                                            output_text = output_text.Replace(item.ToString(), Format["CQImage"].ToString());
+                                            break;
+                                        case CQFunction.Emoji://[CQ: emoji, id=128560]
+                                            output_text = output_text.Replace(item.ToString(), Format["CQEmoji"].ToString());
+                                            break;
+                                        case CQFunction.Face://[CQ:face,id=14]
+                                            output_text = output_text.Replace(item.ToString(), Format["CQFace"].ToString());
+                                            break;
+                                        case CQFunction.Bface:
+                                            //[CQ:bface,p=10616,id=F4A89A4173A48888751D27679FFEEB60]&#91;财源广进&#93;
+                                            Match m = Regex.Match(output_text, "\\[(.*?)\\]");
+                                            output_text = output_text.Replace(item.ToString(), string.Format(Format["CQBface"].ToString(), m.Groups[1]).Replace(m.Value, null));
+                                            break;
+                                        //case CQFunction.Sign:
+                                        //    output_text = output_text.Replace(item.ToString(), "§l§7[签到]§r§a");
+                                        //    break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                catch (Exception) { continue; }
+                            }
+                            output_text = output_text.Replace("\r", "")/*.Replace("&#91;", "[").Replace("&#93;", "]")*/;
+                            output_text = string.Format(Format["Main"].ToString(), GetMemberNick(ref e), output_text);   // $"§b【群聊消息】§e<{GetMemberNick(ref e)}>§a{output_text}";
+                            e.CQLog.Info("转发消息到服务器", output_text);
+                            foreach (var server in Data.WSClients.Where(l => l.Key.IsAlive))
+                            {
+                                server.Key.Send(Data.GetCmdReq(server.Value["Passwd"].ToString(), $"tellraw @a {{\"rawtext\":[{{\"text\":\"{Operation.StringToUnicode(output_text)}\"}}]}}"));
+                            }
                         }
                     }
                     catch (Exception err)

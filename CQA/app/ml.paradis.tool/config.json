@@ -588,7 +588,135 @@
                             }
                         }
                     ]
+                },
+                //Start---云黑：快速添加白名单---
+                {
+                    "Variants": [
+                        {
+                            "Name": "Message",
+                            "Path": [
+                                "Message"
+                            ]
+                        }
+                    ],
+                    "Operations": [
+                        {
+                            "Type": "RegexGet",
+                            "TargetVariant": "Message",
+                            "CreateVariant": "Action",
+                            "Pattern": "^/(?<Act>whitelist|白名单)",
+                            "GroupName": "Act",
+                            "Filter": true
+                        }
+                    ],
+                    "Filter": {
+                        "Variant": "Action",
+                        "Operator": "!=",
+                        "Value": ""
+                    },
+                    "Actions": [
+                        {
+                            "Target": "doTriggers",
+                            "Triggers": [
+                                {
+                                    "Variants": [
+                                        {
+                                            "Name": "Message",
+                                            "Path": [
+                                                "Message"
+                                            ]
+                                        }
+                                    ],
+                                    "Operations": [
+                                        {
+                                            "Type": "RegexGet",
+                                            "TargetVariant": "Message",
+                                            "CreateVariant": "XBOXID",
+                                            "Pattern": "^/(whitelist|白名单)\\s*(?<XBOXID>[A-Za-z0-9][A-Za-z0-9\\s]*[A-Za-z0-9])$",
+                                            "GroupName": "XBOXID",
+                                            "Filter": true
+                                        }
+                                    ],
+                                    "Filter": {
+                                        "Variant": "XBOXID",
+                                        "Operator": "!=",
+                                        "Value": ""
+                                    },
+                                    "Actions": [
+                                        {
+                                            "Target": "log",
+                                            "Debug": "收到白名单请求:{Get:%XBOXID%}"
+                                        },
+                                        {
+                                            "Target": "ReturnGroupMessageAtFrom",
+                                            "Message": "收到白名单请求:{Get:%XBOXID%},正在通过云黑Api验证"
+                                        },
+                                        {
+                                            "Target": "doTriggers",
+                                            "Triggers": [
+                                                {
+                                                    "Variants": [
+                                                        {
+                                                            "Name": "Message",
+                                                            "Path": [
+                                                                "Message"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "Operations": [
+                                                        {
+                                                            "Type": "RegexGet",
+                                                            "TargetVariant": "Message",
+                                                            "CreateVariant": "XBOXID",
+                                                            "Pattern": "^/(whitelist|白名单)\\s*(?<XBOXID>[A-Za-z0-9][A-Za-z0-9\\s]*[A-Za-z0-9])$",
+                                                            "GroupName": "XBOXID",
+                                                            "Filter": true
+                                                        },
+                                                        {
+                                                            "Type": "GetHTML",
+                                                            "CreateVariant": "HTMLResult",
+                                                            "URI": "http://yh.nyan.xyz:8899/api/check.php?id=%XBOXID%",
+                                                            "Filter": true
+                                                        }
+                                                    ],
+                                                    "Filter": {
+                                                        "Variant": "HTMLResult",
+                                                        "Operator": "==",
+                                                        "Value": "0"
+                                                    },
+                                                    "Actions": [
+                                                        {
+                                                            "Target": "ReturnGroupMessageAtFrom",
+                                                            "Message": "云黑验证通过！自助添加白名单中...(%XBOXID%)"
+                                                        },
+                                                        {
+                                                            "Target": "servers",
+                                                            "cmd": "whitelist add %XBOXID%",
+                                                            "Filter": true
+                                                        }
+                                                    ],
+                                                    "MismatchedActions": [
+                                                        {
+                                                            "Target": "ReturnGroupMessageAtFrom",
+                                                            "Message": "自助添加失败!!!\nXboxID:\"%XBOXID%\"已经在云黑系统中!!!"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "MismatchedActions": [
+                                        {
+                                            "Target": "ReturnGroupMessageAtFrom",
+                                            "Message": "XBOXID格式不规范或命令格式有误！"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 }
+                //End---云黑：快速添加白名单---
             ]
         }
     ],
