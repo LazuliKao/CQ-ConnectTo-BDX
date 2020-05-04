@@ -480,6 +480,7 @@ doTriggers
 ```jsonc
 把下面这一段复制到
 ```
+```jsonc
 {
   "Group":[
     {
@@ -494,6 +495,8 @@ doTriggers
     }
   ]
 }
+```
+
 ```
 //Start---云黑：快速添加白名单---
 {
