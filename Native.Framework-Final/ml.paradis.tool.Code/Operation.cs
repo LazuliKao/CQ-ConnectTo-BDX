@@ -470,7 +470,7 @@ namespace ml.paradis.tool.Code
                                         }
                                     }
                                     catch (Exception err)
-                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                    { AddLog($"Format参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "ToUnicode":
                                     try
@@ -489,7 +489,7 @@ namespace ml.paradis.tool.Code
                                         }
                                     }
                                     catch (Exception err)
-                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                    { AddLog($"ToUnicode参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "MotdBE":
                                     try
@@ -512,7 +512,7 @@ namespace ml.paradis.tool.Code
                                         }
                                     }
                                     catch (Exception err)
-                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                    { AddLog($"MotdBE执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 case "GetHTML":
                                     try
@@ -528,12 +528,23 @@ namespace ml.paradis.tool.Code
                                             }
                                             catch (Exception err)
                                             {
-                                                Variants.Add(operation["CreateVariant"].ToString(), "获取失败"+ err.Message);
+                                                Variants.Add(operation["CreateVariant"].ToString(), "获取失败" + err.Message);
                                             }
                                         }
                                     }
                                     catch (Exception err)
-                                    { AddLog($"参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                    { AddLog($"GetHTML执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                    break;
+                                case "Sleep":
+                                    try
+                                    {
+                                        if (operation.ContainsKey("Time"))
+                                        {
+                                            Thread.Sleep(int.Parse(operation["Time"].ToString()));
+                                        }
+                                    }
+                                    catch (Exception err)
+                                    { AddLog($"Sleep执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
                                 default:
                                     break;

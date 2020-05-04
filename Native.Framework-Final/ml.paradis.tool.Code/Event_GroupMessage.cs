@@ -276,7 +276,14 @@ namespace ml.paradis.tool.Code
                 case "ReturnPrivateMessage":
                     if (action.ContainsKey("Message"))
                     {
-                        ReturnPrivateMessage(ref e, Operation.Format(action["Message"].ToString(), Variants));
+                        if (action.ContainsKey("QQ"))
+                        {
+                            e.CQApi.SendPrivateMessage(long.Parse(action["QQ"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
+                        }
+                        else
+                        {
+                            ReturnPrivateMessage(ref e, Operation.Format(action["Message"].ToString(), Variants));
+                        }
                     }
                     break;
                 case "doTriggers":
