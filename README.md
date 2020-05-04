@@ -1,7 +1,7 @@
 # CQ-Connect-BDX
 with BDX plugin and this CQ plugin,you could simply operate between QQ group and MCBE servers (>ω&lt;)
 > ## 编写语言C#  使用Native.Sdk  不建议wine or docker
-> ## 不是易语言！不是易语言！不是易语言！(你见过哪个易语言的程序有这么美观的界面233<=没卵用系列)
+> - ### 不是易语言！不是易语言！不是易语言！(你见过哪个易语言的程序有这么美观的界面233<=没卵用系列)
 ## 下载地址
 - <a href="https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/">GitHub最新Release</a><br/>
 - <a href="http://www.tf3q.com/s/ij3xoz6f">网盘地址(可能不是最新版本)</a><br/>
