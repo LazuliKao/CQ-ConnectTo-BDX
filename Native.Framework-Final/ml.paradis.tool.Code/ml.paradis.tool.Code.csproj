@@ -81,6 +81,7 @@
     <Compile Include="Data.cs" />
     <Compile Include="Event_App.cs" />
     <Compile Include="Event_GroupMessage.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -102,7 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Resources\config_old.json" />
     <None Include="Resources\config.json" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using Native.Sdk.Cqp;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,247 +14,6 @@ namespace ml.paradis.tool.Code
 {
     class Operation
     {
-        private static void ReceiveMessage(WebSocket wsc, string receiveData)
-        {
-            try
-            {
-                JObject receive = JObject.Parse(receiveData);
-                //foreach (JObject server in Data.Config["Servers"])
-                //{
-                JObject server = Data.WSClients[wsc];
-                void DoTriggers(JArray triggers)
-                {
-                    foreach (JObject trigger in triggers)
-                    {
-                        VariantCreate(trigger, receive, out Dictionary<string, string> Variants, server);
-                        VariantOperation(trigger, receive, ref Variants);
-                        #region 过滤条件计算
-                        if (trigger.ContainsKey("Filter"))
-                        {
-                            void DoActions(JObject action)
-                            {
-                                switch (action["Target"].ToString())
-                                {
-                                    case "log":
-                                        try
-                                        {
-                                            if (action.ContainsKey("Info"))
-                                                _ = Data.E.CQLog.Info("CQToBDX-Log", Format(action["Info"].ToString(), Variants));
-                                            if (action.ContainsKey("Debug"))
-                                                _ = Data.E.CQLog.Debug("CQToBDX-Log", Format(action["Debug"].ToString(), Variants));
-                                            if (action.ContainsKey("Warning"))
-                                                _ = Data.E.CQLog.Warning("CQToBDX-Log", Format(action["Warning"].ToString(), Variants));
-                                            if (action.ContainsKey("Fatal"))
-                                                _ = Data.E.CQLog.Fatal("CQToBDX-Log", Format(action["Fatal"].ToString(), Variants));
-                                        }
-                                        catch (Exception) { }
-                                        break;
-                                    case "sender":
-                                        if (action.ContainsKey("cmd"))
-                                        {
-                                            wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants)));
-                                        }
-                                        break;
-                                    case "other":
-                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
-                                        {
-                                            if (action.ContainsKey("cmd"))
-                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants))); }
-                                        }
-                                        break;
-                                    case "all":
-                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
-                                        {
-                                            if (action.ContainsKey("cmd"))
-                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Format(action["cmd"].ToString(), Variants))); }
-                                        }
-                                        break;
-                                    case "QQGroup":
-                                        if (action.ContainsKey("GroupID"))
-                                        {
-                                            Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Format(action["Message"].ToString(), Variants));
-                                        }
-                                        break;
-                                    case "doTriggers":
-                                        DoTriggers((JArray)action["Triggers"]);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                            if (CalculateExpressions(trigger["Filter"], receive, Variants))
-                            {
-                                #region 满足条件Actions 
-                                if (trigger.ContainsKey("Actions"))
-                                {
-                                    foreach (JObject action in trigger["Actions"])
-                                    {
-                                        DoActions(action);
-                                    }
-                                }
-                                #endregion
-                            }
-                            else
-                            {
-                                #region 不满足条件Actions 
-                                if (trigger.ContainsKey("MismatchedActions"))
-                                {
-                                    foreach (JObject action in trigger["MismatchedActions"])
-                                    {
-                                        DoActions(action);
-                                    }
-                                }
-                                #endregion
-                            }
-                        }
-                        #endregion
-                    }
-                }
-                DoTriggers((JArray)server["Triggers"]);
-                //}
-            }
-            catch (Exception err)
-            { AddLog(err.ToString()); }
-        }
-        public static void Setup()
-        {
-            #region WebSocket实例初始化
-            foreach (var server in Data.Config["Servers"])
-            {
-                Data.WSClients.Add(new WebSocket(server["Address"].ToString()), (JObject)server);
-                Data.WSClients.Last().Key.OnMessage += (sender, e) =>
-                {
-                    AddLog((sender as WebSocket).Url + "Received:" + e.Data);
-                    ReceiveMessage(sender as WebSocket, e.Data);
-                };
-                Data.WSClients.Last().Key.OnClose += (sender, e) =>
-                {
-                    AddLog((sender as WebSocket).Url + "连接已断开:" + e.Code + "\n" + e.Reason);
-                };
-                Data.WSClients.Last().Key.OnError += (sender, e) =>
-                {
-                    AddLog((sender as WebSocket).Url + "运行出错:" + e.Exception + "\n" + e.Message);
-                };
-                Data.WSClients.Last().Key.OnOpen += (sender, e) =>
-                {
-                    AddLog((sender as WebSocket).Url + "连接已建立");
-                };
-                try
-                {
-                    Data.WSClients.Last().Key.Connect();
-                    if (Data.WSClients.Last().Key.IsAlive)
-                    {
-                        AddLog($"{server["Tag"]}{Data.WSClients.Last().Key.Url}连接成功！");
-                    }
-                    else
-                    {
-                        AddLog($"{server["Tag"]}{Data.WSClients.Last().Key.Url}连接失败！");
-                    }
-                }
-                catch (Exception err) { AddLog($"{server["Tag"]}{Data.WSClients.Last().Key.Url}连接失败！\n{err}"); }
-            }
-            #endregion
-            #region 掉线检查初始化
-            Data.KeepAliveTimer.Interval = double.Parse(Data.Config["CheckConnectionTime"].ToString()) * 1000;
-            Data.KeepAliveTimer.Elapsed += (sender, e) =>
-            {
-                foreach (WebSocket ws in Data.WSClients.Keys.Where(l => !l.IsAlive))
-                {
-                    try
-                    {
-                        ws.Connect();
-                        if (ws.Ping() && ws.IsAlive)
-                        { AddLog($"[KeepAlive]实例重连成功！\n" + ws.Url); }
-                        else
-                        { AddLog($"[KeepAlive]实例重连失败！\n" + ws.Url); }
-                    }
-                    catch (Exception err) { AddLog($"重连失败！{ws.Url}\n{err}"); }
-                }
-            };
-            Data.KeepAliveTimer.Start();
-            #endregion
-            #region Timers初始化
-            if (Data.Config.ContainsKey("Timers"))
-            {
-                foreach (JObject Atimer in Data.Config["Timers"])
-                {
-                    System.Timers.Timer timer = new System.Timers.Timer(double.Parse(Atimer["Interval"].ToString()) * 1000);
-                    timer.Elapsed += (sender, e) =>
-                    {
-                        try
-                        {
-                            foreach (JObject action in Data.Timers[sender as System.Timers.Timer]["Actions"])
-                            {
-                                #region 执行Actions
-                                Dictionary<string, string> Variants = new Dictionary<string, string>();
-                                switch (action["Target"].ToString())
-                                {
-                                    case "log":
-                                        try
-                                        {
-                                            if (action.ContainsKey("Info"))
-                                                _ = Data.E.CQLog.Info("CQToBDX-Log", Format(action["Info"].ToString(), Variants));
-                                            if (action.ContainsKey("Debug"))
-                                                _ = Data.E.CQLog.Debug("CQToBDX-Log", Format(action["Debug"].ToString(), Variants));
-                                            if (action.ContainsKey("Warning"))
-                                                _ = Data.E.CQLog.Warning("CQToBDX-Log", Format(action["Warning"].ToString(), Variants));
-                                            if (action.ContainsKey("Fatal"))
-                                                _ = Data.E.CQLog.Fatal("CQToBDX-Log", Format(action["Fatal"].ToString(), Variants));
-                                        }
-                                        catch (Exception) { }
-                                        break;
-                                    case "servers":
-                                        if (action.ContainsKey("cmd"))
-                                        {
-                                            if (action.ContainsKey("Filter"))
-                                            {
-                                                var lambda_receive = new JObject();
-                                                var lambda_Variants = Variants;
-                                                foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive && Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
-                                                {
-                                                    ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-                                                }
-                                            }
-                                            else
-                                            {
-                                                foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive))
-                                                {
-                                                    ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case "QQGroup":
-                                        if (action.ContainsKey("GroupID"))
-                                        {
-                                            Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                #endregion
-                            }
-                            Data.E.CQLog.Debug("计时器触发", "#" + (Data.Timers.Keys.ToList().IndexOf(sender as System.Timers.Timer) + 1));
-                        }
-                        catch (Exception err) { Data.E.CQLog.Warning("计时器触发出错", err.Message + "\n" + Data.Timers[sender as System.Timers.Timer]); }
-                    };
-                    Data.Timers.Add(timer, Atimer);
-                    Data.Timers.Keys.Last().Start();
-                }
-                int i = 0;
-                AddLog($"--------初始化--------\n成功创建 {Data.Timers.Count()} 个计时器(Timers)\n#" + string.Join("秒\n#", Data.Timers.Values.ToList().ConvertAll(l => ++i + ">" + l["Interval"].ToString())) + "秒\n----------------------");
-            }
-            #endregion
-            #region Tasks初始化
-            if (Data.Config.ContainsKey("Tasks"))
-            {
-                int i = 0;
-                AddLog($"--------初始化--------\n读取到 {Data.Config["Tasks"].Count()} 个定时任务(Tasks)\n#" + string.Join("\n#", Data.Config["Tasks"].ToList().ConvertAll(l => ++i + ">" + l["Mode"].ToString() + ":" + l["Time"].ToString())) + "\n----------------------");
-                SetNextTask();
-            }
-            #endregion
-        }
         #region 获取最近的Task
         private static KeyValuePair<double, JObject> GetNextTask()
         {
@@ -285,7 +43,7 @@ namespace ml.paradis.tool.Code
             }
             return new KeyValuePair<double, JObject>(interval, Data.Config["Tasks"][index] as JObject);
         }
-        private static void SetNextTask()
+        public static void SetNextTask()
         {
             KeyValuePair<double, JObject> NextTask = GetNextTask();
             Data.TaskTimer.Dispose();
@@ -358,14 +116,7 @@ namespace ml.paradis.tool.Code
             Data.E.CQLog.Debug("定时任务", $"当前时间:\t{DateTime.Now:HH:mm:ss}\n下一任务:\t{DateTime.Now.AddMilliseconds(NextTask.Key):HH:mm:ss}\n距离下一个定时任务触发还有{(NextTask.Key < 3600000 ? null : TimeSpan.FromMilliseconds(NextTask.Key).Hours + "小时")}{TimeSpan.FromMilliseconds(NextTask.Key).Minutes}分{TimeSpan.FromMilliseconds(NextTask.Key).Seconds}秒");
         }
         #endregion
-        public static void Quit()
-        {
-            Data.KeepAliveTimer.Stop();
-            foreach (var item in Data.WSClients.Keys)
-            {
-                item.Close();
-            }
-        }
+
         #region 计算值  
 
         #region 1.变量创建
@@ -546,6 +297,29 @@ namespace ml.paradis.tool.Code
                                     catch (Exception err)
                                     { AddLog($"Sleep执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
                                     break;
+                                //case "write_ini":
+                                //    try
+                                //    {
+                                //        Native.Tool.IniConfig.Attribute. iniConfig = new Native.Tool.IniConfig();
+                                //        if (operation.ContainsKey("Time"))
+                                //        {
+                                //            Thread.Sleep(int.Parse(operation["Time"].ToString()));
+                                //        }
+                                //    }
+                                //    catch (Exception err)
+                                //    { AddLog($"ini写入出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                //    break;
+                                //case "read_ini":
+                                //    try
+                                //    {
+                                //        if (operation.ContainsKey("Time"))
+                                //        {
+                                //            Thread.Sleep(int.Parse(operation["Time"].ToString()));
+                                //        }
+                                //    }
+                                //    catch (Exception err)
+                                //    { AddLog($"ini读取出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                                //    break;
                                 default:
                                     break;
                             }
@@ -556,6 +330,189 @@ namespace ml.paradis.tool.Code
                     catch (Exception err) { AddLog("貌似有个操作执行失败!" + err.Message); }
                 }
             }
+        }
+        public static bool ActionOperation(JObject action, JObject receive, ref Dictionary<string, string> Variants)
+        {
+            if (!action.ContainsKey("Type")) { throw new Exception("参数缺失:\"Type\""); }
+            if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
+            JObject Part = action["Parameters"] as JObject;
+            switch (action["Type"].ToString().ToLower())
+            {
+                case "createvariant":
+                    try
+                    { 
+                    }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    break;
+
+                case "replace":
+                    try
+                    {
+                        if (true)
+                        {
+
+                        }
+                        //if (operation.ContainsKey("CreateVariant"))
+                        //{
+                        //    Variants.Add(operation["CreateVariant"].ToString(), Variants[operation["TargetVariant"].ToString()].Replace(operation["Find"].ToString(), operation["Replacement"].ToString()));
+                        //}
+                        //else
+                        //{
+                        //    string TargetVariant = operation["TargetVariant"].ToString();
+                        //    Variants[TargetVariant] = Variants[TargetVariant].Replace(operation["Find"].ToString(), operation["Replacement"].ToString());
+                        //}
+                    }
+                    catch (Exception err)      { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    break;
+                case "regexreplace":
+                    try
+                    {
+                        if (operation.ContainsKey("CreateVariant"))
+                        {
+                            Variants.Add(operation["CreateVariant"].ToString(), Regex.Replace(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString(), operation["Replacement"].ToString()));
+                        }
+                        else
+                        {
+                            string TargetVariant = operation["TargetVariant"].ToString();
+                            Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], operation["Pattern"].ToString(), operation["Replacement"].ToString());
+                        }
+                    }
+                    catch (Exception err)
+                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t", Variants)}\n位于{operation}\n错误内容{err.Message}"); }
+                    break;
+                case "regexget":
+                    try
+                    {
+                        if (operation.ContainsKey("CreateVariant"))
+                        {
+                            Variants.Add(operation["CreateVariant"].ToString(), Regex.Match(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value);
+                        }
+                        else
+                        {
+                            string TargetVariant = operation["TargetVariant"].ToString();
+                            Variants[TargetVariant] = Regex.Match(Variants[TargetVariant], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value;
+                        }
+                    }
+                    catch (Exception err)
+                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t", Variants)}\n位于{operation}\n错误内容{err.Message}"); }
+                    break;
+                case "format":
+                    try
+                    {
+                        if (operation.ContainsKey("CreateVariant"))
+                        {
+                            Variants.Add(operation["CreateVariant"].ToString(), Format(operation["Text"].ToString(), Variants));
+                        }
+                        else
+                        {
+                            string TargetVariant = operation["TargetVariant"].ToString();
+                            Variants[TargetVariant] = Format(operation["Text"].ToString(), Variants);
+                        }
+                    }
+                    catch (Exception err)
+                    { AddLog($"Format参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    break;
+                case "tounicode":
+                    try
+                    {
+                        if (operation.ContainsKey("CreateVariant"))
+                        {
+                            Variants.Add(operation["CreateVariant"].ToString(), Operation.StringToUnicode(Format(operation["Text"].ToString(), Variants)));
+                        }
+                        else
+                        {
+                            if (operation.ContainsKey("TargetVariant"))
+                            {
+                                string TargetVariant = operation["TargetVariant"].ToString();
+                                Variants[TargetVariant] = Operation.StringToUnicode(Variants[TargetVariant]);
+                            }
+                        }
+                    }
+                    catch (Exception err)
+                    { AddLog($"ToUnicode参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    break;
+                case "motdbe":
+                    try
+                    {
+                        if (operation.ContainsKey("CreateVariant"))
+                        {
+                            try
+                            {
+                                Variants.Add(operation["CreateVariant"].ToString(),
+                                    Format(Format(operation["Text"].ToString(), GetServerInfoD(
+                                      Format(operation["IP"].ToString(), Variants),
+                                      Format(operation["PORT"].ToString(), Variants)),
+                                        "$"), Variants)
+                                    );
+                            }
+                            catch (Exception err)
+                            {
+                                Variants.Add(operation["CreateVariant"].ToString(), Format(string.Format(operation["FailedText"].ToString(), err.Message), Variants));
+                            }
+                        }
+                    }
+                    catch (Exception err)
+                    { AddLog($"MotdBE执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    break;
+                case "gethtml":
+                    try
+                    {
+                        if (operation.ContainsKey("CreateVariant"))
+                        {
+                            try
+                            {
+                                Native.Tool.Http.HttpWebClient webClient = new Native.Tool.Http.HttpWebClient();
+                                Variants.Add(operation["CreateVariant"].ToString(),
+                                    Encoding.UTF8.GetString(webClient.DownloadData(Format(operation["URI"].ToString(), Variants)))
+                                    );
+                            }
+                            catch (Exception err)
+                            {
+                                Variants.Add(operation["CreateVariant"].ToString(), "获取失败" + err.Message);
+                            }
+                        }
+                    }
+                    catch (Exception err)
+                    { AddLog($"GetHTML执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    break;
+                case "sleep":
+                    try
+                    {
+                        if (operation.ContainsKey("Time"))
+                        {
+                            Thread.Sleep(int.Parse(operation["Time"].ToString()));
+                        }
+                    }
+                    catch (Exception err)
+                    { AddLog($"Sleep执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    break;
+                //case "write_ini":
+                //    try
+                //    {
+                //        Native.Tool.IniConfig.Attribute. iniConfig = new Native.Tool.IniConfig();
+                //        if (operation.ContainsKey("Time"))
+                //        {
+                //            Thread.Sleep(int.Parse(operation["Time"].ToString()));
+                //        }
+                //    }
+                //    catch (Exception err)
+                //    { AddLog($"ini写入出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                //    break;
+                //case "read_ini":
+                //    try
+                //    {
+                //        if (operation.ContainsKey("Time"))
+                //        {
+                //            Thread.Sleep(int.Parse(operation["Time"].ToString()));
+                //        }
+                //    }
+                //    catch (Exception err)
+                //    { AddLog($"ini读取出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                //    break;
+                default:
+                    return false;
+            }
+            return true;
         }
         #endregion
 
@@ -652,7 +609,7 @@ namespace ml.paradis.tool.Code
         //----------------
 
         public static bool CalculateExpressions(JToken Filters, JToken Source, Dictionary<string, string> Variants) =>
-  CalculateExpressions(Filters, Source, Variants, new JObject());
+        CalculateExpressions(Filters, Source, Variants, new JObject());
         public static bool CalculateExpressions(JToken Filters, JToken Source, Dictionary<string, string> Variants, JObject server)
         {
             if (Filters.Type == JTokenType.Boolean) { return (bool)Filters; }

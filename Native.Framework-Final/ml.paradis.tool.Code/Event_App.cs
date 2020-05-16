@@ -22,7 +22,7 @@ namespace ml.paradis.tool.Code
             try
             {
                 Data.E = e;
-                Operation.Setup();
+                Main.Setup();
                 Operation.AddLog("插件启动成功!\nCQ插件作者:gxh\nSDK:Native.Sdk\n编写语言C#\n需配合BDX端的Websocket插件使用!");
                 Operation.AddLog($"当前{Data.WSClients.Count}个Websocket实例");
                 for (int i = 0; i < Data.WSClients.Count; i++)
@@ -40,7 +40,7 @@ namespace ml.paradis.tool.Code
     {
         public void AppDisable(object sender, CQAppDisableEventArgs e)
         {
-            Operation.Quit();
+            Main.Quit();
         }
     }
 }
