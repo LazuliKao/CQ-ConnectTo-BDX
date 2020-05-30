@@ -168,12 +168,12 @@ namespace ml.paradis.tool.Code
                                                                                     new JProperty("MaxMemberCount", GroupInfo.MaxMemberCount)
                                                                                 }
                             )
-                        };
-                        //   Operation.AddLog(receive.ToString());
+                        }; 
+
                         DoTriggers((JArray)group["Triggers"], ref receive, group, ref e);
                     }
                     catch (Exception err)
-                    { Operation.AddLog("群聊触发器" + err.ToString()); }
+                    { Operation.AddLog("群聊动作执行出错：\n" + err.ToString()); }
                     #endregion
 
                 }

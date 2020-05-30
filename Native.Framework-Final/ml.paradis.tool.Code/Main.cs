@@ -178,114 +178,255 @@ namespace ml.paradis.tool.Code
                     {
                         try
                         {
-                            Operation.ActionOperation(action, receive, ref Variants);
-                         }
+                            if (Operation.ActionOperation(action, receive, ref Variants, server))
+                            {
+                                #region 特定操作
+                                if (!action.ContainsKey("Type")) { throw new Exception("参数缺失:\"Type\""); }
+                                if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
+                                JObject Part = action["Parameters"] as JObject;
+                                if (action.ContainsKey("Filter"))
+                                { if (!Operation.CalculateExpressions(action["Filter"], receive, Variants)) { continue; } }
+                                switch (action["Type"].ToString().ToLower())
+                                {
+                                    case "doactions":
+                                    case "doaction":
+                                    case "subactions":
+                                    case "subaction":
+                                        try
+                                        {
+                                            DoActions((JArray)Part["Actions"]);
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        continue;
+                                    case "sender":
+                                        try
+                                        {
+                                            wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                         break;
+                                    case "other":
+                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
+                                        {
+                                            try
+                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
+                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        }
+                                        break;
+                                    case "all": 
+                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
+                                        {
+                                            try
+                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
+                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        }
+                                        break;
+                                    case "qqgroup":
+                                    case "group":
+                                    case "groupmessage":
+                                    case "gm":
+                                    case "发送群消息":
+                                        try
+                                        { Data.E.CQApi.SendGroupMessage(long.Parse(Part["GroupID"].ToString()), Operation.Format(Part["Message"].ToString(), Variants)); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        break;
+                                    default:
+                                        Data.E.CQLog.Error("[WS接收]ERROR[Actions]", $"未知操作{action["Type"].ToString()}\n位于{action}");
+                                        continue;
+                                }
+                                #endregion
+                            }
+                        }
                         catch (Exception err)
                         {
                             Data.E.CQLog.Error("[WS接收]ERROR", err.Message);
-                         }
+                        }
                     }
                 }
                 DoActions((JArray)server["Actions"]);
 
-            //    #region 1
-            //    //JObject server = Data.WSClients[wsc];
-            //    void DoTriggers(JArray triggers)
-            //    {
-            //        foreach (JObject trigger in triggers)
-            //        {
-            //            Operation.VariantCreate(trigger, receive, out Dictionary<string, string> Variants, server);
-            //            Operation.VariantOperation(trigger, receive, ref Variants);
-            //            //#region 过滤条件计算
-            //            //if (trigger.ContainsKey("Filter"))
-            //            //{
-            //            //    void DoActions(JObject action)
-            //            //    {
-            //            //        switch (action["Target"].ToString())
-            //            //        {
-            //            //            case "log":
-            //            //                try
-            //            //                {
-            //            //                    if (action.ContainsKey("Info"))
-            //            //                        _ = Data.E.CQLog.Info("CQToBDX-Log", Operation.Format(action["Info"].ToString(), Variants));
-            //            //                    if (action.ContainsKey("Debug"))
-            //            //                        _ = Data.E.CQLog.Debug("CQToBDX-Log", Operation.Format(action["Debug"].ToString(), Variants));
-            //            //                    if (action.ContainsKey("Warning"))
-            //            //                        _ = Data.E.CQLog.Warning("CQToBDX-Log", Operation.Format(action["Warning"].ToString(), Variants));
-            //            //                    if (action.ContainsKey("Fatal"))
-            //            //                        _ = Data.E.CQLog.Fatal("CQToBDX-Log", Operation.Format(action["Fatal"].ToString(), Variants));
-            //            //                }
-            //            //                catch (Exception) { }
-            //            //                break;
-            //            //            case "sender":
-            //            //                if (action.ContainsKey("cmd"))
-            //            //                {
-            //            //                    wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-            //            //                }
-            //            //                break;
-            //            //            case "other":
-            //            //                foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
-            //            //                {
-            //            //                    if (action.ContainsKey("cmd"))
-            //            //                    { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants))); }
-            //            //                }
-            //            //                break;
-            //            //            case "all":
-            //            //                foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
-            //            //                {
-            //            //                    if (action.ContainsKey("cmd"))
-            //            //                    { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants))); }
-            //            //                }
-            //            //                break;
-            //            //            case "QQGroup":
-            //            //                if (action.ContainsKey("GroupID"))
-            //            //                {
-            //            //                    Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
-            //            //                }
-            //            //                break;
-            //            //            case "doTriggers":
-            //            //                DoTriggers((JArray)action["Triggers"]);
-            //            //                break;
-            //            //            default:
-            //            //                break;
-            //            //        }
-            //            //    }
-            //            //    if (Operation.CalculateExpressions(trigger["Filter"], receive, Variants))
-            //            //    {
-            //            //        #region 满足条件Actions 
-            //            //        if (trigger.ContainsKey("Actions"))
-            //            //        {
-            //            //            foreach (JObject action in trigger["Actions"])
-            //            //            {
-            //            //                DoActions(action);
-            //            //            }
-            //            //        }
-            //            //        #endregion
-            //            //    }
-            //            //    else
-            //            //    {
-            //            //        #region 不满足条件Actions 
-            //            //        if (trigger.ContainsKey("MismatchedActions"))
-            //            //        {
-            //            //            foreach (JObject action in trigger["MismatchedActions"])
-            //            //            {
-            //            //                DoActions(action);
-            //            //            }
-            //            //        }
-            //            //        #endregion
-            //            //    }
-            //            //}
-            //            //#endregion
-            //        }
-            //    }
-            //    DoTriggers((JArray)server["Triggers"]);
-            //    #endregion
-            //
+                //    #region 1
+                //    //JObject server = Data.WSClients[wsc];
+                //    void DoTriggers(JArray triggers)
+                //    {
+                //        foreach (JObject trigger in triggers)
+                //        {
+                //            Operation.VariantCreate(trigger, receive, out Dictionary<string, string> Variants, server);
+                //            Operation.VariantOperation(trigger, receive, ref Variants);
+                //            //#region 过滤条件计算
+                //            //if (trigger.ContainsKey("Filter"))
+                //            //{
+                //            //    void DoActions(JObject action)
+                //            //    {
+                //            //        switch (action["Target"].ToString())
+                //            //        {
+                //            //            case "log":
+                //            //                try
+                //            //                {
+                //            //                    if (action.ContainsKey("Info"))
+                //            //                        _ = Data.E.CQLog.Info("CQToBDX-Log", Operation.Format(action["Info"].ToString(), Variants));
+                //            //                    if (action.ContainsKey("Debug"))
+                //            //                        _ = Data.E.CQLog.Debug("CQToBDX-Log", Operation.Format(action["Debug"].ToString(), Variants));
+                //            //                    if (action.ContainsKey("Warning"))
+                //            //                        _ = Data.E.CQLog.Warning("CQToBDX-Log", Operation.Format(action["Warning"].ToString(), Variants));
+                //            //                    if (action.ContainsKey("Fatal"))
+                //            //                        _ = Data.E.CQLog.Fatal("CQToBDX-Log", Operation.Format(action["Fatal"].ToString(), Variants));
+                //            //                }
+                //            //                catch (Exception) { }
+                //            //                break;
+                //            //            case "sender":
+                //            //                if (action.ContainsKey("cmd"))
+                //            //                {
+                //            //                    wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
+                //            //                }
+                //            //                break;
+                //            //            case "other":
+                //            //                foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
+                //            //                {
+                //            //                    if (action.ContainsKey("cmd"))
+                //            //                    { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants))); }
+                //            //                }
+                //            //                break;
+                //            //            case "all":
+                //            //                foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
+                //            //                {
+                //            //                    if (action.ContainsKey("cmd"))
+                //            //                    { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants))); }
+                //            //                }
+                //            //                break;
+                //            //            case "QQGroup":
+                //            //                if (action.ContainsKey("GroupID"))
+                //            //                {
+                //            //                    Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
+                //            //                }
+                //            //                break;
+                //            //            case "doTriggers":
+                //            //                DoTriggers((JArray)action["Triggers"]);
+                //            //                break;
+                //            //            default:
+                //            //                break;
+                //            //        }
+                //            //    }
+                //            //    if (Operation.CalculateExpressions(trigger["Filter"], receive, Variants))
+                //            //    {
+                //            //        #region 满足条件Actions 
+                //            //        if (trigger.ContainsKey("Actions"))
+                //            //        {
+                //            //            foreach (JObject action in trigger["Actions"])
+                //            //            {
+                //            //                DoActions(action);
+                //            //            }
+                //            //        }
+                //            //        #endregion
+                //            //    }
+                //            //    else
+                //            //    {
+                //            //        #region 不满足条件Actions 
+                //            //        if (trigger.ContainsKey("MismatchedActions"))
+                //            //        {
+                //            //            foreach (JObject action in trigger["MismatchedActions"])
+                //            //            {
+                //            //                DoActions(action);
+                //            //            }
+                //            //        }
+                //            //        #endregion
+                //            //    }
+                //            //}
+                //            //#endregion
+                //        }
+                //    }
+                //    DoTriggers((JArray)server["Triggers"]);
+                //    #endregion
+                //
             }
             catch (Exception err)
             { Operation.AddLog(err.ToString()); }
         }
         #endregion
-
+        #region WSC receive
+        public static void GroupReceiveMessage(Native.Sdk.Cqp.EventArgs.CQGroupMessageEventArgs e, string receiveData)
+        {
+            try
+            {
+                JObject receive = JObject.Parse(receiveData);
+                JObject server = Data.WSClients[wsc];
+                Dictionary<string, string> Variants = new Dictionary<string, string>();
+                void DoActions(JArray actions)
+                {
+                    foreach (JObject action in actions)
+                    {
+                        try
+                        {
+                            if (Operation.ActionOperation(action, receive, ref Variants, server))
+                            {
+                                #region 特定操作
+                                if (!action.ContainsKey("Type")) { throw new Exception("参数缺失:\"Type\""); }
+                                if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
+                                JObject Part = action["Parameters"] as JObject;
+                                if (action.ContainsKey("Filter"))
+                                { if (!Operation.CalculateExpressions(action["Filter"], receive, Variants)) { continue; } }
+                                switch (action["Type"].ToString().ToLower())
+                                {
+                                    case "doactions":
+                                    case "doaction":
+                                    case "subactions":
+                                    case "subaction":
+                                        try
+                                        {
+                                            DoActions((JArray)Part["Actions"]);
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        continue;
+                                    case "sender":
+                                        try
+                                        {
+                                            wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        break;
+                                    case "other":
+                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
+                                        {
+                                            try
+                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
+                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        }
+                                        break;
+                                    case "all":
+                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
+                                        {
+                                            try
+                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
+                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        }
+                                        break;
+                                    case "qqgroup":
+                                    case "group":
+                                    case "groupmessage":
+                                    case "gm":
+                                    case "发送群消息":
+                                        try
+                                        { Data.E.CQApi.SendGroupMessage(long.Parse(Part["GroupID"].ToString()), Operation.Format(Part["Message"].ToString(), Variants)); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        break;
+                                    default:
+                                        Data.E.CQLog.Error("[WS接收]ERROR[Actions]", $"未知操作{action["Type"].ToString()}\n位于{action}");
+                                        continue;
+                                }
+                                #endregion
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            Data.E.CQLog.Error("[WS接收]ERROR", err.Message);
+                        }
+                    }
+                }
+                DoActions((JArray)server["Actions"]); 
+            }
+            catch (Exception err)
+            { Operation.AddLog(err.ToString()); }
+        }
+        #endregion
     }
 }

@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Native.Tool.IniConfig.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -331,188 +333,213 @@ namespace ml.paradis.tool.Code
                 }
             }
         }
-        public static bool ActionOperation(JObject action, JObject receive, ref Dictionary<string, string> Variants)
+        public static bool ActionOperation(JObject action, JObject receive, ref Dictionary<string, string> Variants, JObject server)
         {
             if (!action.ContainsKey("Type")) { throw new Exception("参数缺失:\"Type\""); }
             if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
             JObject Part = action["Parameters"] as JObject;
+            if (action.ContainsKey("Filter"))
+            { if (!CalculateExpressions(action["Filter"], receive, Variants)) { return false; } }
             switch (action["Type"].ToString().ToLower())
             {
                 case "createvariant":
+                case "var":
                     try
-                    { 
+                    {
+                        if (Part.ContainsKey("Path"))
+                        {
+                            Variants.Add(Part["Name"].ToString(), GetSubItem(receive, Part["Path"].ToList().ConvertAll(l => l.ToString())));
+                        }
+                        else if (Part.ContainsKey("ServerConfig"))
+                        {
+                            Variants.Add(Part["Name"].ToString(), GetSubItem(server, Part["ServerConfig"].ToList().ConvertAll(l => l.ToString())));
+                        }
+                        else if (Part.ContainsKey("Value"))
+                        {
+                            Variants.Add(Part["Name"].ToString(), Part["Value"].ToString());
+                        }
+                        else
+                        {
+                            throw new Exception("缺少参数！创建变量需要\"Path\",\"ServerConfig\"或\"Value\"之一");
+                        }
                     }
                     catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
-
+                case "log":
+                    try
+                    {
+                        string logType = "CQToBDX-Log";
+                        if (Part.ContainsKey("logType"))
+                        {
+                            logType = Format(Part["logType"].ToString(), Variants);
+                        }
+                        if (Part.ContainsKey("Info"))
+                            _ = Data.E.CQLog.Info(logType, Format(Part["Info"].ToString(), Variants));
+                        if (Part.ContainsKey("Debug"))
+                            _ = Data.E.CQLog.Debug(logType, Format(Part["Debug"].ToString(), Variants));
+                        if (Part.ContainsKey("Warning"))
+                            _ = Data.E.CQLog.Warning(logType, Format(Part["Warning"].ToString(), Variants));
+                        if (Part.ContainsKey("Fatal"))
+                            _ = Data.E.CQLog.Fatal(logType, Format(Part["Fatal"].ToString(), Variants));
+                    }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    break;
                 case "replace":
                     try
                     {
-                        if (true)
+                        if (Part.ContainsKey("CreateVariant"))
                         {
-
+                            Variants.Add(Part["CreateVariant"].ToString(), Variants[Part["TargetVariant"].ToString()].Replace(Part["Find"].ToString(), Part["Replacement"].ToString()));
                         }
-                        //if (operation.ContainsKey("CreateVariant"))
-                        //{
-                        //    Variants.Add(operation["CreateVariant"].ToString(), Variants[operation["TargetVariant"].ToString()].Replace(operation["Find"].ToString(), operation["Replacement"].ToString()));
-                        //}
-                        //else
-                        //{
-                        //    string TargetVariant = operation["TargetVariant"].ToString();
-                        //    Variants[TargetVariant] = Variants[TargetVariant].Replace(operation["Find"].ToString(), operation["Replacement"].ToString());
-                        //}
+                        else
+                        {
+                            string TargetVariant = Part["TargetVariant"].ToString();
+                            Variants[TargetVariant] = Variants[TargetVariant].Replace(Part["Find"].ToString(), Part["Replacement"].ToString());
+                        }
                     }
-                    catch (Exception err)      { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
                 case "regexreplace":
                     try
                     {
-                        if (operation.ContainsKey("CreateVariant"))
+                        if (Part.ContainsKey("CreateVariant"))
                         {
-                            Variants.Add(operation["CreateVariant"].ToString(), Regex.Replace(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString(), operation["Replacement"].ToString()));
+                            Variants.Add(Part["CreateVariant"].ToString(), Regex.Replace(Variants[Part["TargetVariant"].ToString()], Part["Pattern"].ToString(), Part["Replacement"].ToString()));
                         }
                         else
                         {
-                            string TargetVariant = operation["TargetVariant"].ToString();
-                            Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], operation["Pattern"].ToString(), operation["Replacement"].ToString());
+                            string TargetVariant = Part["TargetVariant"].ToString();
+                            Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], Part["Pattern"].ToString(), Part["Replacement"].ToString());
                         }
                     }
-                    catch (Exception err)
-                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t", Variants)}\n位于{operation}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
                 case "regexget":
                     try
                     {
-                        if (operation.ContainsKey("CreateVariant"))
+                        if (Part.ContainsKey("CreateVariant"))
                         {
-                            Variants.Add(operation["CreateVariant"].ToString(), Regex.Match(Variants[operation["TargetVariant"].ToString()], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value);
+                            Variants.Add(Part["CreateVariant"].ToString(), Regex.Match(Variants[Part["TargetVariant"].ToString()], Part["Pattern"].ToString()).Groups[Part["GroupName"].ToString()].Value);
                         }
                         else
                         {
-                            string TargetVariant = operation["TargetVariant"].ToString();
-                            Variants[TargetVariant] = Regex.Match(Variants[TargetVariant], operation["Pattern"].ToString()).Groups[operation["GroupName"].ToString()].Value;
+                            string TargetVariant = Part["TargetVariant"].ToString();
+                            Variants[TargetVariant] = Regex.Match(Variants[TargetVariant], Part["Pattern"].ToString()).Groups[Part["GroupName"].ToString()].Value;
                         }
                     }
-                    catch (Exception err)
-                    { AddLog($"可能是参数缺失或变量或正则表达式有误不存在\nVarList:{string.Join("\t", Variants)}\n位于{operation}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
                 case "format":
                     try
                     {
-                        if (operation.ContainsKey("CreateVariant"))
+                        if (Part.ContainsKey("CreateVariant"))
                         {
-                            Variants.Add(operation["CreateVariant"].ToString(), Format(operation["Text"].ToString(), Variants));
+                            Variants.Add(Part["CreateVariant"].ToString(), Format(Part["Text"].ToString(), Variants));
                         }
                         else
                         {
-                            string TargetVariant = operation["TargetVariant"].ToString();
-                            Variants[TargetVariant] = Format(operation["Text"].ToString(), Variants);
+                            string TargetVariant = Part["TargetVariant"].ToString();
+                            Variants[TargetVariant] = Format(Part["Text"].ToString(), Variants);
                         }
                     }
-                    catch (Exception err)
-                    { AddLog($"Format参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
                 case "tounicode":
                     try
                     {
-                        if (operation.ContainsKey("CreateVariant"))
+                        if (Part.ContainsKey("CreateVariant"))
                         {
-                            Variants.Add(operation["CreateVariant"].ToString(), Operation.StringToUnicode(Format(operation["Text"].ToString(), Variants)));
+                            Variants.Add(Part["CreateVariant"].ToString(), StringToUnicode(Format(Part["Text"].ToString(), Variants)));
                         }
                         else
                         {
-                            if (operation.ContainsKey("TargetVariant"))
+                            if (Part.ContainsKey("TargetVariant"))
                             {
-                                string TargetVariant = operation["TargetVariant"].ToString();
-                                Variants[TargetVariant] = Operation.StringToUnicode(Variants[TargetVariant]);
+                                string TargetVariant = Part["TargetVariant"].ToString();
+                                Variants[TargetVariant] = StringToUnicode(Variants[TargetVariant]);
                             }
                         }
                     }
-                    catch (Exception err)
-                    { AddLog($"ToUnicode参数缺失或变量或格式有误不存在\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
                 case "motdbe":
                     try
                     {
-                        if (operation.ContainsKey("CreateVariant"))
+                        if (Part.ContainsKey("CreateVariant"))
                         {
                             try
                             {
-                                Variants.Add(operation["CreateVariant"].ToString(),
-                                    Format(Format(operation["Text"].ToString(), GetServerInfoD(
-                                      Format(operation["IP"].ToString(), Variants),
-                                      Format(operation["PORT"].ToString(), Variants)),
+                                Variants.Add(Part["CreateVariant"].ToString(),
+                                    Format(Format(Part["Text"].ToString(), GetServerInfoD(
+                                      Format(Part["IP"].ToString(), Variants),
+                                      Format(Part["PORT"].ToString(), Variants)),
                                         "$"), Variants)
                                     );
                             }
                             catch (Exception err)
                             {
-                                Variants.Add(operation["CreateVariant"].ToString(), Format(string.Format(operation["FailedText"].ToString(), err.Message), Variants));
+                                Variants.Add(Part["CreateVariant"].ToString(), Format(string.Format(Part["FailedText"].ToString(), err.Message), Variants));
                             }
                         }
                     }
                     catch (Exception err)
-                    { AddLog($"MotdBE执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    { AddLog($"MotdBE执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
                 case "gethtml":
                     try
                     {
-                        if (operation.ContainsKey("CreateVariant"))
+                        if (Part.ContainsKey("CreateVariant"))
                         {
                             try
                             {
                                 Native.Tool.Http.HttpWebClient webClient = new Native.Tool.Http.HttpWebClient();
-                                Variants.Add(operation["CreateVariant"].ToString(),
-                                    Encoding.UTF8.GetString(webClient.DownloadData(Format(operation["URI"].ToString(), Variants)))
+                                Variants.Add(Part["CreateVariant"].ToString(),
+                                    Encoding.UTF8.GetString(webClient.DownloadData(Format(Part["URI"].ToString(), Variants)))
                                     );
                             }
                             catch (Exception err)
                             {
-                                Variants.Add(operation["CreateVariant"].ToString(), "获取失败" + err.Message);
+                                Variants.Add(Part["CreateVariant"].ToString(), "获取失败" + err.Message);
                             }
                         }
                     }
                     catch (Exception err)
-                    { AddLog($"GetHTML执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    { AddLog($"GetHTML执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
                 case "sleep":
                     try
                     {
-                        if (operation.ContainsKey("Time"))
+                        if (Part.ContainsKey("Time"))
                         {
-                            Thread.Sleep(int.Parse(operation["Time"].ToString()));
+                            Thread.Sleep(int.Parse(Part["Time"].ToString()));
                         }
                     }
                     catch (Exception err)
-                    { AddLog($"Sleep执行出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
+                    { AddLog($"Sleep执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
-                //case "write_ini":
-                //    try
-                //    {
-                //        Native.Tool.IniConfig.Attribute. iniConfig = new Native.Tool.IniConfig();
-                //        if (operation.ContainsKey("Time"))
-                //        {
-                //            Thread.Sleep(int.Parse(operation["Time"].ToString()));
-                //        }
-                //    }
-                //    catch (Exception err)
-                //    { AddLog($"ini写入出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
-                //    break;
-                //case "read_ini":
-                //    try
-                //    {
-                //        if (operation.ContainsKey("Time"))
-                //        {
-                //            Thread.Sleep(int.Parse(operation["Time"].ToString()));
-                //        }
-                //    }
-                //    catch (Exception err)
-                //    { AddLog($"ini读取出错\nVarCount:{Variants.Count}\n位于{operation}\n错误内容{err.Message}"); }
-                //    break;
+                case "write_ini":
+                    try
+                    {
+                        IniObject iObject = IniObject.Load(Regex.Replace(Part["Path"].ToString(), @"^~/?", Path.GetDirectoryName(Data.ConfigPath) + "/").Replace("/", "\\"));
+                        iObject[Format(Part["Section"].ToString(), Variants)][Format(Part["Key"].ToString(), Variants)] = new IniValue(Format(Part["Value"].ToString(), Variants));
+                        iObject.Save();
+                    }
+                    catch (Exception err)
+                    { AddLog($"ini写入出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    break;
+                case "read_ini":
+                    try
+                    {
+                        IniObject iObject = IniObject.Load(Regex.Replace(Part["Path"].ToString(), @"^~/?", Path.GetDirectoryName(Data.ConfigPath) + "/").Replace("/", "\\"));
+                         Variants.Add(Part["CreateVariant"].ToString(), iObject[Format(Part["Section"].ToString(), Variants)][Format(Part["Key"].ToString(), Variants)].Value);
+                     }
+                    catch (Exception err)
+                    { AddLog($"ini读取出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    break;
                 default:
-                    return false;
+                    return true;
             }
-            return true;
+            return false;
         }
         #endregion
 

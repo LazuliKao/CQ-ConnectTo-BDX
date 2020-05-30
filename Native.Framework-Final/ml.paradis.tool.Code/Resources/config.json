@@ -6,14 +6,15 @@
 //https://code.visualstudio.com/
 //--------------------------------
 {
-    "configVersion": 0.3,
+    "configVersion": 1.0,
     "Servers": [
         {
             "Address": "ws://localhost:29132/mc",
             "Passwd": "passwd",
             "Tag": "测试服务器1",
-            "Triggers": [
-                { //服务器消息转发到群聊
+            "Actions": [
+                {
+                    "Type": "DoActions",
                     "Filter": {
                         "Path": [
                             "operate"
@@ -21,65 +22,67 @@
                         "Operator": "==", //比较符github有详讲
                         "Value": "onmsg" //值
                     },
-                    "Actions": [ //满足上面的筛选器后执行行为
-                        {
-                            "Target": "doTriggers", //嵌套一层触发器
-                            "Triggers": [ //上面一样格式的触发器
-                                {
-                                    "Variants": [ //自定义变量，以便在后面用%xxx%调用
-                                        {
-                                            "Name": "PlayerName", //%PlayerName%
-                                            "Path": [
-                                                "target" //层级目录，取自{"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
-                                            ]
-                                        },
-                                        {
-                                            "Name": "Message", //变量名称
-                                            "Path": [
-                                                "text" //层级目录，取自{"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
-                                            ]
-                                        },
-                                        {
-                                            "Name": "ServerName",
-                                            "ServerConfig": [
-                                                "Tag" //配置文件层级目录，取自当前server的配置文件，可以自定义任何标签{ "Address": "ws://localhost:8880/mc", "Passwd": "passwd","Tag": "测试服务器1","Triggers"。。。}
-                                            ]
-                                        }
-                                    ],
-                                    "Filter": true,
-                                    "Operations": [
-                                        {
-                                            "Type": "ToUnicode", //操作类型
-                                            "CreateVariant": "ReturnMessage", //创建的变量，不需要提前在"Variants"定义，自动创建用来储存返回值
-                                            "Text": "§e<§6%PlayerName%§e>§b%Message%", //格式化的字符串
-                                            "Filter": true //筛选是否执行 保持执行请填true
-                                        }
-                                    ],
-                                    "Actions": [ //各种操作，参考GitHub
-                                        {
-                                            "Target": "log",
-                                            "Debug": "[%ServerName%]玩家%PlayerName%发送了消息:%Message%"
-                                        } /*,
-                                        {
-                                            "Target": "sender",
-                                            "cmd": "say §e§'<复读机§'>§b%PlayerName%§a=>§r%Message%"
-                                        }*/,
-                                        {
-                                            "Target": "other",
-                                            "cmd": "tellraw @a {\"rawtext\":[{\"text\":\"§a【%ServerName%】%ReturnMessage%\"}]}"
-                                        },
-                                        {
-                                            "Target": "QQGroup",
-                                            "GroupID": 386475891,
-                                            "Message": "[%ServerName%:Chat]%PlayerName%>%Message%"
-                                        }
+                    "Parameters": {
+                        "Actions": [
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "PlayerName",
+                                    "Path": [
+                                        "target"
                                     ]
                                 }
-                            ]
-                        }
-                    ]
+                            },
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "Message", //变量名称
+                                    "Path": [
+                                        "text" //层级目录，取自{"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
+                                    ]
+                                }
+                            },
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "ServerName",
+                                    "ServerConfig": [
+                                        "Tag"
+                                    ]
+                                }
+                            },
+                            {
+                                "Type": "ToUnicode",
+                                "Parameters": {
+                                    "CreateVariant": "ReturnMessage",
+                                    "Text": "§e<§6%PlayerName%§e>§b%Message%",
+                                    "Filter": true
+                                }
+                            },
+                            {
+                                "Type": "log",
+                                "Parameters": {
+                                    "Debug": "[%ServerName%]玩家%PlayerName%发送了消息:%Message%"
+                                }
+                            },
+                            {
+                                "Type": "other",
+                                "Parameters": {
+                                    "cmd": "tellraw @a {\"rawtext\":[{\"text\":\"§a【%ServerName%】%ReturnMessage%\"}]}"
+                                }
+                            },
+                            {
+                                "Type": "GroupMessage",
+                                "Parameters": {
+                                    "GroupID": 386475891,
+                                    "Message": "[%ServerName%:Chat]%PlayerName%>%Message%"
+                                }
+                            }
+                        ]
+                    }
                 },
-                { //玩家加入信息处理
+                {
+                    "Type": "DoActions",
                     "Filter": {
                         "Path": [
                             "operate"
@@ -87,51 +90,56 @@
                         "Operator": "==", //比较符github有详讲
                         "Value": "onjoin" //值
                     },
-                    "Actions": [ //满足上面的筛选器后执行行为
-                        {
-                            "Target": "doTriggers", //嵌套一层触发器
-                            "Triggers": [ //上面一样格式的触发器
-                                {
-                                    "Variants": [ //自定义变量，以便在后面用%xxx%调用
-                                        {
-                                            "Name": "PlayerName", //%PlayerName%
-                                            "Path": [
-                                                "target" //层级目录，取自{"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
-                                            ]
-                                        },
-                                        {
-                                            "Name": "ServerName",
-                                            "ServerConfig": [
-                                                "Tag" //配置文件层级目录，取自当前server的配置文件，可以自定义任何标签{ "Address": "ws://localhost:8880/mc", "Passwd": "passwd","Tag": "测试服务器1","Triggers"。。。}
-                                            ]
-                                        }
-                                    ],
-                                    "Filter": true,
-                                    "Actions": [ //各种操作，参考GitHub
-                                        {
-                                            "Target": "log",
-                                            "Debug": "[%ServerName%]玩家%PlayerName%加入了服务器"
-                                        },
-                                        {
-                                            "Target": "sender",
-                                            "cmd": "say §e欢迎%PlayerName%§a加入%ServerName%！"
-                                        },
-                                        {
-                                            "Target": "other",
-                                            "cmd": "say %PlayerName%加入了%ServerName%"
-                                        },
-                                        {
-                                            "Target": "QQGroup",
-                                            "GroupID": 386475891,
-                                            "Message": "[%ServerName%:Join]%PlayerName%加入了服务器"
-                                        }
+                    "Parameters": {
+                        "Actions": [
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "PlayerName",
+                                    "Path": [
+                                        "target"
                                     ]
                                 }
-                            ]
-                        }
-                    ]
+                            },
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "ServerName",
+                                    "ServerConfig": [
+                                        "Tag"
+                                    ]
+                                }
+                            },
+                            {
+                                "Type": "log",
+                                "Parameters": {
+                                    "Debug": "[%ServerName%]玩家%PlayerName%加入了服务器"
+                                }
+                            },
+                            {
+                                "Type": "sender",
+                                "Parameters": {
+                                    "cmd": "say §e欢迎%PlayerName%§a加入%ServerName%！"
+                                }
+                            },
+                            {
+                                "Type": "other",
+                                "Parameters": {
+                                    "cmd": "say %PlayerName%加入了%ServerName%"
+                                }
+                            },
+                            {
+                                "Type": "GroupMessage",
+                                "Parameters": {
+                                    "GroupID": 386475891,
+                                    "Message": "[%ServerName%:Join]%PlayerName%加入了服务器"
+                                }
+                            }
+                        ]
+                    }
                 },
-                { //玩家退出信息处理
+                {
+                    "Type": "DoActions",
                     "Filter": {
                         "Path": [
                             "operate"
@@ -139,200 +147,53 @@
                         "Operator": "==", //比较符github有详讲
                         "Value": "onleft" //值
                     },
-                    "Actions": [ //满足上面的筛选器后执行行为
-                        {
-                            "Target": "doTriggers", //嵌套一层触发器
-                            "Triggers": [ //上面一样格式的触发器
-                                {
-                                    "Variants": [ //自定义变量，以便在后面用%xxx%调用
-                                        {
-                                            "Name": "PlayerName", //%PlayerName%
-                                            "Path": [
-                                                "target" //层级目录，取自{"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
-                                            ]
-                                        },
-                                        {
-                                            "Name": "ServerName",
-                                            "ServerConfig": [
-                                                "Tag" //配置文件层级目录，取自当前server的配置文件，可以自定义任何标签{ "Address": "ws://localhost:8880/mc", "Passwd": "passwd","Tag": "测试服务器1","Triggers"。。。}
-                                            ]
-                                        }
-                                    ],
-                                    "Filter": true,
-                                    "Actions": [ //各种操作，参考GitHub
-                                        {
-                                            "Target": "log",
-                                            "Debug": "[%ServerName%]玩家%PlayerName%退出了服务器"
-                                        },
-                                        {
-                                            "Target": "sender",
-                                            "cmd": "say §e真可惜%PlayerName%§a离开了%ServerName%！"
-                                        },
-                                        {
-                                            "Target": "other",
-                                            "cmd": "say %PlayerName%离开了%ServerName%"
-                                        },
-                                        {
-                                            "Target": "QQGroup",
-                                            "GroupID": 386475891,
-                                            "Message": "[%ServerName%:Left]%PlayerName%离开了服务器"
-                                        }
+                    "Parameters": {
+                        "Actions": [
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "PlayerName",
+                                    "Path": [
+                                        "target"
                                     ]
                                 }
-                            ]
-                        }
-                    ]
-                },
-                { //CMD执行命令反馈信息处理
-                    "Filter": {
-                        "Path": [
-                            "operate"
-                        ], //收到的json逐层目录取自{"operate":"runcmd","Auth":"Success","text":"commands.kick.success"}
-                        "Operator": "==", //比较符github有详讲
-                        "Value": "runcmd" //值
-                    },
-                    "Actions": [ //满足上面的筛选器后执行行为
-                        {
-                            "Target": "doTriggers", //嵌套一层触发器
-                            "Triggers": [ //更上面一样格式的触发器
-                                {
-                                    "Variants": [ //自定义变量，以便在后面用%xxx%调用
-                                        {
-                                            "Name": "feedback", //%PlayerName%
-                                            "Path": [
-                                                "text" //层级目录，取自{"operate":"runcmd","Auth":"Success","text":"commands.kick.success"}
-                                            ]
-                                        },
-                                        {
-                                            "Name": "ServerName",
-                                            "ServerConfig": [
-                                                "Tag" //配置文件层级目录，取自当前server的配置文件，可以自定义任何标签{ "Address": "ws://localhost:8880/mc", "Passwd": "passwd","Tag": "测试服务器1","Triggers"。。。}
-                                            ]
-                                        }
-                                    ],
-                                    "Operations": [
-                                        {
-                                            "Type": "RegexReplace", //操作类型
-                                            "TargetVariant": "feedback", //操作的变量，需要提前在"Variants"定义
-                                            "Pattern": "\\n*$", //正则表达式匹配
-                                            "Replacement": "", //替换掉的字符串
-                                            "Filter": true //筛选是否执行 保持执行请填true
-                                        } //上面这个是把返回信息的文末换行符去掉的意思
-                                    ],
-                                    "Filter": {
-                                        "all_of": [
-                                            {
-                                                "Path": [
-                                                    "Auth"
-                                                ], //收到的json逐层目录取自 {"operate":"runcmd","Auth":"Success","text":"commands.kick.success"}
-                                                "Operator": "==", //比较符github有详讲
-                                                "Value": "Success" //值
-                                            },
-                                            {
-                                                "Variant": "feedback",
-                                                "Operator": "!=",
-                                                "Value": "没有与选择器匹配的目标"
-                                            },
-                                            {
-                                                "Variant": "feedback",
-                                                "Operator": "!=",
-                                                "Value": "No targets matched selector"
-                                            },
-                                            {
-                                                "Variant": "feedback",
-                                                "Operator": "!=",
-                                                "Value": "" //排除一些不需要的指令反馈
-                                            }
-                                        ]
-                                    },
-                                    "Actions": [ //各种操作，参考GitHub
-                                        {
-                                            "Target": "log",
-                                            "Debug": "%ServerName%>%feedback%"
-                                        },
-                                        {
-                                            "Target": "QQGroup",
-                                            "GroupID": 386475891,
-                                            "Message": "%ServerName%>%feedback%" //指令反馈转发到群聊
-                                        }
+                            },
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "ServerName",
+                                    "ServerConfig": [
+                                        "Tag"
                                     ]
                                 }
-                            ]
-                        }
-                    ]
-                },
-                { //自定义服务器命令执行操作
-                    "Filter": {
-                        "Path": [
-                            "operate"
-                        ],
-                        //收到的json逐层目录取自
-                        //{"operate":"onCMD","target":"gxh2004","text":"/x test"}
-                        //{"operate":"onCMD","target":"gxh2004","text":"/kick gxh2004"}
-                        "Operator": "==",
-                        "Value": "oncmd"
-                    },
-                    "Actions": [
-                        {
-                            "Target": "doTriggers",
-                            "Triggers": [
-                                {
-                                    "Variants": [
-                                        {
-                                            "Name": "CMD",
-                                            "Path": [
-                                                "text"
-                                            ]
-                                        },
-                                        {
-                                            "Name": "PlayerName", //%PlayerName%
-                                            "Path": [
-                                                "target"
-                                            ]
-                                        }
-                                    ],
-                                    "Operations": [
-                                        {
-                                            "Type": "RegexGet",
-                                            "TargetVariant": "CMD",
-                                            "CreateVariant": "getCMD1",
-                                            "Pattern": "^/(?<MyValue>\\w?)\\s+.*",
-                                            "GroupName": "MyValue",
-                                            "Filter": true
-                                        },
-                                        {
-                                            "Type": "RegexGet",
-                                            "TargetVariant": "CMD",
-                                            "CreateVariant": "CMD内容",
-                                            "Pattern": "^/\\w?\\s+(?<MyValue>.*)",
-                                            "GroupName": "MyValue",
-                                            "Filter": true
-                                        }
-                                    ],
-                                    "Filter": {
-                                        "Variant": "getCMD1",
-                                        "Operator": "==",
-                                        "Value": "x" //指令，比如/x test
-                                    },
-                                    "Actions": [
-                                        {
-                                            "Target": "log",
-                                            "Debug": "玩家%PlayerName%触发了指令:%getCMD1%=>%CMD内容%"
-                                        },
-                                        {
-                                            "Target": "QQGroup",
-                                            "GroupID": 386475891,
-                                            "Message": "%PlayerName%触发命令>%CMD内容%" //指令反馈转发到群聊
-                                        },
-                                        {
-                                            "Target": "sender",
-                                            "cmd": "/tellraw %PlayerName% {\"rawtext\":[{\"text\":\"§e你触发了/%getCMD1%命令=>%CMD内容%\"}]}" //指令反馈转发到群聊
-                                        }
-                                    ]
+                            },
+                            {
+                                "Type": "log",
+                                "Parameters": {
+                                    "Debug": "[%ServerName%]玩家%PlayerName%退出了服务器"
                                 }
-                            ]
-                        }
-                    ]
+                            },
+                            {
+                                "Type": "sender",
+                                "Parameters": {
+                                    "cmd": "say §e真可惜%PlayerName%§a离开了%ServerName%！"
+                                }
+                            },
+                            {
+                                "Type": "other",
+                                "Parameters": {
+                                    "cmd": "say %PlayerName%离开了%ServerName%"
+                                }
+                            },
+                            {
+                                "Type": "GroupMessage",
+                                "Parameters": {
+                                    "GroupID": 386475891,
+                                    "Message": "[%ServerName%:Left]%PlayerName%离开了服务器"
+                                }
+                            }
+                        ]
+                    }
                 }
             ]
         }
