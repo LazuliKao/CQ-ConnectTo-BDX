@@ -36,13 +36,13 @@ namespace ml.paradis.tool.Code
             catch (Exception)
             { return "null"; }
         }
-        private void ReturnGMAtFrom(ref CQGroupMessageEventArgs e, string message)
+        public static void ReturnGMAtFrom(ref CQGroupMessageEventArgs e, string message)
         {
             if (message == null) {/* message = "null";*/return; }
             message = Regex.Replace(message, "\\s$", "");
             e.CQApi.SendGroupMessage(e.FromGroup, Native.Sdk.Cqp.CQApi.CQCode_At(e.FromQQ), message);
         }
-        private void ReturnPrivateMessage(ref CQGroupMessageEventArgs e, string message)
+        public static void ReturnPrivateMessage(ref CQGroupMessageEventArgs e, string message)
         {
             if (message == null) { message = "null"; }
             message = Regex.Replace(message, "\\s$", "");
@@ -138,160 +138,13 @@ namespace ml.paradis.tool.Code
                     #region 触发器匹配
                     try
                     {
-                        var MemberInfo = e.FromQQ.GetGroupMemberInfo(e.FromGroup);
-                        var GroupInfo = e.FromGroup.GetGroupInfo();
-                        JObject receive = new JObject() {
-                            new JProperty("Message", CQApi.CQDeCode(e.Message.Text)/*.Replace("&#91;", "[").Replace("&#93;", "]")*/),
-                            new JProperty("FromQQ", e.FromQQ.Id),
-                            new JProperty("FromQQNick",MemberInfo.Nick),
-                            new JProperty("FromGroup", e.FromGroup.Id),
-                            new JProperty("IsFromAnonymous", e.IsFromAnonymous),
-                            new JProperty("Id", e.Id),
-                            new JProperty("MemberInfo",
-                                                                                new JObject(){
-                                                                                    new JProperty("Card",MemberInfo. Card),
-                                                                                    new JProperty("Sex",MemberInfo. Sex),
-                                                                                    new JProperty("Age",MemberInfo. Age),
-                                                                                    new JProperty("Area",MemberInfo. Area),
-                                                                                    new JProperty("JoinGroupDateTime",MemberInfo. JoinGroupDateTime),
-                                                                                    new JProperty("LastSpeakDateTime",MemberInfo. LastSpeakDateTime),
-                                                                                    new JProperty("Level",MemberInfo. Level),
-                                                                                    new JProperty("MemberType",MemberInfo. MemberType.ToString()),
-                                                                                    new JProperty("ExclusiveTitle",MemberInfo. ExclusiveTitle),
-                                                                                    new JProperty("ExclusiveTitleExpirationTime",MemberInfo. ExclusiveTitleExpirationTime)
-                                                                                                    }
-                            ),
-                            new  JProperty("GroupInfo",
-                                                                                new JObject(){
-                                                                                    new JProperty("Name", GroupInfo.Name),
-                                                                                    new JProperty("CurrentMemberCount", GroupInfo.CurrentMemberCount),
-                                                                                    new JProperty("MaxMemberCount", GroupInfo.MaxMemberCount)
-                                                                                }
-                            )
-                        }; 
-
-                        DoTriggers((JArray)group["Triggers"], ref receive, group, ref e);
+                        MessageCallback.GroupReceiveMessage(ref e,  group);  
                     }
                     catch (Exception err)
                     { Operation.AddLog("群聊动作执行出错：\n" + err.ToString()); }
-                    #endregion
-
-                }
-
+                    #endregion 
+                } 
             }
         }
-        private void DoTriggers(JArray triggers, ref JObject receive, JObject group, ref CQGroupMessageEventArgs e)
-        {
-            foreach (JObject trigger in triggers)
-            {
-                try
-                {
-                    Operation.VariantCreate(trigger, receive, out Dictionary<string, string> Variants, group);
-                    Operation.VariantOperation(trigger, receive, ref Variants);
-                    #region 过滤条件计算
-                    if (trigger.ContainsKey("Filter"))
-                    {
-                        if (Operation.CalculateExpressions(trigger["Filter"], receive, Variants))
-                        {
-                            #region 满足条件的Actions
-                            if (trigger.ContainsKey("Actions"))
-                            {
-                                foreach (JObject action in trigger["Actions"])
-                                {
-                                    DoAction(action, ref Variants, ref receive, ref group, ref e);
-                                }
-                            }
-                            #endregion
-                        }
-                        else
-                        {
-                            #region 不满足条件的Actions
-                            if (trigger.ContainsKey("MismatchedActions"))
-                            {
-                                foreach (JObject action in trigger["MismatchedActions"])
-                                {
-                                    DoAction(action, ref Variants, ref receive, ref group, ref e);
-                                }
-                            }
-                            #endregion
-                        }
-                    }
-                    #endregion
-                }
-                catch (Exception err)
-                { Operation.AddLog("触发器解析" + err.ToString()); }
-            }
-        }
-        private void DoAction(JObject action, ref Dictionary<string, string> Variants, ref JObject receive, ref JObject group, ref CQGroupMessageEventArgs e)
-        {
-            switch (action["Target"].ToString())
-            {
-                case "log":
-                    try
-                    {
-                        if (action.ContainsKey("Info"))
-                            _ = Data.E.CQLog.Info("CQToBDX-Log", Operation.Format(action["Info"].ToString(), Variants));
-                        if (action.ContainsKey("Debug"))
-                            _ = Data.E.CQLog.Debug("CQToBDX-Log", Operation.Format(action["Debug"].ToString(), Variants));
-                        if (action.ContainsKey("Warning"))
-                            _ = Data.E.CQLog.Warning("CQToBDX-Log", Operation.Format(action["Warning"].ToString(), Variants));
-                        if (action.ContainsKey("Fatal"))
-                            _ = Data.E.CQLog.Fatal("CQToBDX-Log", Operation.Format(action["Fatal"].ToString(), Variants));
-                    }
-                    catch (Exception) { }
-                    break;
-                case "servers":
-                    if (action.ContainsKey("cmd"))
-                    {
-                        if (action.ContainsKey("Filter"))
-                        {
-                            var lambda_receive = receive;
-                            var lambda_Variants = Variants;
-                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive && Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
-                            {
-                                ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-                            }
-                        }
-                        else
-                        {
-                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive))
-                            {
-                                ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-                            }
-                        }
-                    }
-                    break;
-                case "QQGroup":
-                    if (action.ContainsKey("GroupID"))
-                    {
-                        Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
-                    }
-                    break;
-                case "ReturnGroupMessageAtFrom":
-                    if (action.ContainsKey("Message"))
-                    {
-                        ReturnGMAtFrom(ref e, Operation.Format(action["Message"].ToString(), Variants));
-                    }
-                    break;
-                case "ReturnPrivateMessage":
-                    if (action.ContainsKey("Message"))
-                    {
-                        if (action.ContainsKey("QQ"))
-                        {
-                            e.CQApi.SendPrivateMessage(long.Parse(action["QQ"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
-                        }
-                        else
-                        {
-                            ReturnPrivateMessage(ref e, Operation.Format(action["Message"].ToString(), Variants));
-                        }
-                    }
-                    break;
-                case "doTriggers":
-                    DoTriggers((JArray)action["Triggers"], ref receive, group, ref e);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+      }
 }

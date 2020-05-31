@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebSocketSharp;
 
@@ -77,58 +78,7 @@ namespace ml.paradis.tool.Code
                     {
                         try
                         {
-                            foreach (JObject action in Data.Timers[sender as System.Timers.Timer]["Actions"])
-                            {
-                                #region 执行Actions
-                                Dictionary<string, string> Variants = new Dictionary<string, string>();
-                                switch (action["Target"].ToString())
-                                {
-                                    case "log":
-                                        try
-                                        {
-                                            if (action.ContainsKey("Info"))
-                                                _ = Data.E.CQLog.Info("CQToBDX-Log", Operation.Format(action["Info"].ToString(), Variants));
-                                            if (action.ContainsKey("Debug"))
-                                                _ = Data.E.CQLog.Debug("CQToBDX-Log", Operation.Format(action["Debug"].ToString(), Variants));
-                                            if (action.ContainsKey("Warning"))
-                                                _ = Data.E.CQLog.Warning("CQToBDX-Log", Operation.Format(action["Warning"].ToString(), Variants));
-                                            if (action.ContainsKey("Fatal"))
-                                                _ = Data.E.CQLog.Fatal("CQToBDX-Log", Operation.Format(action["Fatal"].ToString(), Variants));
-                                        }
-                                        catch (Exception) { }
-                                        break;
-                                    case "servers":
-                                        if (action.ContainsKey("cmd"))
-                                        {
-                                            if (action.ContainsKey("Filter"))
-                                            {
-                                                var lambda_receive = new JObject();
-                                                var lambda_Variants = Variants;
-                                                foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive && Operation.CalculateExpressions(action["Filter"], lambda_receive, lambda_Variants, l.Value)))
-                                                {
-                                                    ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-                                                }
-                                            }
-                                            else
-                                            {
-                                                foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive))
-                                                {
-                                                    ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case "QQGroup":
-                                        if (action.ContainsKey("GroupID"))
-                                        {
-                                            Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                #endregion
-                            }
+                            MessageCallback.TimerOrTaskElapsedMessage( Data.Timers[sender as System.Timers.Timer]);
                             Data.E.CQLog.Debug("计时器触发", "#" + (Data.Timers.Keys.ToList().IndexOf(sender as System.Timers.Timer) + 1));
                         }
                         catch (Exception err) { Data.E.CQLog.Warning("计时器触发出错", err.Message + "\n" + Data.Timers[sender as System.Timers.Timer]); }
@@ -185,186 +135,31 @@ namespace ml.paradis.tool.Code
                                 if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
                                 JObject Part = action["Parameters"] as JObject;
                                 if (action.ContainsKey("Filter"))
-                                { if (!Operation.CalculateExpressions(action["Filter"], receive, Variants)) { continue; } }
-                                switch (action["Type"].ToString().ToLower())
                                 {
-                                    case "doactions":
-                                    case "doaction":
-                                    case "subactions":
-                                    case "subaction":
-                                        try
+                                    if (!Operation.CalculateExpressions(action["Filter"], receive, Variants))
+                                    {
+                                        #region 不满足条件的Actions
+                                        switch (action["Type"].ToString().ToLower())
                                         {
-                                            DoActions((JArray)Part["Actions"]);
+                                            case "doactions":
+                                            case "doaction":
+                                            case "subactions":
+                                            case "subaction":
+                                                try
+                                                {
+                                                    if (Part.ContainsKey("MismatchedActions"))
+                                                    {
+                                                        DoActions((JArray)Part["MismatchedActions"]);
+                                                    }
+                                                }
+                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                                continue;
+                                            default:
+                                                continue;
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
-                                        continue;
-                                    case "sender":
-                                        try
-                                        {
-                                            wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
-                                        }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
-                                         break;
-                                    case "other":
-                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
-                                        {
-                                            try
-                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
-                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
-                                        }
-                                        break;
-                                    case "all": 
-                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
-                                        {
-                                            try
-                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
-                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
-                                        }
-                                        break;
-                                    case "qqgroup":
-                                    case "group":
-                                    case "groupmessage":
-                                    case "gm":
-                                    case "发送群消息":
-                                        try
-                                        { Data.E.CQApi.SendGroupMessage(long.Parse(Part["GroupID"].ToString()), Operation.Format(Part["Message"].ToString(), Variants)); }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
-                                        break;
-                                    default:
-                                        Data.E.CQLog.Error("[WS接收]ERROR[Actions]", $"未知操作{action["Type"].ToString()}\n位于{action}");
-                                        continue;
+                                        #endregion
+                                    }
                                 }
-                                #endregion
-                            }
-                        }
-                        catch (Exception err)
-                        {
-                            Data.E.CQLog.Error("[WS接收]ERROR", err.Message);
-                        }
-                    }
-                }
-                DoActions((JArray)server["Actions"]);
-
-                //    #region 1
-                //    //JObject server = Data.WSClients[wsc];
-                //    void DoTriggers(JArray triggers)
-                //    {
-                //        foreach (JObject trigger in triggers)
-                //        {
-                //            Operation.VariantCreate(trigger, receive, out Dictionary<string, string> Variants, server);
-                //            Operation.VariantOperation(trigger, receive, ref Variants);
-                //            //#region 过滤条件计算
-                //            //if (trigger.ContainsKey("Filter"))
-                //            //{
-                //            //    void DoActions(JObject action)
-                //            //    {
-                //            //        switch (action["Target"].ToString())
-                //            //        {
-                //            //            case "log":
-                //            //                try
-                //            //                {
-                //            //                    if (action.ContainsKey("Info"))
-                //            //                        _ = Data.E.CQLog.Info("CQToBDX-Log", Operation.Format(action["Info"].ToString(), Variants));
-                //            //                    if (action.ContainsKey("Debug"))
-                //            //                        _ = Data.E.CQLog.Debug("CQToBDX-Log", Operation.Format(action["Debug"].ToString(), Variants));
-                //            //                    if (action.ContainsKey("Warning"))
-                //            //                        _ = Data.E.CQLog.Warning("CQToBDX-Log", Operation.Format(action["Warning"].ToString(), Variants));
-                //            //                    if (action.ContainsKey("Fatal"))
-                //            //                        _ = Data.E.CQLog.Fatal("CQToBDX-Log", Operation.Format(action["Fatal"].ToString(), Variants));
-                //            //                }
-                //            //                catch (Exception) { }
-                //            //                break;
-                //            //            case "sender":
-                //            //                if (action.ContainsKey("cmd"))
-                //            //                {
-                //            //                    wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants)));
-                //            //                }
-                //            //                break;
-                //            //            case "other":
-                //            //                foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
-                //            //                {
-                //            //                    if (action.ContainsKey("cmd"))
-                //            //                    { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants))); }
-                //            //                }
-                //            //                break;
-                //            //            case "all":
-                //            //                foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
-                //            //                {
-                //            //                    if (action.ContainsKey("cmd"))
-                //            //                    { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(action["cmd"].ToString(), Variants))); }
-                //            //                }
-                //            //                break;
-                //            //            case "QQGroup":
-                //            //                if (action.ContainsKey("GroupID"))
-                //            //                {
-                //            //                    Data.E.CQApi.SendGroupMessage(long.Parse(action["GroupID"].ToString()), Operation.Format(action["Message"].ToString(), Variants));
-                //            //                }
-                //            //                break;
-                //            //            case "doTriggers":
-                //            //                DoTriggers((JArray)action["Triggers"]);
-                //            //                break;
-                //            //            default:
-                //            //                break;
-                //            //        }
-                //            //    }
-                //            //    if (Operation.CalculateExpressions(trigger["Filter"], receive, Variants))
-                //            //    {
-                //            //        #region 满足条件Actions 
-                //            //        if (trigger.ContainsKey("Actions"))
-                //            //        {
-                //            //            foreach (JObject action in trigger["Actions"])
-                //            //            {
-                //            //                DoActions(action);
-                //            //            }
-                //            //        }
-                //            //        #endregion
-                //            //    }
-                //            //    else
-                //            //    {
-                //            //        #region 不满足条件Actions 
-                //            //        if (trigger.ContainsKey("MismatchedActions"))
-                //            //        {
-                //            //            foreach (JObject action in trigger["MismatchedActions"])
-                //            //            {
-                //            //                DoActions(action);
-                //            //            }
-                //            //        }
-                //            //        #endregion
-                //            //    }
-                //            //}
-                //            //#endregion
-                //        }
-                //    }
-                //    DoTriggers((JArray)server["Triggers"]);
-                //    #endregion
-                //
-            }
-            catch (Exception err)
-            { Operation.AddLog(err.ToString()); }
-        }
-        #endregion
-        #region WSC receive
-        public static void GroupReceiveMessage(Native.Sdk.Cqp.EventArgs.CQGroupMessageEventArgs e, string receiveData)
-        {
-            try
-            {
-                JObject receive = JObject.Parse(receiveData);
-                JObject server = Data.WSClients[wsc];
-                Dictionary<string, string> Variants = new Dictionary<string, string>();
-                void DoActions(JArray actions)
-                {
-                    foreach (JObject action in actions)
-                    {
-                        try
-                        {
-                            if (Operation.ActionOperation(action, receive, ref Variants, server))
-                            {
-                                #region 特定操作
-                                if (!action.ContainsKey("Type")) { throw new Exception("参数缺失:\"Type\""); }
-                                if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
-                                JObject Part = action["Parameters"] as JObject;
-                                if (action.ContainsKey("Filter"))
-                                { if (!Operation.CalculateExpressions(action["Filter"], receive, Variants)) { continue; } }
                                 switch (action["Type"].ToString().ToLower())
                                 {
                                     case "doactions":
@@ -400,17 +195,8 @@ namespace ml.paradis.tool.Code
                                             catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                                         }
                                         break;
-                                    case "qqgroup":
-                                    case "group":
-                                    case "groupmessage":
-                                    case "gm":
-                                    case "发送群消息":
-                                        try
-                                        { Data.E.CQApi.SendGroupMessage(long.Parse(Part["GroupID"].ToString()), Operation.Format(Part["Message"].ToString(), Variants)); }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
-                                        break;
-                                    default:
-                                        Data.E.CQLog.Error("[WS接收]ERROR[Actions]", $"未知操作{action["Type"].ToString()}\n位于{action}");
+                                     default:
+                                        Data.E.CQLog.Error("[WS接收]ERROR[Actions]", $"未知操作{action["Type"]}\n位于{action}");
                                         continue;
                                 }
                                 #endregion
@@ -422,7 +208,223 @@ namespace ml.paradis.tool.Code
                         }
                     }
                 }
-                DoActions((JArray)server["Actions"]); 
+                DoActions((JArray)server["Actions"]);
+            }
+            catch (Exception err)
+            { Operation.AddLog(err.ToString()); }
+        }
+        #endregion
+        #region GM receive
+        public static void GroupReceiveMessage(ref Native.Sdk.Cqp.EventArgs.CQGroupMessageEventArgs ev, JObject group)
+        {
+            try
+            {
+                var MemberInfo = ev.FromQQ.GetGroupMemberInfo(ev.FromGroup);
+                var GroupInfo = ev.FromGroup.GetGroupInfo();
+                JObject receive = new JObject() {
+                            new JProperty("Message", Native.Sdk.Cqp.CQApi.CQDeCode(ev.Message.Text)/*.Replace("&#91;", "[").Replace("&#93;", "]")*/),
+                            new JProperty("FromQQ", ev.FromQQ.Id),
+                            new JProperty("FromQQNick",MemberInfo.Nick),
+                            new JProperty("FromGroup", ev.FromGroup.Id),
+                            new JProperty("IsFromAnonymous", ev.IsFromAnonymous),
+                            new JProperty("Id", ev.Id),
+                            new JProperty("MemberInfo",
+                                                                                new JObject(){
+                                                                                    new JProperty("Card",MemberInfo. Card),
+                                                                                    new JProperty("Sex",MemberInfo. Sex),
+                                                                                    new JProperty("Age",MemberInfo. Age),
+                                                                                    new JProperty("Area",MemberInfo. Area),
+                                                                                    new JProperty("JoinGroupDateTime",MemberInfo. JoinGroupDateTime),
+                                                                                    new JProperty("LastSpeakDateTime",MemberInfo. LastSpeakDateTime),
+                                                                                    new JProperty("Level",MemberInfo. Level),
+                                                                                    new JProperty("MemberType",MemberInfo. MemberType.ToString()),
+                                                                                    new JProperty("ExclusiveTitle",MemberInfo. ExclusiveTitle),
+                                                                                    new JProperty("ExclusiveTitleExpirationTime",MemberInfo. ExclusiveTitleExpirationTime)
+                                                                                                    }
+                            ),
+                            new  JProperty("GroupInfo",
+                                                                                new JObject(){
+                                                                                    new JProperty("Name", GroupInfo.Name),
+                                                                                    new JProperty("CurrentMemberCount", GroupInfo.CurrentMemberCount),
+                                                                                    new JProperty("MaxMemberCount", GroupInfo.MaxMemberCount)
+                                                                                }
+                            )
+                        };
+                Dictionary<string, string> Variants = new Dictionary<string, string>();
+                void DoActions(JArray actions, ref Native.Sdk.Cqp.EventArgs.CQGroupMessageEventArgs e)
+                {
+                    foreach (JObject action in actions)
+                    {
+                        try
+                        {
+                            if (Operation.ActionOperation(action, receive, ref Variants, group))
+                            {
+                                #region 特定操作
+                                if (!action.ContainsKey("Type")) { throw new Exception("参数缺失:\"Type\""); }
+                                if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
+                                JObject Part = action["Parameters"] as JObject;
+                                if (action.ContainsKey("Filter"))
+                                {
+                                    if (!Operation.CalculateExpressions(action["Filter"], receive, Variants))
+                                    {
+                                        #region 不满足条件的Actions
+                                        switch (action["Type"].ToString().ToLower())
+                                        {
+                                            case "doactions":
+                                            case "doaction":
+                                            case "subactions":
+                                            case "subaction":
+                                                try
+                                                {
+                                                    if (Part.ContainsKey("MismatchedActions"))
+                                                    {
+                                                        DoActions((JArray)Part["MismatchedActions"], ref e);
+                                                    }
+                                                }
+                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                                continue;
+                                            default:
+                                                continue;
+                                        }
+                                        #endregion
+                                    }
+                                }
+                                switch (action["Type"].ToString().ToLower())
+                                {
+                                    case "doactions":
+                                    case "doaction":
+                                    case "subactions":
+                                    case "subaction":
+                                        try
+                                        {
+                                            DoActions((JArray)Part["Actions"], ref e);
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        continue; 
+                                 
+                                    case "returngroupmessageatfrom":
+                                        try
+                                        {
+                                            Event_GroupMessage.ReturnGMAtFrom(ref e, Operation.Format(Part["Message"].ToString(), Variants));
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        break;
+                                    case "returnprivatemessage":
+                                        try
+                                        {
+                                            if (Part.ContainsKey("QQ"))
+                                            {
+                                                e.CQApi.SendPrivateMessage(long.Parse(Operation.Format(Part["QQ"].ToString(), Variants)), Operation.Format(Part["Message"].ToString(), Variants));
+                                            }
+                                            else
+                                            {
+                                                Event_GroupMessage.ReturnPrivateMessage(ref e, Operation.Format(Part["Message"].ToString(), Variants));
+                                            }
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        break;
+                                    default:
+                                        Data.E.CQLog.Error("[GM接收]ERROR[Actions]", $"未知操作{action["Type"]}\n位于{action}");
+                                        continue;
+                                }
+                                #endregion
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            Data.E.CQLog.Error("[GM接收]ERROR", err.Message);
+                        }
+                    }
+                }
+                DoActions((JArray)group["Actions"], ref ev);
+            }
+            catch (Exception err)
+            { Operation.AddLog(err.ToString()); }
+        }
+        #endregion
+        #region Timer Elapsed&Task
+        public static void TimerOrTaskElapsedMessage(JObject timer)
+        {
+            try
+            {
+                JObject receive = new JObject() { };
+                Dictionary<string, string> Variants = new Dictionary<string, string>();
+                void DoActions(JArray actions)
+                {
+                    foreach (JObject action in actions)
+                    {
+                        try
+                        {
+                            if (Operation.ActionOperation(action, receive, ref Variants, timer))
+                            {
+                                #region 特定操作
+                                if (!action.ContainsKey("Type")) { throw new Exception("参数缺失:\"Type\""); }
+                                if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
+                                JObject Part = action["Parameters"] as JObject;
+                                if (action.ContainsKey("Filter"))
+                                {
+                                    if (!Operation.CalculateExpressions(action["Filter"], receive, Variants))
+                                    {
+                                        #region 不满足条件的Actions
+                                        switch (action["Type"].ToString().ToLower())
+                                        {
+                                            case "doactions":
+                                            case "doaction":
+                                            case "subactions":
+                                            case "subaction":
+                                                try
+                                                {
+                                                    if (Part.ContainsKey("MismatchedActions"))
+                                                    {
+                                                        DoActions((JArray)Part["MismatchedActions"]);
+                                                    }
+                                                }
+                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                                continue;
+                                            default:
+                                                continue;
+                                        }
+                                        #endregion
+                                    }
+                                }
+                                switch (action["Type"].ToString().ToLower())
+                                {
+                                    case "doactions":
+                                    case "doaction":
+                                    case "subactions":
+                                    case "subaction":
+                                        try
+                                        {
+                                            DoActions((JArray)Part["Actions"]);
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        continue;
+                              
+                                    case "qqgroup":
+                                    case "group":
+                                    case "groupmessage":
+                                    case "gm":
+                                    case "发送群消息":
+                                        try
+                                        {
+                                            Data.E.CQApi.SendGroupMessage(long.Parse(Operation.Format(Part["GroupID"].ToString(), Variants)), Operation.Format(Part["Message"].ToString(), Variants));
+                                        }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        break;
+                                    default:
+                                        Data.E.CQLog.Error("[TT触发]ERROR[Actions]", $"未知操作{action["Type"]}\n位于{action}");
+                                        continue;
+                                }
+                                #endregion
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            Data.E.CQLog.Error("[TT触发]ERROR", err.Message);
+                        }
+                    }
+                }
+                DoActions((JArray)timer["Actions"]);
             }
             catch (Exception err)
             { Operation.AddLog(err.ToString()); }
