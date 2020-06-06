@@ -33,6 +33,7 @@ namespace ml.paradis.tool.Code
                 Data.WSClients.Last().Key.OnOpen += (sender, e) =>
                 {
                     Operation.AddLog((sender as WebSocket).Url + "连接已建立");
+                    ((WebSocket)sender).Send($"{{\"operate\":\"setdesp\",\"desp\":\"BotByGxh(Ver:{Data.E.CQApi.AppInfo.Version}|logonQQ:{Data.E.CQApi.GetLoginQQId()})\"}}");
                 };
                 try
                 {
@@ -277,7 +278,7 @@ namespace ml.paradis.tool.Code
                                 if (action.ContainsKey("Filter"))
                                 {
                                     if (!Operation.CalculateExpressions(action["Filter"], receive, Variants))
-                                    { 
+                                    {
                                         #region 不满足条件的Actions
                                         switch (action["Type"].ToString().ToLower())
                                         {
