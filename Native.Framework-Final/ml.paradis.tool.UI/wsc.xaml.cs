@@ -79,7 +79,7 @@ namespace ml.paradis.tool.UI
             }
         }
         #region 艹
-     
+
         private void CleanButton_Click(object sender, RoutedEventArgs e)
         {
             OutPutText.Document.Blocks.Clear();
@@ -117,9 +117,12 @@ namespace ml.paradis.tool.UI
                 }
                 return sTemp.ToUpper();
             }
-            JObject raw = JObject.Parse("{\"operate\":\"runcmd\",\"passwd\":\"token\",\"cmd\":\"say null\"}");
-            raw["cmd"] = cmd;
-            raw["passwd"] = GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm"));
+            JObject raw = new JObject() {
+                new JProperty("operate","runcmd"),
+                new JProperty("cmd",cmd),
+                new JProperty("msgid","0")
+            };
+            raw.Add("passwd", GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None)));
             return raw;
         }
         private void SendMessageButton_Click(object sender, RoutedEventArgs e)
@@ -273,7 +276,7 @@ namespace ml.paradis.tool.UI
                 }
                 else
                 {
-                    OutPut("正在尝试连接至"+((WS)((ComboBoxItem)SelectServer.SelectedItem).Tag).client.Url);
+                    OutPut("正在尝试连接至" + ((WS)((ComboBoxItem)SelectServer.SelectedItem).Tag).client.Url);
                     ((WS)((ComboBoxItem)SelectServer.SelectedItem).Tag).client.ConnectAsync();
                 }
             }

@@ -68,26 +68,37 @@ namespace ml.paradis.tool.Code
             set { configData = value; }
         }
         public static Dictionary<WebSocket, JObject> WSClients = new Dictionary<WebSocket, JObject>();
-        private readonly static JObject cmdModel = JObject.Parse("{\"operate\":\"runcmd\",\"passwd\":\"token\",\"cmd\":\"say null\"}");
+        public struct CallBackInfo
+        {
+            public string uuid;
+            public JArray CallbackActions;
+            public Dictionary<string, string> Variants;
+        }
+        public static List<CallBackInfo> CMDQueue = new List<CallBackInfo>();
+        public static string GetCmdReq(string token, string cmd, JArray CBactions, Dictionary<string, string> Variants)
+        {
+            JObject raw = new JObject() {
+                new JProperty("operate","runcmd"),
+                new JProperty("cmd",cmd),
+                new JProperty("msgid", Operation.RandomUUID)
+            };
+            raw.Add("passwd", Operation.GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None)));
+            CMDQueue.Add(new CallBackInfo()
+            {
+                uuid = raw["msgid"].ToString(),
+                CallbackActions = CBactions,
+                Variants = Variants
+            });
+            return raw.ToString(Newtonsoft.Json.Formatting.None);
+        }
         public static string GetCmdReq(string token, string cmd)
         {
-            string GetMD5(string sDataIn)
-            {
-                MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-                byte[] bytValue, bytHash;
-                bytValue = Encoding.UTF8.GetBytes(sDataIn);
-                bytHash = md5.ComputeHash(bytValue);
-                md5.Clear();
-                string sTemp = "";
-                for (int i = 0; i < bytHash.Length; i++)
-                {
-                    sTemp += bytHash[i].ToString("X").PadLeft(2, '0');
-                }
-                return sTemp.ToUpper();
-            }
-            JObject raw = cmdModel;
-            raw["cmd"] = cmd;
-            raw["passwd"] = GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm"));
+            JObject raw = new JObject() {
+                new JProperty("operate","runcmd"),
+                new JProperty("cmd",cmd),
+                new JProperty("msgid","0")
+            };
+            raw.Add("passwd", Operation.GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None)));
             return raw.ToString(Newtonsoft.Json.Formatting.None);
         }
     }

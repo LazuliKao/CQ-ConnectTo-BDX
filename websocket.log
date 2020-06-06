@@ -1,0 +1,72 @@
+2020-05-31T13:42:46>Start listening at 127.0.0.1:19130
+2020-05-31T13:42:46>Enter " /connect 127.0.0.1:19130 " in Minecraft UWP to connect!
+2020-05-31T13:43:34>A connection has been set up(GUID:0fcee699-9d1e-406c-be3a-411f08ba5756)
+2020-05-31T13:43:34>Load:PlayerMessage
+2020-05-31T13:45:13>Start listening at 127.0.0.1:19130
+2020-05-31T13:45:13>Enter " /connect 127.0.0.1:19130 " in Minecraft UWP to connect!
+2020-05-31T13:45:15>A connection has been set up(GUID:f281e011-f64b-455d-b29d-5b3d646ed068)
+2020-05-31T13:45:15>Load:PlayerMessage
+{"operate":"runcmd","passwd":"61C17F0749AD1AD3A54933AFA4E145A5","cmd":"233"}
+2020-05-31T13:45:44>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"61C17F0749AD1AD3A54933AFA4E145A5","cmd":"233"}
+2020-05-31T13:45:45>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"61C17F0749AD1AD3A54933AFA4E145A5","cmd":"233"}
+2020-05-31T13:45:45>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:02>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:02>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:02>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:03>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:03>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:03>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:03>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:03>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:03>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:04>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:04>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:04>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:04>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:04>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:04>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:04>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:05>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+{"operate":"runcmd","passwd":"2E339176EF8961F9BFC4D7FF3BC59287","cmd":"233"}
+2020-05-31T13:46:05>Error:System.NullReferenceException: 未将对象引用设置到对象的实例。
+   在 MinecraftToolKit.Pages.Websocket.<>c__DisplayClass9_0.<StartButton_Click>b__3(String message)
+2020-05-31T13:46:17>A client disconnected(GUID:f281e011-f64b-455d-b29d-5b3d646ed068

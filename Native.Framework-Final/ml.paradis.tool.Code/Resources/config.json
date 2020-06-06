@@ -324,17 +324,26 @@
                                             "Operator": "==",
                                             "Value": "Manage" //判断是管理员
                                         } /*,
-                                                                {
-                                                                    "Path": [
-                                                                        "FromQQ"
-                                                                    ],
-                                                                    "Operator": "==",
-                                                                    "Value": "xxxxx"//通过QQ号判断权限
-                                                                }*/
+                                        {
+                                            "Path": [
+                                                "FromQQ"
+                                            ],
+                                            "Operator": "==",
+                                            "Value": "xxxxx"//通过QQ号判断权限
+                                        }*/
                                     ]
                                 },
                                 "Parameters": {
                                     "Actions": [
+                                        {
+                                            "Type": "var",
+                                            "Parameters": {
+                                                "Name": "GroupID",
+                                                "Path": [
+                                                    "FromGroup"
+                                                ]
+                                            }
+                                        },
                                         {
                                             "Type": "servers",
                                             "Parameters": {
@@ -354,19 +363,40 @@
                                                             "Value": "%SelectedServer%"
                                                         }
                                                     ]
-                                                }
+                                                },
+                                                "CallbackActions": [
+                                                    {
+                                                        "Type": "var",
+                                                        "Parameters": {
+                                                            "Name": "result",
+                                                            "Path": [
+                                                                "text"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "Type": "var",
+                                                        "Parameters": {
+                                                            "Name": "ServerName",
+                                                            "ServerConfig": [
+                                                                "Tag"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "Type": "GroupMessage",
+                                                        "Parameters": {
+                                                            "GroupID": "%GroupID%",
+                                                            "Message": "[%ServerName%]命令\"%CMDStr%\"执行成功\n>%result%"
+                                                        }
+                                                    }
+                                                ]
                                             }
                                         },
                                         {
                                             "Type": "log",
                                             "Parameters": {
                                                 "Info": "%SelectedServer%执行命令%CMDStr%"
-                                            }
-                                        },
-                                        {
-                                            "Type": "ReturnGroupMessageAtFrom",
-                                            "Parameters": {
-                                                "Message": "%SelectedServer%执行命令%CMDStr%"
                                             }
                                         }
                                     ],
@@ -375,6 +405,107 @@
                                             "Type": "ReturnGroupMessageAtFrom",
                                             "Parameters": {
                                                 "Message": "你莫得权限无法执行%CMDStr%"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "Type": "RegexGet",
+                    "Parameters": {
+                        "TargetVariant": "Message", //操作的变量，需要提前在"Variants"定义
+                        "CreateVariant": "QueryAction", //创建变量储存操作结果
+                        "Pattern": "^/(?<QueryAction>query|查询)", //正则表达式匹配 基于C#的高端正不懂勿用
+                        "GroupName": "QueryAction" //筛选组名，需要上方 Pattern有定义，否则返回空
+                    }
+                },
+                {
+                    "Type": "DoActions",
+                    "Filter": {
+                        "Variant": "QueryAction",
+                        "Operator": "!=",
+                        "Value": ""
+                    },
+                    "Parameters": {
+                        "Actions": [
+                            {
+                                "Type": "RegexGet",
+                                "Parameters": {
+                                    "TargetVariant": "Message", //操作的变量，需要提前在"Variants"定义
+                                    "CreateVariant": "QueryServer", //创建变量储存操作结果
+                                    "Pattern": "^/(query|查询)\\s*(?<Server>测试服务器1|测试服务器2)", //正则表达式匹配 基于C#的高端正不懂勿用
+                                    "GroupName": "Server" //筛选组名，需要上方 Pattern有定义，否则返回空
+                                }
+                            },
+                            {
+                                "Type": "DoActions",
+                                "Parameters": {
+                                    "Actions": [
+                                        {
+                                            "Type": "var",
+                                            "Parameters": {
+                                                "Name": "GroupID",
+                                                "Path": [
+                                                    "FromGroup"
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "Type": "servers",
+                                            "Parameters": {
+                                                "cmd": "list",
+                                                "Filter": {
+                                                    "any_of": [
+                                                        {
+                                                            "Variant": "QueryServer",
+                                                            "Operator": "==",
+                                                            "Value": ""
+                                                        },
+                                                        {
+                                                            "ServerConfig": [
+                                                                "Tag"
+                                                            ], //每个server对应配置文件层级目录，取自当前server的配置文件筛选，可以自定义任何标签{ "Address": "ws://localhost:8880/mc", "Passwd": "passwd","Tag": "测试服务器1","Triggers"。。。}
+                                                            "Operator": "==",
+                                                            "Value": "%QueryServer%"
+                                                        }
+                                                    ]
+                                                },
+                                                "CallbackActions": [
+                                                    {
+                                                        "Type": "var",
+                                                        "Parameters": {
+                                                            "Name": "QueryResult",
+                                                            "Path": [
+                                                                "text"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "Type": "var",
+                                                        "Parameters": {
+                                                            "Name": "ServerName",
+                                                            "ServerConfig": [
+                                                                "Tag"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "Type": "GroupMessage",
+                                                        "Parameters": {
+                                                            "GroupID": "%GroupID%",
+                                                            "Message": "[%ServerName%]查询成功\n%QueryResult%"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "Type": "log",
+                                            "Parameters": {
+                                                "Info": "%SelectedServer%执行命令%CMDStr%"
                                             }
                                         }
                                     ]
@@ -393,17 +524,42 @@
             //3600秒即1小时
             "Actions": [
                 {
-                    "Target": "log",
+                    "Type": "log",
                     "Parameters": {
                         "Info": "计时器：定时在线查询"
                     }
                 },
                 {
-                    "Target": "servers",
+                    "Type": "servers",
                     "Parameters": {
                         "cmd": "list",
-                        "Filter": true
-                       // "CallbackActions":{""}
+                        "CallbackActions": [
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "result",
+                                    "Path": [
+                                        "text"
+                                    ]
+                                }
+                            },
+                            {
+                                "Type": "var",
+                                "Parameters": {
+                                    "Name": "ServerName",
+                                    "ServerConfig": [
+                                        "Tag"
+                                    ]
+                                }
+                            },
+                            {
+                                "Type": "GroupMessage",
+                                "Parameters": {
+                                    "GroupID": "%GroupID%",
+                                    "Message": "[%ServerName%]在线定时查询\n>%result%"
+                                }
+                            }
+                        ]
                     }
                 }
             ]
@@ -419,7 +575,7 @@
             "Time": 0,
             "Actions": [
                 {
-                    "Target": "log",
+                    "Type": "log",
                     "Parameters": {
                         "Info": "现在是整点！"
                     }
@@ -434,7 +590,7 @@
             "Time": 30,
             "Actions": [
                 {
-                    "Target": "log",
+                    "Type": "log",
                     "Parameters": {
                         "Info": "现在是半点！"
                     }
@@ -449,7 +605,7 @@
             "Time": 0,
             "Actions": [
                 {
-                    "Target": "log",
+                    "Type": "log",
                     "Parameters": {
                         "Info": "美好的一天过去了......"
                     }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -275,24 +276,27 @@ namespace ml.paradis.tool.Code
                     catch (Exception err)
                     { AddLog($"ini读取出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
+                case "write_log":
+                    try
+                    {
+                        File.AppendAllText(Regex.Replace(Part["Path"].ToString(), @"^~/?", Path.GetDirectoryName(Data.ConfigPath) + "/").Replace("/", "\\"),
+                                           Format(Part["WriteLine"].ToString(), Variants));
+                    }
+                    catch (Exception err)
+                    { AddLog($"写log操作出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    break;
                 case "servers":
                     try
                     {
-                        if (Part.ContainsKey("Filter"))
+                        Dictionary<string, string> Variants_copy = Variants;
+                        string cmdStr = Format(Part["cmd"].ToString(), Variants);
+                        foreach (var ws in Part.ContainsKey("Filter")
+                                                     ? Data.WSClients.Where(l => l.Key.IsAlive && CalculateExpressions(Part["Filter"], receive, Variants_copy, l.Value))
+                                                     : Data.WSClients.Where(l => l.Key.IsAlive))
                         {
-                            var lambda_receive = receive;
-                            var lambda_Variants = Variants;
-                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive && Operation.CalculateExpressions(Part["Filter"], lambda_receive, lambda_Variants, l.Value)))
-                            {
-                                ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
-                            }
-                        }
-                        else
-                        {
-                            foreach (var ws in Data.WSClients.Where(l => l.Key.IsAlive))
-                            {
-                                ws.Key.Send(Data.GetCmdReq(ws.Value["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
-                            }
+                            ws.Key.Send(Part.ContainsKey("CallbackActions")
+                                                ? Data.GetCmdReq(ws.Value["Passwd"].ToString(), cmdStr, (JArray)Part["CallbackActions"], Variants_copy)
+                                                : Data.GetCmdReq(ws.Value["Passwd"].ToString(), cmdStr));
                         }
                     }
                     catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
@@ -300,10 +304,7 @@ namespace ml.paradis.tool.Code
                 case "privatemessage":
                     try
                     {
-                        if (Part.ContainsKey("QQ"))
-                        {
-                            Data.E.CQApi.SendPrivateMessage(long.Parse(Operation.Format(Part["QQ"].ToString(), Variants)), Operation.Format(Part["Message"].ToString(), Variants));
-                        }
+                        Data.E.CQApi.SendPrivateMessage(long.Parse(Format(Part["QQ"].ToString(), Variants)), Format(Part["Message"].ToString(), Variants));
                     }
                     catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                     break;
@@ -330,7 +331,7 @@ namespace ml.paradis.tool.Code
         public static string Format(string input, Dictionary<string, string> vars)
         {
             if (string.IsNullOrEmpty(input)) { return ""; }
-            string processText = input;
+            string processText = input;/*Format(input,new Dictionary<string, string>() { { "Time"}, });*/
             while (true)
             {
                 Match match = Regex.Match(processText, @"%(\w+?)%");
@@ -518,7 +519,24 @@ namespace ml.paradis.tool.Code
         }
         #endregion
         #endregion
-        private string CreateUUID() => Guid.NewGuid().ToString();
+        public static string RandomUUID
+        {
+            get { return Guid.NewGuid().ToString(); }
+        }
+        public static string GetMD5(string sDataIn)
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] bytValue, bytHash;
+            bytValue = Encoding.UTF8.GetBytes(sDataIn);
+            bytHash = md5.ComputeHash(bytValue);
+            md5.Clear();
+            string sTemp = "";
+            for (int i = 0; i < bytHash.Length; i++)
+            {
+                sTemp += bytHash[i].ToString("X").PadLeft(2, '0');
+            }
+            return sTemp.ToUpper();
+        }
         public static void AddLog(string text)
         {
             _ = Data.E.CQLog.Info("CQToBDX", text);

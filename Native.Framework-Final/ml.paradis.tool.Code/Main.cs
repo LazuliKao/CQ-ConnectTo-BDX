@@ -78,7 +78,7 @@ namespace ml.paradis.tool.Code
                     {
                         try
                         {
-                            MessageCallback.TimerOrTaskElapsedMessage( Data.Timers[sender as System.Timers.Timer]);
+                            MessageCallback.TimerOrTaskElapsedMessage(Data.Timers[sender as System.Timers.Timer]);
                             Data.E.CQLog.Debug("计时器触发", "#" + (Data.Timers.Keys.ToList().IndexOf(sender as System.Timers.Timer) + 1));
                         }
                         catch (Exception err) { Data.E.CQLog.Warning("计时器触发出错", err.Message + "\n" + Data.Timers[sender as System.Timers.Timer]); }
@@ -117,6 +117,7 @@ namespace ml.paradis.tool.Code
         #region WSC receive
         public static void WSCReceiveMessage(WebSocket wsc, string receiveData)
         {
+
             try
             {
                 JObject receive = JObject.Parse(receiveData);
@@ -195,7 +196,7 @@ namespace ml.paradis.tool.Code
                                             catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                                         }
                                         break;
-                                     default:
+                                    default:
                                         Data.E.CQLog.Error("[WS接收]ERROR[Actions]", $"未知操作{action["Type"]}\n位于{action}");
                                         continue;
                                 }
@@ -209,6 +210,16 @@ namespace ml.paradis.tool.Code
                     }
                 }
                 DoActions((JArray)server["Actions"]);
+                #region CMDcallback 
+                try
+                {
+                    Data.CallBackInfo get = Data.CMDQueue.First(new Func<Data.CallBackInfo, bool>(l => l.uuid == receive["msgid"].ToString()));
+                    Data.CMDQueue.Remove(get);
+                    Variants = get.Variants;
+                    DoActions(get.CallbackActions); 
+                }
+                catch (Exception) { }
+                #endregion
             }
             catch (Exception err)
             { Operation.AddLog(err.ToString()); }
@@ -300,8 +311,8 @@ namespace ml.paradis.tool.Code
                                             DoActions((JArray)Part["Actions"], ref e);
                                         }
                                         catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
-                                        continue; 
-                                 
+                                        continue;
+
                                     case "returngroupmessageatfrom":
                                         try
                                         {
@@ -399,7 +410,7 @@ namespace ml.paradis.tool.Code
                                         }
                                         catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                                         continue;
-                              
+
                                     case "qqgroup":
                                     case "group":
                                     case "groupmessage":
