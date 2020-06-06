@@ -216,7 +216,7 @@ namespace ml.paradis.tool.Code
                     Data.CallBackInfo get = Data.CMDQueue.First(new Func<Data.CallBackInfo, bool>(l => l.uuid == receive["msgid"].ToString()));
                     Data.CMDQueue.Remove(get);
                     Variants = get.Variants;
-                    DoActions(get.CallbackActions); 
+                    DoActions(get.CallbackActions);
                 }
                 catch (Exception) { }
                 #endregion
@@ -277,7 +277,7 @@ namespace ml.paradis.tool.Code
                                 if (action.ContainsKey("Filter"))
                                 {
                                     if (!Operation.CalculateExpressions(action["Filter"], receive, Variants))
-                                    {
+                                    { 
                                         #region 不满足条件的Actions
                                         switch (action["Type"].ToString().ToLower())
                                         {
@@ -312,7 +312,6 @@ namespace ml.paradis.tool.Code
                                         }
                                         catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
                                         continue;
-
                                     case "returngroupmessageatfrom":
                                         try
                                         {

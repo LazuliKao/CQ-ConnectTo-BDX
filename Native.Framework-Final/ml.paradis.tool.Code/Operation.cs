@@ -79,7 +79,7 @@ namespace ml.paradis.tool.Code
             if (!action.ContainsKey("Parameters")) { throw new Exception("参数缺失:\"Parameters\""); }
             JObject Part = action["Parameters"] as JObject;
             if (action.ContainsKey("Filter"))
-            { if (!CalculateExpressions(action["Filter"], receive, Variants)) { return false; } }
+            { if (!CalculateExpressions(action["Filter"], receive, Variants)) { return true; } }
             switch (action["Type"].ToString().ToLower())
             {
                 case "createvariant":
