@@ -154,7 +154,7 @@ namespace ml.paradis.tool.Code
                                                         DoActions((JArray)Part["MismatchedActions"]);
                                                     }
                                                 }
-                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                                 continue;
                                             default:
                                                 continue;
@@ -172,21 +172,21 @@ namespace ml.paradis.tool.Code
                                         {
                                             DoActions((JArray)Part["Actions"]);
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         continue;
                                     case "sender":
                                         try
                                         {
                                             wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         break;
                                     case "other":
                                         foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
                                         {
                                             try
                                             { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
-                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         }
                                         break;
                                     case "all":
@@ -194,7 +194,7 @@ namespace ml.paradis.tool.Code
                                         {
                                             try
                                             { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
-                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                            catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         }
                                         break;
                                     default:
@@ -293,7 +293,7 @@ namespace ml.paradis.tool.Code
                                                         DoActions((JArray)Part["MismatchedActions"], ref e);
                                                     }
                                                 }
-                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                                 continue;
                                             default:
                                                 continue;
@@ -311,14 +311,14 @@ namespace ml.paradis.tool.Code
                                         {
                                             DoActions((JArray)Part["Actions"], ref e);
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         continue;
                                     case "returngroupmessageatfrom":
                                         try
                                         {
                                             Event_GroupMessage.ReturnGMAtFrom(ref e, Operation.Format(Part["Message"].ToString(), Variants));
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         break;
                                     case "returnprivatemessage":
                                         try
@@ -332,7 +332,7 @@ namespace ml.paradis.tool.Code
                                                 Event_GroupMessage.ReturnPrivateMessage(ref e, Operation.Format(Part["Message"].ToString(), Variants));
                                             }
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         break;
                                     default:
                                         Data.E.CQLog.Error("[GM接收]ERROR[Actions]", $"未知操作{action["Type"]}\n位于{action}");
@@ -390,7 +390,7 @@ namespace ml.paradis.tool.Code
                                                         DoActions((JArray)Part["MismatchedActions"]);
                                                     }
                                                 }
-                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                                catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                                 continue;
                                             default:
                                                 continue;
@@ -408,7 +408,7 @@ namespace ml.paradis.tool.Code
                                         {
                                             DoActions((JArray)Part["Actions"]);
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         continue;
 
                                     case "qqgroup":
@@ -420,7 +420,7 @@ namespace ml.paradis.tool.Code
                                         {
                                             Data.E.CQApi.SendGroupMessage(long.Parse(Operation.Format(Part["GroupID"].ToString(), Variants)), Operation.Format(Part["Message"].ToString(), Variants));
                                         }
-                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                                        catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         break;
                                     default:
                                         Data.E.CQLog.Error("[TT触发]ERROR[Actions]", $"未知操作{action["Type"]}\n位于{action}");

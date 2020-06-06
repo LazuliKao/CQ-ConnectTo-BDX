@@ -103,7 +103,7 @@ namespace ml.paradis.tool.Code
                             throw new Exception("缺少参数！创建变量需要\"Path\",\"ServerConfig\"或\"Value\"之一");
                         }
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "log":
                     try
@@ -122,7 +122,7 @@ namespace ml.paradis.tool.Code
                         if (Part.ContainsKey("Fatal"))
                             _ = Data.E.CQLog.Fatal(logType, Format(Part["Fatal"].ToString(), Variants));
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "replace":
                     try
@@ -137,7 +137,7 @@ namespace ml.paradis.tool.Code
                             Variants[TargetVariant] = Variants[TargetVariant].Replace(Part["Find"].ToString(), Part["Replacement"].ToString());
                         }
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "regexreplace":
                     try
@@ -152,7 +152,7 @@ namespace ml.paradis.tool.Code
                             Variants[TargetVariant] = Regex.Replace(Variants[TargetVariant], Part["Pattern"].ToString(), Part["Replacement"].ToString());
                         }
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "regexget":
                     try
@@ -167,7 +167,7 @@ namespace ml.paradis.tool.Code
                             Variants[TargetVariant] = Regex.Match(Variants[TargetVariant], Part["Pattern"].ToString()).Groups[Part["GroupName"].ToString()].Value;
                         }
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "format":
                     try
@@ -182,7 +182,7 @@ namespace ml.paradis.tool.Code
                             Variants[TargetVariant] = Format(Part["Text"].ToString(), Variants);
                         }
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "tounicode":
                     try
@@ -200,7 +200,7 @@ namespace ml.paradis.tool.Code
                             }
                         }
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "motdbe":
                     try
@@ -223,7 +223,7 @@ namespace ml.paradis.tool.Code
                         }
                     }
                     catch (Exception err)
-                    { AddLog($"MotdBE执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    { AddLog($"MotdBE执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "gethtml":
                     try
@@ -244,7 +244,7 @@ namespace ml.paradis.tool.Code
                         }
                     }
                     catch (Exception err)
-                    { AddLog($"GetHTML执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    { AddLog($"GetHTML执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "sleep":
                     try
@@ -255,7 +255,7 @@ namespace ml.paradis.tool.Code
                         }
                     }
                     catch (Exception err)
-                    { AddLog($"Sleep执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    { AddLog($"Sleep执行出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "write_ini":
                     try
@@ -265,7 +265,7 @@ namespace ml.paradis.tool.Code
                         iObject.Save();
                     }
                     catch (Exception err)
-                    { AddLog($"ini写入出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    { AddLog($"ini写入出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "read_ini":
                     try
@@ -274,7 +274,7 @@ namespace ml.paradis.tool.Code
                         Variants.Add(Part["CreateVariant"].ToString(), iObject[Format(Part["Section"].ToString(), Variants)][Format(Part["Key"].ToString(), Variants)].Value);
                     }
                     catch (Exception err)
-                    { AddLog($"ini读取出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    { AddLog($"ini读取出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "write_log":
                     try
@@ -283,7 +283,7 @@ namespace ml.paradis.tool.Code
                                            Format(Part["WriteLine"].ToString(), Variants));
                     }
                     catch (Exception err)
-                    { AddLog($"写log操作出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    { AddLog($"写log操作出错\nVarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "servers":
                     try
@@ -299,14 +299,14 @@ namespace ml.paradis.tool.Code
                                                 : Data.GetCmdReq(ws.Value["Passwd"].ToString(), cmdStr));
                         }
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "privatemessage":
                     try
                     {
                         Data.E.CQApi.SendPrivateMessage(long.Parse(Format(Part["QQ"].ToString(), Variants)), Format(Part["Message"].ToString(), Variants));
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 case "qqgroup":
                 case "group":
@@ -315,9 +315,9 @@ namespace ml.paradis.tool.Code
                 case "发送群消息":
                     try
                     {
-                        Data.E.CQApi.SendGroupMessage(long.Parse(Operation.Format(Part["GroupID"].ToString(), Variants)), Operation.Format(Part["Message"].ToString(), Variants));
+                        Data.E.CQApi.SendGroupMessage(long.Parse(Format(Part["GroupID"].ToString(), Variants)), Format(Part["Message"].ToString(), Variants));
                     }
-                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容{err.Message}"); }
+                    catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                     break;
                 default:
                     return true;

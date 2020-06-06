@@ -505,7 +505,7 @@
                                         {
                                             "Type": "log",
                                             "Parameters": {
-                                                "Info": "%SelectedServer%执行命令%CMDStr%"
+                                                "Info": "查询"
                                             }
                                         }
                                     ]
@@ -520,8 +520,8 @@
     //计时器
     "Timers": [
         {
-            "Interval": 3600, //计时间隔，单位(秒)
-            //3600秒即1小时
+            "Interval": 7200, //计时间隔，单位(秒)
+            //7200秒即2小时
             "Actions": [
                 {
                     "Type": "log",
@@ -555,7 +555,7 @@
                             {
                                 "Type": "GroupMessage",
                                 "Parameters": {
-                                    "GroupID": "%GroupID%",
+                                    "GroupID": "386475891",
                                     "Message": "[%ServerName%]在线定时查询\n>%result%"
                                 }
                             }
