@@ -83,11 +83,16 @@ namespace ml.paradis.tool.Code
                 new JProperty("msgid", Operation.RandomUUID)
             };
             raw.Add("passwd", Operation.GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None)));
+            Dictionary<string, string> Variants_copy = new Dictionary<string, string>();
+            foreach (var variant in Variants)
+            {
+                Variants_copy.Add(variant.Key, variant.Value);
+            }
             CMDQueue.Add(new CallBackInfo()
             {
                 uuid = raw["msgid"].ToString(),
                 CallbackActions = CBactions,
-                Variants = Variants
+                Variants = Variants_copy
             });
             return raw.ToString(Newtonsoft.Json.Formatting.None);
         }

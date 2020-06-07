@@ -177,23 +177,35 @@ namespace ml.paradis.tool.Code
                                     case "sender":
                                         try
                                         {
-                                            wsc.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
+                                            wsc.Send(
+                                           Part.ContainsKey("CallbackActions")
+                                                  ? Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants), (JArray)Part["CallbackActions"], Variants)
+                                                  : Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))
+                                                );
                                         }
                                         catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         break;
                                     case "other":
-                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l != wsc && l.IsAlive))
+                                        foreach (var wsItem in Data.WSClients.Where(l => l.Key != wsc && l.Key.IsAlive))
                                         {
                                             try
-                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
+                                            {
+                                                wsItem.Key.Send(Part.ContainsKey("CallbackActions")
+                                                       ? Data.GetCmdReq(wsItem.Value["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants), (JArray)Part["CallbackActions"], Variants)
+                                                       : Data.GetCmdReq(wsItem.Value["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
+                                            }
                                             catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         }
                                         break;
                                     case "all":
-                                        foreach (WebSocket ws in Data.WSClients.Keys.Where(l => l.IsAlive))
+                                        foreach (var wsItem in Data.WSClients.Where( l=> l.Key.IsAlive))
                                         {
                                             try
-                                            { ws.Send(Data.GetCmdReq(server["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants))); }
+                                            {
+                                                wsItem.Key.Send(Part.ContainsKey("CallbackActions")
+                                                       ? Data.GetCmdReq(wsItem.Value["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants), (JArray)Part["CallbackActions"], Variants)
+                                                       : Data.GetCmdReq(wsItem.Value["Passwd"].ToString(), Operation.Format(Part["cmd"].ToString(), Variants)));
+                                            }
                                             catch (Exception err) { throw new Exception($"VarCount:{Variants.Count}\n位于{action}\n错误内容:{err.Message}"); }
                                         }
                                         break;

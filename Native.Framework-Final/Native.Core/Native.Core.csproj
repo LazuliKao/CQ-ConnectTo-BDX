@@ -185,4 +185,9 @@ if exist "$(TargetDir)app.json" (
 move "$(TargetDir)app.json" "$(TargetDir)$(TargetName)" 
 )</PostBuildEvent>
   </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties app_1json__JsonSchema="https://json.schemastore.org/jsconfig" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
