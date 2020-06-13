@@ -80,9 +80,10 @@ namespace ml.paradis.tool.Code
             JObject raw = new JObject() {
                 new JProperty("operate","runcmd"),
                 new JProperty("cmd",cmd),
-                new JProperty("msgid", Operation.RandomUUID)
+                new JProperty("msgid", Operation.RandomUUID),
+                new JProperty("passwd", "")
             };
-            raw.Add("passwd", Operation.GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None)));
+            raw["passwd"] = Operation.GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None));
             Dictionary<string, string> Variants_copy = new Dictionary<string, string>();
             foreach (var variant in Variants)
             {
@@ -101,9 +102,10 @@ namespace ml.paradis.tool.Code
             JObject raw = new JObject() {
                 new JProperty("operate","runcmd"),
                 new JProperty("cmd",cmd),
-                new JProperty("msgid","0")
+                new JProperty("msgid","0"),
+                new JProperty("passwd", "")
             };
-            raw.Add("passwd", Operation.GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None)));
+            raw["passwd"] = Operation.GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None));
             return raw.ToString(Newtonsoft.Json.Formatting.None);
         }
     }
