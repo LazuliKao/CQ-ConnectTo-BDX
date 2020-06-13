@@ -361,7 +361,8 @@
                   //    "CurrentMemberCount": 7,
                   //    "MaxMemberCount": 200
                   //  }
-                  //}              //}
+                  //}        
+                  //}
                 }
               },
               {
@@ -376,6 +377,7 @@
               {
                 "Type": "DoActions",
                 "Filter": {
+                  //##START_ReplacePlace_1##
                   "any_of": [ //任一满足返回true
                     {
                       "Variant": "MemberType",
@@ -395,6 +397,7 @@
                                             "Value": "xxxxx"//通过QQ号判断权限
                                         }*/
                   ]
+                  //##END_ReplacePlace_1##
                 },
                 "Parameters": {
                   "Actions": [
@@ -615,7 +618,7 @@
       "Actions": [
         {
           "Type": "log",
-          "Parameters": { "Info": "现在是整点！" }
+          "Parameters": { "Info": "[示例Task]现在是整点！" }
         }
       ]
     },
@@ -628,7 +631,7 @@
       "Actions": [
         {
           "Type": "log",
-          "Parameters": { "Info": "现在是半点！" }
+          "Parameters": { "Info": "[示例Task]现在是半点！" }
         }
       ]
     },

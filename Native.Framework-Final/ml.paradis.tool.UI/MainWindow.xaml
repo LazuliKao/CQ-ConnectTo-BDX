@@ -18,6 +18,9 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <!--MDE-->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignLightTheme.xaml" />
                 <!-- primary colors -->
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
@@ -92,8 +95,8 @@
         <GroupBox  Padding="2,0,2,2"   >
             <!--materialDesign:ShadowAssist.ShadowDepth="Depth3" Background="White"-->
             <GroupBox.Header>
-                <DockPanel >
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Grid >
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center">
                         <RadioButton  Style="{StaticResource TabRadioButton}"  Checked="TabRadioButtonConfig_Checked"  >
                             <Grid   Margin="0,0,10,0">
                                 <Grid.ColumnDefinitions>
@@ -125,7 +128,10 @@
                             </Grid>
                         </RadioButton>
                     </StackPanel>
-                </DockPanel>
+                    <Button Click="ReloadButton_Click" HorizontalAlignment="Right" Padding="0" Style="{StaticResource WindowButtonStyle}" ToolTip="    Reload&#13;重载配置文件" Opacity="1" Width="30" Height="30">
+                        <materialDesign:PackIcon Kind="Restart" Foreground="{StaticResource SecondaryAccentBrush}" Width="30" Height="30"/>
+                    </Button>
+                </Grid>
 
             </GroupBox.Header>
             <Grid >

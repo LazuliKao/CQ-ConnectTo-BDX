@@ -32,9 +32,11 @@
                     <ResourceDictionary.MergedDictionaries>
                         <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Lime.xaml" />
                     </ResourceDictionary.MergedDictionaries>
+                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}"/>
                     <SolidColorBrush x:Key="SecondaryAccentBrush" Color="{StaticResource Accent400}" />
                     <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{StaticResource Accent400Foreground}" />
                 </ResourceDictionary>
+                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -62,7 +64,7 @@
             <Label x:Name="ButtonLeft" Padding="0">
              
             </Label>
-            <Button Grid.Column="2" x:Name="ButtonRight" Click="ButtonRight_Click" Content="ojbk!"/>
+            <Button Grid.Column="2" x:Name="ButtonRight" Style="{StaticResource MaterialDesignOutlinedButton}" Click="ButtonRight_Click" Content="ojbk!"/>
         </Grid>
     </Grid>
     </mde:MaterialWindow>

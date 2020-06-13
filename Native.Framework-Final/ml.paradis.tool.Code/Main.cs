@@ -9,7 +9,7 @@ using WebSocketSharp;
 
 namespace ml.paradis.tool.Code
 {
-    class Main
+    public class Main
     {
         public static void Setup()
         {
@@ -103,6 +103,21 @@ namespace ml.paradis.tool.Code
         public static void Restart()
         {
             Quit();
+            try
+            {
+                Data.WSClients = new Dictionary<WebSocket, JObject>();
+                Data.TaskTimerActions = new JObject();
+                Data.CMDQueue = new List<Data.CallBackInfo>();
+                Data.KeepAliveTimer.Stop();
+                Data.KeepAliveTimer.Dispose();
+                Data.TaskTimer.Stop();
+                Data.TaskTimer.Dispose();
+            }
+            catch (Exception) { }
+            Data.KeepAliveTimer = new System.Timers.Timer();
+            Data.TaskTimer = new System.Timers.Timer();
+            Data.Config = null;
+            Setup();
         }
         public static void Quit()
         {
@@ -110,7 +125,7 @@ namespace ml.paradis.tool.Code
             foreach (var item in Data.WSClients.Keys)
             {
                 item.Close();
-            }
+            }   
         }
     }
     class MessageCallback
@@ -198,7 +213,7 @@ namespace ml.paradis.tool.Code
                                         }
                                         break;
                                     case "all":
-                                        foreach (var wsItem in Data.WSClients.Where( l=> l.Key.IsAlive))
+                                        foreach (var wsItem in Data.WSClients.Where(l => l.Key.IsAlive))
                                         {
                                             try
                                             {

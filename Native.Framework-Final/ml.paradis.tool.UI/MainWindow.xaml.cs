@@ -28,9 +28,9 @@ namespace ml.paradis.tool.UI
             Frame.Navigate(new welcome());
             //Task.Run(() =>
             //{
-                Pages.Add(new wsc());
-                Pages.Add(new config());
-                Pages.Add(new update());
+            Pages.Add(new wsc());
+            Pages.Add(new config());
+            Pages.Add(new update());
             //});
         }
         private void LoadPage(Page page)
@@ -54,6 +54,12 @@ namespace ml.paradis.tool.UI
         private void TabRadioButtonAbout_Checked(object sender, RoutedEventArgs e)
         {
             try { LoadPage(Pages.First(l => l is update)); } catch (Exception) { }
+        }
+
+        private void ReloadButton_Click(object sender, RoutedEventArgs e)
+        {/*Task.Run()*/
+            Code.Main.Restart();
+            Dialog.ShowDialog("配置文件已重载", "详情请见酷Q日志", "");
         }
     }
 }

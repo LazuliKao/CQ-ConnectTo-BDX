@@ -64,7 +64,7 @@ namespace Native.App.Export
 			// 反射获取 AppData 实例	
 			Type appDataType = typeof (AppData);	
 			// 注册一个 CQApi 实例	
-			AppInfo appInfo = new AppInfo ("ml.paradis.tool", 1, 9, "酷Q与BDX联动", "0.1.8", 18, "gxh2004", "实现酷Q与BDX服务器端联动,高自定义程度，所有内容、操作、触发器均由config.json定义,注意:必须配合BDX服务端的MCWS插件才能使用", authCode);	
+			AppInfo appInfo = new AppInfo ("ml.paradis.tool", 1, 9, "酷Q与BDX联动", "0.1.9", 19, "gxh2004", "实现酷Q与BDX服务器端联动,高自定义程度，所有内容、操作、触发器均由config.json定义,注意:必须配合BDX服务端的MCWS插件才能使用", authCode);	
 			appDataType.GetRuntimeProperty ("CQApi").GetSetMethod (true).Invoke (null, new object[] { new CQApi (appInfo) });	
 			AppData.UnityContainer.RegisterInstance<CQApi> ("ml.paradis.tool", AppData.CQApi);	
 			// 向容器注册一个 CQLog 实例	

@@ -120,9 +120,10 @@ namespace ml.paradis.tool.UI
             JObject raw = new JObject() {
                 new JProperty("operate","runcmd"),
                 new JProperty("cmd",cmd),
-                new JProperty("msgid","0")
+                new JProperty("msgid","0"),
+                new JProperty("passwd","")
             };
-            raw.Add("passwd", GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None)));
+            raw["passwd"]= GetMD5(token + DateTime.Now.ToString("yyyyMMddHHmm") + "@" + raw.ToString(Newtonsoft.Json.Formatting.None));
             return raw;
         }
         private void SendMessageButton_Click(object sender, RoutedEventArgs e)
