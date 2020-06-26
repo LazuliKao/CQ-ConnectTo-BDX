@@ -15,3 +15,14 @@ with BDX plugin and this CQ plugin,you could simply operate between QQ group and
 - <a href="https://www.mcbbs.net/thread-1011364-1-1.html">MCBBS</a><br/>
 - <a href="https://www.minebbs.com/resources/1023/">MineBBS</a><br/>
 - <a href="https://cqp.cc/t/49225">酷Q论坛</a><br/>
+
+
+
+
+----
+
+
+[![star](https://gitee.com/littlegao233/CQ-ConnectTo-BDX/badge/star.svg?theme=white)](https://gitee.com/littlegao233/CQ-ConnectTo-BDX/stargazers)
+
+
+[![gxh/CQ-ConnectTo-BDX](https://gitee.com/littlegao233/CQ-ConnectTo-BDX/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b)](https://gitee.com/littlegao233/CQ-ConnectTo-BDX)
