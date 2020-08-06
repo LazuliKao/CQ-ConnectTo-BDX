@@ -9,7 +9,7 @@
   "configVersion": 1.0,
   "Servers": [
     {
-      "Address": "ws://localhost:29132/mc",
+      "Address": "ws://localhost:29132/mcws",
       "Passwd": "passwd",
       "Tag": "测试服务器1",
       "Actions": [
