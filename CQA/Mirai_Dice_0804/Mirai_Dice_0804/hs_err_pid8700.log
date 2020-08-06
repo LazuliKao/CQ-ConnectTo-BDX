@@ -1,0 +1,446 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  Internal Error (0xe0434352), pid=8700, tid=0x00001740
+#
+# JRE version: OpenJDK Runtime Environment (8.0_252-b09) (build 1.8.0_252-b09)
+# Java VM: OpenJDK Client VM (25.252-b09 mixed mode windows-x86 )
+# Problematic frame:
+# C  [KERNELBASE.dll+0x114622]
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x06c31800):  JavaThread "MiraiNative" daemon [_thread_in_native, id=5952, stack(0x08b50000,0x08ba0000)]
+
+siginfo: ExceptionCode=0xe0434352, ExceptionInformation=0x80131509 0x00000000 0x00000000 0x00000000 0x624c0000 
+
+Registers:
+EAX=0x08b9f418, EBX=0x00000005, ECX=0x00000005, EDX=0x00000000
+ESP=0x08b9f418, EBP=0x08b9f470, ESI=0x08b9f4d8, EDI=0x00000001
+EIP=0x74844622, EFLAGS=0x00200216
+
+Top of Stack: (sp=0x08b9f418)
+0x08b9f418:   e0434352 00000001 00000000 74844622
+0x08b9f428:   00000005 80131509 00000000 00000000
+0x08b9f438:   00000000 624c0000 06dbc388 08b9f52c
+0x08b9f448:   00000001 00000000 00000000 62586e38
+0x08b9f458:   08c0736e 00000000 610b1130 08b9f438
+0x08b9f468:   06dbc388 a3f8dd91 08b9f50c 625c2931
+0x08b9f478:   e0434352 00000001 00000005 08b9f4d8
+0x08b9f488:   da38557b 00000000 08e67e90 00000001 
+
+Instructions: (pc=0x74844622)
+0x74844602:   89 44 24 10 c1 e0 02 50 51 8d 44 24 1c 50 e8 9f
+0x74844612:   85 00 00 83 c4 0c 8d 04 24 50 ff 15 9c 33 8e 74
+0x74844622:   8b 4c 24 54 33 cc e8 f3 43 00 00 8b e5 5d c2 10
+0x74844632:   00 83 64 24 10 00 eb de 6a 0f 58 eb c3 cc cc cc 
+
+
+Register to memory mapping:
+
+EAX=0x08b9f418 is pointing into the stack for thread: 0x06c31800
+EBX=0x00000005 is an unknown value
+ECX=0x00000005 is an unknown value
+EDX=0x00000000 is an unknown value
+ESP=0x08b9f418 is pointing into the stack for thread: 0x06c31800
+EBP=0x08b9f470 is pointing into the stack for thread: 0x06c31800
+ESI=0x08b9f4d8 is pointing into the stack for thread: 0x06c31800
+EDI=0x00000001 is an unknown value
+
+
+Stack: [0x08b50000,0x08ba0000],  sp=0x08b9f418,  free space=317k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [KERNELBASE.dll+0x114622]
+C  [clr.dll+0x102931]
+C  [clr.dll+0x1037d6]
+C  [PresentationCore.ni.dll+0xa05b65]
+C  [PresentationCore.ni.dll+0x205452]
+C  [PresentationFramework.ni.dll+0x30149b]
+C  [PresentationFramework.ni.dll+0x301384]
+C  [PresentationFramework.ni.dll+0x31105b]
+C  [PresentationFramework.ni.dll+0x31a8c4]
+C  [PresentationFramework.ni.dll+0x302648]
+C  0x08d2f6e6
+C  0x08d2e69d
+C  0x08d2e413
+C  0x08bed2d4
+C  [CQP.dll+0x179a]
+j  org.itxtech.mirainative.Bridge.callIntMethod(ILjava/lang/String;)I+0
+j  org.itxtech.mirainative.ui.Tray$$special$$inlined$forEach$lambda$1$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;+57
+j  kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(Ljava/lang/Object;)V+49
+j  kotlinx.coroutines.DispatchedTask.run()V+329
+j  java.util.concurrent.Executors$RunnableAdapter.call()Ljava/lang/Object;+4
+j  java.util.concurrent.FutureTask.run()V+42
+j  java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(Ljava/util/concurrent/ScheduledThreadPoolExecutor$ScheduledFutureTask;)V+1
+j  java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run()V+30
+j  java.util.concurrent.ThreadPoolExecutor.runWorker(Ljava/util/concurrent/ThreadPoolExecutor$Worker;)V+95
+j  java.util.concurrent.ThreadPoolExecutor$Worker.run()V+5
+j  java.lang.Thread.run()V+11
+v  ~StubRoutines::call_stub
+V  [jvm.dll+0x136da2]
+V  [jvm.dll+0x20195b]
+V  [jvm.dll+0x136a9a]
+V  [jvm.dll+0x13742c]
+V  [jvm.dll+0x137386]
+V  [jvm.dll+0xdf4c2]
+V  [jvm.dll+0x15b40a]
+V  [jvm.dll+0x15ab9f]
+V  [jvm.dll+0x1995fb]
+C  [msvcr120.dll+0x2c01d]
+C  [msvcr120.dll+0x2c001]
+C  [KERNEL32.DLL+0x18494]
+C  [ntdll.dll+0x641c8]
+C  [ntdll.dll+0x64198]
+C  0x00000000
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  org.itxtech.mirainative.Bridge.callIntMethod(ILjava/lang/String;)I+0
+j  org.itxtech.mirainative.ui.Tray$$special$$inlined$forEach$lambda$1$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;+57
+j  kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(Ljava/lang/Object;)V+49
+j  kotlinx.coroutines.DispatchedTask.run()V+329
+j  java.util.concurrent.Executors$RunnableAdapter.call()Ljava/lang/Object;+4
+j  java.util.concurrent.FutureTask.run()V+42
+j  java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(Ljava/util/concurrent/ScheduledThreadPoolExecutor$ScheduledFutureTask;)V+1
+j  java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run()V+30
+j  java.util.concurrent.ThreadPoolExecutor.runWorker(Ljava/util/concurrent/ThreadPoolExecutor$Worker;)V+95
+j  java.util.concurrent.ThreadPoolExecutor$Worker.run()V+5
+j  java.lang.Thread.run()V+11
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x06c32400 JavaThread "DestroyJavaVM" [_thread_blocked, id=20240, stack(0x00f50000,0x00fa0000)]
+=>0x06c31800 JavaThread "MiraiNative" daemon [_thread_in_native, id=5952, stack(0x08b50000,0x08ba0000)]
+  0x06c30400 JavaThread "kotlinx.coroutines.DefaultExecutor" daemon [_thread_blocked, id=16168, stack(0x08ab0000,0x08b00000)]
+  0x06c32c00 JavaThread "DefaultDispatcher-worker-2" daemon [_thread_blocked, id=17136, stack(0x08920000,0x08970000)]
+  0x06c2f000 JavaThread "DefaultDispatcher-worker-1" daemon [_thread_blocked, id=19848, stack(0x08890000,0x088e0000)]
+  0x06c31000 JavaThread "AWT-EventQueue-0" [_thread_blocked, id=17764, stack(0x07ec0000,0x07f10000)]
+  0x06c06c00 JavaThread "AWT-Windows" daemon [_thread_in_native, id=20436, stack(0x07870000,0x078c0000)]
+  0x06c06400 JavaThread "AWT-Shutdown" [_thread_blocked, id=4260, stack(0x077e0000,0x07830000)]
+  0x06c03c00 JavaThread "Java2D Disposer" daemon [_thread_blocked, id=21340, stack(0x07750000,0x077a0000)]
+  0x05f9e000 JavaThread "ktor-cio-dispatcher-worker-4" daemon [_thread_blocked, id=5084, stack(0x07360000,0x073b0000)]
+  0x05d57800 JavaThread "Mirai Console Input Thread" [_thread_in_native, id=1596, stack(0x06540000,0x06590000)]
+  0x05d19400 JavaThread "ktor-cio-dispatcher-worker-3" daemon [_thread_blocked, id=3692, stack(0x06390000,0x063e0000)]
+  0x05c07c00 JavaThread "ktor-cio-dispatcher-worker-2" daemon [_thread_blocked, id=10860, stack(0x06070000,0x060c0000)]
+  0x05c07400 JavaThread "ktor-cio-dispatcher-worker-1" daemon [_thread_in_native, id=16008, stack(0x05fe0000,0x06030000)]
+  0x058fa400 JavaThread "kotlinx.coroutines.DefaultExecutor" daemon [_thread_blocked, id=12448, stack(0x05b50000,0x05ba0000)]
+  0x05922800 JavaThread "DefaultDispatcher-worker-2" daemon [_thread_blocked, id=7656, stack(0x05ac0000,0x05b10000)]
+  0x05926400 JavaThread "DefaultDispatcher-worker-1" daemon [_thread_blocked, id=9736, stack(0x05a30000,0x05a80000)]
+  0x01351c00 JavaThread "Service Thread" daemon [_thread_blocked, id=5728, stack(0x05710000,0x05760000)]
+  0x0131e800 JavaThread "C1 CompilerThread0" daemon [_thread_blocked, id=16080, stack(0x05680000,0x056d0000)]
+  0x0134b400 JavaThread "Attach Listener" daemon [_thread_blocked, id=20140, stack(0x055f0000,0x05640000)]
+  0x01312400 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=19552, stack(0x05560000,0x055b0000)]
+  0x010adc00 JavaThread "Finalizer" daemon [_thread_blocked, id=12380, stack(0x05470000,0x054c0000)]
+  0x010a8400 JavaThread "Reference Handler" daemon [_thread_blocked, id=19156, stack(0x053e0000,0x05430000)]
+
+Other Threads:
+  0x01091400 VMThread [stack: 0x05350000,0x053a0000] [id=18440]
+  0x01353c00 WatcherThread [stack: 0x057a0000,0x057f0000] [id=8904]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap:
+ def new generation   total 4992K, used 1699K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K,  26% used [0x10200000, 0x10328f18, 0x10660000)
+  from space 512K, 100% used [0x10660000, 0x106e0000, 0x106e0000)
+  to   space 512K,   0% used [0x106e0000, 0x106e0000, 0x10760000)
+ tenured generation   total 10944K, used 10265K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  93% used [0x15750000, 0x161567c8, 0x16156800, 0x16200000)
+ Metaspace       used 18386K, capacity 18631K, committed 18816K, reserved 18816K
+
+Card table byte_map: [0x01150000,0x011e0000] byte_map_base: 0x010cf000
+
+Polling page: 0x00e00000
+
+CodeCache: size=32768Kb used=1643Kb max_used=1643Kb free=31124Kb
+ bounds [0x02eb0000, 0x03050000, 0x04eb0000]
+ total_blobs=949 nmethods=674 adapters=207
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 11.169 Thread 0x0131e800  679             java.nio.ByteBufferAsCharBufferB::ix (9 bytes)
+Event: 11.169 Thread 0x0131e800 nmethod 679 0x03049188 code [0x03049280, 0x03049300]
+Event: 11.171 Thread 0x0131e800  680             sun.font.CMap$CMapFormat4::<init> (342 bytes)
+Event: 11.172 Thread 0x0131e800 nmethod 680 0x03049348 code [0x03049560, 0x03049d30]
+Event: 11.750 Thread 0x0131e800  681             java.util.concurrent.atomic.AtomicIntegerFieldUpdater$AtomicIntegerFieldUpdaterImpl::accessCheck (17 bytes)
+Event: 11.750 Thread 0x0131e800 nmethod 681 0x0304a688 code [0x0304a790, 0x0304a84c]
+Event: 12.408 Thread 0x0131e800  682             java.util.concurrent.atomic.AtomicIntegerFieldUpdater$AtomicIntegerFieldUpdaterImpl::compareAndSet (19 bytes)
+Event: 12.409 Thread 0x0131e800 nmethod 682 0x0304a8c8 code [0x0304a9d0, 0x0304aabc]
+Event: 12.844 Thread 0x0131e800  683             java.util.concurrent.locks.AbstractQueuedSynchronizer::compareAndSetWaitStatus (13 bytes)
+Event: 12.844 Thread 0x0131e800 nmethod 683 0x0304ab88 code [0x0304ac80, 0x0304ad10]
+
+GC Heap History (10 events):
+Event: 1.517 GC heap before
+{Heap before GC invocations=11 (full 0):
+ def new generation   total 4928K, used 4143K [0x10200000, 0x10750000, 0x15750000)
+  eden space 4416K,  82% used [0x10200000, 0x1058bdb0, 0x10650000)
+  from space 512K, 100% used [0x106d0000, 0x10750000, 0x10750000)
+  to   space 512K,   0% used [0x10650000, 0x10650000, 0x106d0000)
+ tenured generation   total 10944K, used 9485K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  86% used [0x15750000, 0x16093500, 0x16093600, 0x16200000)
+ Metaspace       used 12033K, capacity 12233K, committed 12288K, reserved 12672K
+Event: 1.530 GC heap after
+Heap after GC invocations=12 (full 1):
+ def new generation   total 4992K, used 0K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K,   0% used [0x10200000, 0x10200000, 0x10660000)
+  from space 512K,   0% used [0x10660000, 0x10660000, 0x106e0000)
+  to   space 512K,   0% used [0x106e0000, 0x106e0000, 0x10760000)
+ tenured generation   total 10944K, used 6262K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  57% used [0x15750000, 0x15d6dad8, 0x15d6dc00, 0x16200000)
+ Metaspace       used 12033K, capacity 12233K, committed 12288K, reserved 12672K
+}
+Event: 1.576 GC heap before
+{Heap before GC invocations=12 (full 1):
+ def new generation   total 4992K, used 4480K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K, 100% used [0x10200000, 0x10660000, 0x10660000)
+  from space 512K,   0% used [0x10660000, 0x10660000, 0x106e0000)
+  to   space 512K,   0% used [0x106e0000, 0x106e0000, 0x10760000)
+ tenured generation   total 10944K, used 6262K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  57% used [0x15750000, 0x15d6dad8, 0x15d6dc00, 0x16200000)
+ Metaspace       used 12698K, capacity 12915K, committed 13056K, reserved 13696K
+Event: 1.579 GC heap after
+Heap after GC invocations=13 (full 1):
+ def new generation   total 4992K, used 512K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K,   0% used [0x10200000, 0x10200000, 0x10660000)
+  from space 512K, 100% used [0x106e0000, 0x10760000, 0x10760000)
+  to   space 512K,   0% used [0x10660000, 0x10660000, 0x106e0000)
+ tenured generation   total 10944K, used 6555K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  59% used [0x15750000, 0x15db6e60, 0x15db7000, 0x16200000)
+ Metaspace       used 12698K, capacity 12915K, committed 13056K, reserved 13696K
+}
+Event: 1.680 GC heap before
+{Heap before GC invocations=13 (full 1):
+ def new generation   total 4992K, used 4980K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K,  99% used [0x10200000, 0x1065d3d0, 0x10660000)
+  from space 512K, 100% used [0x106e0000, 0x10760000, 0x10760000)
+  to   space 512K,   0% used [0x10660000, 0x10660000, 0x106e0000)
+ tenured generation   total 10944K, used 6555K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  59% used [0x15750000, 0x15db6e60, 0x15db7000, 0x16200000)
+ Metaspace       used 14311K, capacity 14552K, committed 14720K, reserved 14720K
+Event: 1.685 GC heap after
+Heap after GC invocations=14 (full 1):
+ def new generation   total 4992K, used 512K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K,   0% used [0x10200000, 0x10200000, 0x10660000)
+  from space 512K, 100% used [0x10660000, 0x106e0000, 0x106e0000)
+  to   space 512K,   0% used [0x106e0000, 0x106e0000, 0x10760000)
+ tenured generation   total 10944K, used 7550K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  68% used [0x15750000, 0x15eaf8b0, 0x15eafa00, 0x16200000)
+ Metaspace       used 14311K, capacity 14552K, committed 14720K, reserved 14720K
+}
+Event: 1.908 GC heap before
+{Heap before GC invocations=14 (full 1):
+ def new generation   total 4992K, used 4992K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K, 100% used [0x10200000, 0x10660000, 0x10660000)
+  from space 512K, 100% used [0x10660000, 0x106e0000, 0x106e0000)
+  to   space 512K,   0% used [0x106e0000, 0x106e0000, 0x10760000)
+ tenured generation   total 10944K, used 7550K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  68% used [0x15750000, 0x15eaf8b0, 0x15eafa00, 0x16200000)
+ Metaspace       used 17491K, capacity 17735K, committed 17920K, reserved 18816K
+Event: 1.913 GC heap after
+Heap after GC invocations=15 (full 1):
+ def new generation   total 4992K, used 512K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K,   0% used [0x10200000, 0x10200000, 0x10660000)
+  from space 512K, 100% used [0x106e0000, 0x10760000, 0x10760000)
+  to   space 512K,   0% used [0x10660000, 0x10660000, 0x106e0000)
+ tenured generation   total 10944K, used 9150K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  83% used [0x15750000, 0x1603f8b0, 0x1603fa00, 0x16200000)
+ Metaspace       used 17491K, capacity 17735K, committed 17920K, reserved 18816K
+}
+Event: 2.006 GC heap before
+{Heap before GC invocations=15 (full 1):
+ def new generation   total 4992K, used 4992K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K, 100% used [0x10200000, 0x10660000, 0x10660000)
+  from space 512K, 100% used [0x106e0000, 0x10760000, 0x10760000)
+  to   space 512K,   0% used [0x10660000, 0x10660000, 0x106e0000)
+ tenured generation   total 10944K, used 9150K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  83% used [0x15750000, 0x1603f8b0, 0x1603fa00, 0x16200000)
+ Metaspace       used 18157K, capacity 18407K, committed 18560K, reserved 18816K
+Event: 2.009 GC heap after
+Heap after GC invocations=16 (full 1):
+ def new generation   total 4992K, used 512K [0x10200000, 0x10760000, 0x15750000)
+  eden space 4480K,   0% used [0x10200000, 0x10200000, 0x10660000)
+  from space 512K, 100% used [0x10660000, 0x106e0000, 0x106e0000)
+  to   space 512K,   0% used [0x106e0000, 0x106e0000, 0x10760000)
+ tenured generation   total 10944K, used 10265K [0x15750000, 0x16200000, 0x20200000)
+   the space 10944K,  93% used [0x15750000, 0x161567c8, 0x16156800, 0x16200000)
+ Metaspace       used 18157K, capacity 18407K, committed 18560K, reserved 18816K
+}
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (10 events):
+Event: 0.553 Thread 0x00fdf400 Exception <a 'java/security/PrivilegedActionException'> (0x105eb9f0) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\jvm.cpp, line 1502]
+Event: 0.553 Thread 0x00fdf400 Exception <a 'java/security/PrivilegedActionException'> (0x105ef478) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\jvm.cpp, line 1502]
+Event: 0.553 Thread 0x00fdf400 Exception <a 'java/security/PrivilegedActionException'> (0x105ef858) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\jvm.cpp, line 1502]
+Event: 0.553 Thread 0x00fdf400 Exception <a 'java/security/PrivilegedActionException'> (0x105f0e40) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\jvm.cpp, line 1502]
+Event: 0.553 Thread 0x00fdf400 Exception <a 'java/security/PrivilegedActionException'> (0x105f1220) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\jvm.cpp, line 1502]
+Event: 0.868 Thread 0x05c07c00 Exception <a 'java/lang/NoSuchFieldError': method resolution failed> (0x1021b910) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\methodHandles.cpp, line 1167]
+Event: 0.870 Thread 0x05c07c00 Exception <a 'java/lang/NoSuchFieldError': method resolution failed> (0x102618c0) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\methodHandles.cpp, line 1167]
+Event: 1.648 Thread 0x00fdf400 Exception <a 'java/io/FileNotFoundException'> (0x1051cb30) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\jni.cpp, line 710]
+Event: 1.662 Thread 0x00fdf400 Exception <a 'java/lang/ClassNotFoundException': sun/dc/DuctusRenderingEngine> (0x10532208) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\classfile\systemDictionary.cpp, line 210]
+Event: 1.738 Thread 0x00fdf400 Exception <a 'java/io/FileNotFoundException'> (0x102ac480) thrown at [J:\jenkins\tmp\workspace\build\src\hotspot\src\share\vm\prims\jni.cpp, line 710]
+
+Events (10 events):
+Event: 12.975 Executing VM operation: RevokeBias done
+Event: 12.975 loading class sun/awt/windows/WMenuItemPeer$1 done
+Event: 12.975 loading class java/awt/KeyboardFocusManager$2
+Event: 12.975 loading class java/awt/KeyboardFocusManager$2 done
+Event: 12.976 loading class java/awt/KeyboardFocusManager$HeavyweightFocusRequest
+Event: 12.976 loading class java/awt/KeyboardFocusManager$HeavyweightFocusRequest done
+Event: 12.977 loading class org/itxtech/mirainative/ui/Tray$$special$$inlined$forEach$lambda$1$1
+Event: 12.977 loading class org/itxtech/mirainative/ui/Tray$$special$$inlined$forEach$lambda$1$1 done
+Event: 12.977 loading class org/itxtech/mirainative/ui/Tray$$special$$inlined$forEach$lambda$1$1
+Event: 12.977 loading class org/itxtech/mirainative/ui/Tray$$special$$inlined$forEach$lambda$1$1 done
+
+
+Dynamic libraries:
+0x01210000 - 0x01245000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\java.exe
+0x77cc0000 - 0x77e50000 	C:\Windows\SYSTEM32\ntdll.dll
+0x75fb0000 - 0x76090000 	C:\Windows\System32\KERNEL32.DLL
+0x74730000 - 0x74914000 	C:\Windows\System32\KERNELBASE.dll
+0x71530000 - 0x715cd000 	C:\Windows\SYSTEM32\apphelp.dll
+0x77480000 - 0x774f8000 	C:\Windows\System32\ADVAPI32.dll
+0x75ef0000 - 0x75faf000 	C:\Windows\System32\msvcrt.dll
+0x77500000 - 0x77544000 	C:\Windows\System32\sechost.dll
+0x77a50000 - 0x77b10000 	C:\Windows\System32\RPCRT4.dll
+0x74580000 - 0x745a0000 	C:\Windows\System32\SspiCli.dll
+0x74570000 - 0x7457a000 	C:\Windows\System32\CRYPTBASE.dll
+0x74b20000 - 0x74b77000 	C:\Windows\System32\bcryptPrimitives.dll
+0x745a0000 - 0x7472d000 	C:\Windows\System32\USER32.dll
+0x77650000 - 0x77667000 	C:\Windows\System32\win32u.dll
+0x77ba0000 - 0x77bc2000 	C:\Windows\System32\GDI32.dll
+0x77680000 - 0x777e4000 	C:\Windows\System32\gdi32full.dll
+0x77b20000 - 0x77b9d000 	C:\Windows\System32\msvcp_win.dll
+0x74a00000 - 0x74b1d000 	C:\Windows\System32\ucrtbase.dll
+0x715d0000 - 0x717d4000 	C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.17134.1246_none_1bacf0ae910c9b43\COMCTL32.dll
+0x777f0000 - 0x77a4c000 	C:\Windows\System32\combase.dll
+0x77450000 - 0x77476000 	C:\Windows\System32\IMM32.DLL
+0x0ffd0000 - 0x100be000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\msvcr120.dll
+0x0f5f0000 - 0x0f661000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\msvcp120.dll
+0x07a30000 - 0x07dba000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\client\jvm.dll
+0x75940000 - 0x75946000 	C:\Windows\System32\PSAPI.DLL
+0x739f0000 - 0x73a14000 	C:\Windows\SYSTEM32\WINMM.dll
+0x52ab0000 - 0x52ab8000 	C:\Windows\SYSTEM32\WSOCK32.dll
+0x741d0000 - 0x741d8000 	C:\Windows\SYSTEM32\VERSION.dll
+0x74cd0000 - 0x74d37000 	C:\Windows\System32\WS2_32.dll
+0x72c30000 - 0x72c53000 	C:\Windows\SYSTEM32\WINMMBASE.dll
+0x749c0000 - 0x749f9000 	C:\Windows\System32\cfgmgr32.dll
+0x705f0000 - 0x705fd000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\verify.dll
+0x705c0000 - 0x705e4000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\java.dll
+0x705a0000 - 0x705b4000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\zip.dll
+0x760f0000 - 0x7743f000 	C:\Windows\System32\SHELL32.dll
+0x77570000 - 0x775f8000 	C:\Windows\System32\shcore.dll
+0x75380000 - 0x7593c000 	C:\Windows\System32\windows.storage.dll
+0x77600000 - 0x77645000 	C:\Windows\System32\shlwapi.dll
+0x749b0000 - 0x749bf000 	C:\Windows\System32\kernel.appcore.dll
+0x74e80000 - 0x74e98000 	C:\Windows\System32\profapi.dll
+0x74b80000 - 0x74bc5000 	C:\Windows\System32\powrprof.dll
+0x77b10000 - 0x77b18000 	C:\Windows\System32\FLTLIB.DLL
+0x67bc0000 - 0x67bd6000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\net.dll
+0x73ae0000 - 0x73b36000 	C:\Windows\system32\mswsock.dll
+0x6d850000 - 0x6d85f000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\nio.dll
+0x71f10000 - 0x71f23000 	C:\Windows\SYSTEM32\CRYPTSP.dll
+0x71ee0000 - 0x71f0f000 	C:\Windows\system32\rsaenh.dll
+0x727d0000 - 0x727e9000 	C:\Windows\SYSTEM32\bcrypt.dll
+0x73fe0000 - 0x74002000 	C:\Windows\SYSTEM32\USERENV.dll
+0x74010000 - 0x74040000 	C:\Windows\SYSTEM32\IPHLPAPI.DLL
+0x74d40000 - 0x74d47000 	C:\Windows\System32\NSI.dll
+0x71d20000 - 0x71d33000 	C:\Windows\SYSTEM32\dhcpcsvc6.DLL
+0x73b40000 - 0x73b54000 	C:\Windows\SYSTEM32\dhcpcsvc.DLL
+0x72c90000 - 0x72d1e000 	C:\Windows\SYSTEM32\DNSAPI.dll
+0x71db0000 - 0x71dd1000 	C:\Program Files (x86)\Bonjour\mdnsNSP.dll
+0x71f80000 - 0x71f88000 	C:\Windows\System32\rasadhlp.dll
+0x71f30000 - 0x71f7f000 	C:\Windows\System32\fwpuclnt.dll
+0x67b90000 - 0x67bb3000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\sunec.dll
+0x0f3b0000 - 0x0f4fa000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\awt.dll
+0x74de0000 - 0x74e76000 	C:\Windows\System32\OLEAUT32.dll
+0x71480000 - 0x714fc000 	C:\Windows\system32\uxtheme.dll
+0x75950000 - 0x75a93000 	C:\Windows\System32\MSCTF.dll
+0x70e30000 - 0x70e53000 	C:\Windows\system32\dwmapi.dll
+0x74bd0000 - 0x74ccc000 	C:\Windows\System32\ole32.dll
+0x676b0000 - 0x676d5000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\jpeg.dll
+0x684b0000 - 0x68589000 	C:\Windows\system32\opengl32.dll
+0x66860000 - 0x6689f000 	C:\Windows\SYSTEM32\GLU32.dll
+0x0f970000 - 0x0f9eb000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\freetype.dll
+0x0f2d0000 - 0x0f36b000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\jre\bin\fontmanager.dll
+0x5b520000 - 0x5b5ae000 	C:\Windows\SYSTEM32\mscms.dll
+0x6d830000 - 0x6d83c000 	C:\Windows\SYSTEM32\ColorAdapterClient.dll
+0x5df80000 - 0x5dfbe000 	C:\Windows\SYSTEM32\icm32.dll
+0x6c9e0000 - 0x6c9e9000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\plugins\MiraiNative\CQP.dll
+0x71830000 - 0x71844000 	C:\Windows\SYSTEM32\VCRUNTIME140.dll
+0x67b00000 - 0x67b70000 	C:\Windows\SYSTEM32\MSVCP140.dll
+0x003d0000 - 0x00880000 	C:\Users\gaoxi\source\repos\CQ-ConnectTo-BDX\CQA\Mirai_Dice_0804\Mirai_Dice_0804\plugins\MiraiNative\plugins\ml.paradis.tool.dll
+0x63a40000 - 0x63a95000 	C:\Windows\SYSTEM32\mscoree.dll
+0x639b0000 - 0x63a3d000 	C:\Windows\Microsoft.NET\Framework\v4.0.30319\mscoreei.dll
+0x624c0000 - 0x62c70000 	C:\Windows\Microsoft.NET\Framework\v4.0.30319\clr.dll
+0x636c0000 - 0x636d4000 	C:\Windows\SYSTEM32\VCRUNTIME140_CLR0400.dll
+0x636e0000 - 0x6378b000 	C:\Windows\SYSTEM32\ucrtbase_clr0400.dll
+0x610b0000 - 0x624be000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\mscorlib\46c6217a2d77a20d9fff301af2e1d67e\mscorlib.ni.dll
+0x61020000 - 0x610a9000 	C:\Windows\Microsoft.NET\Framework\v4.0.30319\clrjit.dll
+0x0ae70000 - 0x0af75000 	C:\Windows\Microsoft.NET\Framework\v4.0.30319\diasymreader.dll
+0x605c0000 - 0x61015000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\System\8cac8223556750a7b295488f7d4a74ca\System.ni.dll
+0x6d870000 - 0x6d885000 	C:\Windows\SYSTEM32\wldp.dll
+0x75b80000 - 0x75d15000 	C:\Windows\System32\CRYPT32.dll
+0x77670000 - 0x7767e000 	C:\Windows\System32\MSASN1.dll
+0x74ea0000 - 0x74ee7000 	C:\Windows\System32\WINTRUST.dll
+0x6e2b0000 - 0x6e2bf000 	C:\Windows\SYSTEM32\amsi.dll
+0x5ed80000 - 0x5f598000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\System.Core\b8791dcfe1d120a5766252f6cb08c3ea\System.Core.ni.dll
+0x6c160000 - 0x6c1dd000 	C:\Windows\System32\TextInputFramework.dll
+0x6ca80000 - 0x6ccdd000 	C:\Windows\System32\CoreUIComponents.dll
+0x6d1f0000 - 0x6d27b000 	C:\Windows\System32\CoreMessaging.dll
+0x73e60000 - 0x73e89000 	C:\Windows\SYSTEM32\ntmarta.dll
+0x6e1d0000 - 0x6e2a6000 	C:\Windows\SYSTEM32\wintypes.dll
+0x5e360000 - 0x5e77b000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\WindowsBase\720f476f7404a8f6bec897e7cf277b1a\WindowsBase.ni.dll
+0x0c9f0000 - 0x0d62c000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\PresentationCore\30f2319074f951e5014726caeb0b6945\PresentationCore.ni.dll
+0x5c330000 - 0x5d714000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\Presentatio5ae0f00f#\fb377b185b6c8050736b951bcc0a54a5\PresentationFramework.ni.dll
+0x5c120000 - 0x5c323000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\System.Xaml\8b5300564268e404eb6e520a78eb2390\System.Xaml.ni.dll
+0x70ba0000 - 0x70e26000 	C:\Windows\SYSTEM32\dwrite.dll
+0x5bf90000 - 0x5c11d000 	C:\Windows\Microsoft.NET\Framework\v4.0.30319\WPF\wpfgfx_v0400.dll
+0x5bf20000 - 0x5bf8b000 	C:\Windows\SYSTEM32\MSVCP140_CLR0400.dll
+0x5be30000 - 0x5bf13000 	C:\Windows\Microsoft.NET\Framework\v4.0.30319\WPF\PresentationNative_v0400.dll
+0x5bd20000 - 0x5be25000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\System.Configuration\a3af6c9b7a8f859d5b6b79262d94c3c4\System.Configuration.ni.dll
+0x0d630000 - 0x0dda4000 	C:\Windows\assembly\NativeImages_v4.0.30319_32\System.Xml\0ed2c9bed42f40c4e5b14b89482e2248\System.Xml.ni.dll
+0x73cd0000 - 0x73e52000 	C:\Windows\SYSTEM32\dbghelp.dll
+
+VM Arguments:
+java_command: mirai-console-wrapper-1.3.0.jar --update keep
+java_class_path (initial): mirai-console-wrapper-1.3.0.jar
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+PATH=E:\Internetwork\xftp\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;E:\code\UltraEdit;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;E:\code\Git\cmd;E:\Internetwork\PuTTY\;E:\code\mono\bin;C:\Program Files\dotnet\;C:\Program Files (x86)\ZeroTier\One\;E:\System tools\JSONBuddy;C:\Users\gaoxi\AppData\Local\Microsoft\WindowsApps;C:\Users\gaoxi\AppData\Local\Programs\Fiddler;E:\System tools\Microsoft VS Code\bin;E:\Internetwork\Fiddler;C:\Users\gaoxi\AppData\Local\GitHubDesktop\bin
+USERNAME=gaoxi
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 78 Stepping 3, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10.0 , 64 bit Build 17134 (10.0.17134.753)
+
+CPU:total 4 (initial active 4) (2 cores per cpu, 2 threads per core) family 6 model 78 stepping 3, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx
+
+Memory: 4k page, physical 8278168k(1481840k free), swap 14307480k(3175688k free)
+
+vm_info: OpenJDK Client VM (25.252-b09) for windows-x86 JRE (1.8.0_252-b09), built on Apr 22 2020 09:37:52 by "jenkins" with MS VC++ 12.0 (VS2013)
+
+time: Thu Aug 06 18:51:09 2020
+timezone: 中国标准时间
+elapsed time: 13 seconds (0d 0h 0m 13s)
+

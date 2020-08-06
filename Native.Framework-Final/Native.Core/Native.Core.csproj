@@ -30,7 +30,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\CQA\dev\</OutputPath>
+    <OutputPath>..\..\CQA\Mirai_Dice_0804\Mirai_Dice_0804\plugins\MiraiNative\plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -172,18 +172,22 @@
     <Error Condition="!Exists('..\packages\MaterialDesignThemes.3.1.0\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MaterialDesignThemes.3.1.0\build\MaterialDesignThemes.targets'))" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>if exist "$(TargetDir)$(TargetName)" (echo 文件夹已存在) else (md "$(TargetDir)$(TargetName)") 
+    <PreBuildEvent>REM if exist "$(TargetDir)$(TargetName)" (echo 文件夹已存在) else (md "$(TargetDir)$(TargetName)") 
 if exist "$(TargetDir)$(TargetName)\app.dll" (del /F /A /Q "$(TargetDir)$(TargetName)\app.dll") 
 if exist "$(TargetDir)$(TargetName)\app.json" (del /F /A /Q "$(TargetDir)$(TargetName)\app.json")</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>if exist "$(TargetDir)$(TargetName).dll" (
-move "$(TargetDir)$(TargetName).dll" "$(TargetDir)$(TargetName)" 
-rename "$(TargetDir)$(TargetName)\$(TargetName).dll" "app.dll" 
+#move "$(TargetDir)$(TargetName).dll" "$(TargetDir)$(TargetName)" 
+#rename "$(TargetDir)$(TargetName)\$(TargetName).dll" "app.dll" 
 ) 
 if exist "$(TargetDir)app.json" (
-move "$(TargetDir)app.json" "$(TargetDir)$(TargetName)" 
-)</PostBuildEvent>
+move "$(TargetDir)app.json" "$(TargetDir)$(TargetName).json" 
+)
+
+del /f "$(TargetDir)$(TargetName).pdb" 
+
+</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

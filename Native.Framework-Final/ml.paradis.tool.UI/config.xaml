@@ -302,11 +302,13 @@
                                                 <TextBox Name="Func_4_TimerQueryDuration" Text="7200" Visibility="{Binding IsChecked,ElementName=Func_4_TimerQueryCB,Converter={StaticResource boolToVisibilityConverter}}"/>
                                                 <TextBlock    Text="(秒)" Visibility="{Binding IsChecked,ElementName=Func_4_TimerQueryCB,Converter={StaticResource boolToVisibilityConverter}}"/>
                                             </StackPanel>
-                                            <!--<StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Ⅱ.群聊消息=>服务器" Margin="30,0,10,0"/>
-                                                <ToggleButton/>
-                                            </StackPanel>
                                             <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Ⅱ." Margin="30,0,10,0"/>
+                                                <CheckBox IsChecked="True" x:Name="Func_4_Motd" Style="{StaticResource SelectCheckBox}"   VerticalContentAlignment="Center">
+                                                    <TextBlock Text="Motd动态查询" FontSize="16" />
+                                                </CheckBox>
+                                            </StackPanel>
+                                            <!--<StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="Ⅲ.服务器消息=>群聊" Margin="30,0,10,0"/>
                                                 <ToggleButton/>
                                             </StackPanel>
@@ -323,7 +325,9 @@
                                                 <TextBlock Text="Ⅰ.定时自动查服:" Foreground="Blue"/>
                                                 <TextBlock Opacity=".68"   TextWrapping="Wrap" xml:space="preserve">每隔对应的时间(秒)查询一次服务器，并将查询结果发送到群聊</TextBlock>
                                                 <Separator/>
-                                            </StackPanel>
+                                                <TextBlock Text="Ⅰ.Motd动态查询:" Foreground="Blue"/>
+                                                <TextBlock Opacity=".68"   TextWrapping="Wrap" xml:space="preserve">群聊或者服务器发送"/motd ip地址:端口"即可一键查询BE服务器</TextBlock>
+                                             </StackPanel>
                                         </Grid>
                                     </Grid>
                                 </Expander>
