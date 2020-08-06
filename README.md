@@ -4,7 +4,7 @@ with BDX plugin and this CQ plugin,you could simply operate between QQ group and
 > - ### 不是易语言！不是易语言！不是易语言！(你见过哪个易语言的程序有这么美观的界面233<=没卵用系列)
 ## 下载地址
 - ### <a href="https://github.com/littlegao233/CQ-ConnectTo-BDX/releases/">GitHub最新Release</a>[酷Q-WS客户端]
-- ### <a href="http://www.tf3q.com/s/ij3xoz6f">网盘地址(可能不是最新版本)</a>[酷Q-WS客户端]
+- ### <a href="https://gitee.com/littlegao233/CQ-ConnectTo-BDX/releases">Gitee同步release(可能不是最新版本)</a>[酷Q-WS客户端]
 - ### 附加信息
     > - #### <a href="https://github.com/littlegao233/WPFtesws/releases">WS远程管理工具</a>[客户端]
     > - #### <a href="https://github.com/WangYneos/BDXWebSocket/releases">BDX端的BDXWebsocket.dll</a>[服务器端by WangYneos]
@@ -15,3 +15,14 @@ with BDX plugin and this CQ plugin,you could simply operate between QQ group and
 - <a href="https://www.mcbbs.net/thread-1011364-1-1.html">MCBBS</a><br/>
 - <a href="https://www.minebbs.com/resources/1023/">MineBBS</a><br/>
 - <a href="https://cqp.cc/t/49225">酷Q论坛</a><br/>
+
+
+
+
+----
+
+
+[![star](https://gitee.com/littlegao233/CQ-ConnectTo-BDX/badge/star.svg?theme=white)](https://gitee.com/littlegao233/CQ-ConnectTo-BDX/stargazers)
+
+
+[![gxh/CQ-ConnectTo-BDX](https://gitee.com/littlegao233/CQ-ConnectTo-BDX/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b)](https://gitee.com/littlegao233/CQ-ConnectTo-BDX)
