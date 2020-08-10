@@ -132,8 +132,7 @@ namespace ml.paradis.tool.Code
     {
         #region WSC receive
         public static void WSCReceiveMessage(WebSocket wsc, string receiveData)
-        {
-
+        { 
             try
             {
                 JObject receive = JObject.Parse(receiveData);
