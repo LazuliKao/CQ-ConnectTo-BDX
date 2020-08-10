@@ -473,9 +473,8 @@ ReturnPrivateMessage
     >``` json
     >  {"operate":"onmsg","target":"WangYneos","text":"HelloWorld"}
     >  //操作标识——————————目标——————————————————返回信息（玩家聊天内容）
-        >  ```
-
-  ### 玩家加入(服务端发出
+    >  ```
+    >  ### 玩家加入(服务端发出
     >  ### when a playe join the server
     >  
     >
