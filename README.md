@@ -7,6 +7,7 @@ with BDX plugin and this CQ plugin,you could simply operate between QQ group and
 - ### <a href="https://gitee.com/littlegao233/CQ-ConnectTo-BDX/releases">Gitee同步release(可能不是最新版本)</a>[酷Q-WS客户端]
 - ### 附加信息
     > - #### <a href="https://github.com/littlegao233/WPFtesws/releases">WS远程管理工具</a>[客户端]
+    > - #### <a href="https://github.com/littlegao233/PFWebsocketAPI/releases">PFWebsocketAPI（基于CSR）</a>[服务器端]
     > - #### <a href="https://github.com/WangYneos/BDXWebSocket/releases">BDX端的BDXWebsocket.dll</a>[服务器端by WangYneos]
 ## <a href="https://github.com/littlegao233/CQ-ConnectTo-BDX/blob/master/Guide.md">使用教程</a><br/>
 
