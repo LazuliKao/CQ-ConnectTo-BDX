@@ -1,8 +1,8 @@
 # CQ-Connect-BDX
 
-## 本版本即将被弃用
-## 重写版本将支持更多框架、更高自定义程度
-## [PFBridge](https://github.com/littlegao233/PFBridge)
+> ## 本版本即将被弃用
+> ## 重写版本将支持更多框架、更高自定义程度
+> ## [PFBridge](https://github.com/littlegao233/PFBridge)
 
 with BDX plugin and this CQ plugin,you could simply operate between QQ group and MCBE servers (>ω&lt;)
 > ## 编写语言C#(基于Native.Sdk,需要.Net运行库)  不建议wine or docker
